@@ -10,8 +10,11 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import ConfigParser
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+config = ConfigParser.ConfigParser()
+config.read(os.path.join(BASE_DIR, "config.ini"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -59,10 +62,12 @@ WSGI_APPLICATION = 'webapps.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': '/home/ubuntu/my.cnf',
-        },
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': config.get('Database', 'Name'),
+        'USER': config.get('Database', 'User'),
+        'PASSWORD': config.get('Database', 'Password'),
+        'HOST': config.get('Database', 'Host'),   # Or an IP Address that your DB is hosted on
+        'PORT': config.get('Database', 'Port'),
     }
 }
 
