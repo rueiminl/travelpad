@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>todo list</title>
+</head>
+<body>
+<h1>Todo List</h1>
+	<table>
+	<tr>
+        {% for field in form.visible_fields %}
+	<th>{{field.label_tag}}</th>
+	{% endfor %}
+	<th><!-- submit button --></th>
+	</tr>
+	{% for todo in todoes %}
+	<tr>
+		<td>{{todo.created_by}}</td>
+		<td>{{todo.task}}</td>
+		<td>{{todo.status}}</td>
+		<td>{{todo.related_event}}</td>
+		<td>{{todo.related_itinerary}}</td>
+		<td>{{todo.owner}}</td>
+		<td>{{todo.note}}</td>
+	</tr>
+	{% endfor %}
+	<tr><form action="/create_todo" method="post" enctype="multipart/form-data">
+		{% for field in form.visible_fields %}
+		<td>{{field}}</td>
+		{% endfor %}
+	<td><input type="submit"/></td>
+	{% csrf_token %}
+	</form></tr>
+	</table>
+</body>
+</html>
