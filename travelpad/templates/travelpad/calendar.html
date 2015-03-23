@@ -17,12 +17,14 @@
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
+				right: 'agendaWeek,agendaDay'
 			},
+			allDaySlot: false,
 			defaultDate: '2015-02-12',
 			selectable: true,
 			selectHelper: true,
 			select: function(start, end) {
+				//TODO: add events
 				var title = prompt('Event Title:');
 				var eventData;
 				if (title) {
@@ -37,6 +39,7 @@
 			},
 			editable: true,
 			eventLimit: true, // allow "more" link when too many events
+			//events: '/travelpad/get-calendar-evetns-json/' + itenarary_id,
 			events: [
 				{
 					title: 'All Day Event',
