@@ -7,18 +7,13 @@ from bootstrap3_datetime.widgets import *
 
 MAX_UPLOAD_SIZE = 2500000
        
-class AttractionForm(forms.ModelForm):
-    class Meta:
-        model = Event
-        fields = ['title', 'start_date', 'start_time', 'end_date', 'end_time', 'note']
-        widgets = {
-            'title': forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'the name of this event'}),
-            'start_date': DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}),
-            'start_time': DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}),
-            'end_date': DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}),
-            'end_time': DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}),
-            'note': forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}),
-        }
+class AttractionForm(forms.Form):
+    title = forms.CharField(max_length=30, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'the name of this event'}))
+    start_date = forms.DateField(widget = DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
+    start_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
+    end_date = forms.DateField(widget = DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
+    end_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
+    note = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}))
         
     def clean(self):
         cleaned_data = super(AttractionForm, self).clean()

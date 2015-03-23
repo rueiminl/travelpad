@@ -39,7 +39,7 @@ def home_page(request):
     #return render(request, 'socialnetwork/profile.html', context)
     context = {}
     return render(request, 'travelpad/addevent.html', context)
-
+    
 def eventedit(request):
     if request.method == 'GET':
         context = {}
@@ -60,10 +60,18 @@ def eventedit(request):
     print new_user
     #newevent = Event(user=request.user, type="attraction",proposed = isproposed)
     newevent = Event(user = new_user, type="attraction",proposed = isproposed)
-    form = AttractionForm(request.POST, instance=newevent)
-    print form.data['title'];
+    form = AttractionForm(request.POST)
     if form.is_valid():
-        form.save()
+        newevent.title = form.cleaned_data['title']
+        #newevent.start_date = form.cleaned_data['start_date']
+        #newevent.start_time = form.cleaned_data['start_time']
+        #newevent.end_date = form.cleaned_data['end_date']
+        #newevent.end_time = form.cleaned_data['end_time']
+        newevent.start_datetime = datetime.combine(form.cleaned_data['start_date'], form.cleaned_data['start_time'])
+        newevent.end_datetime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
+        newevent.note = form.cleaned_data['note']
+        newevent.save()
+        #dateutil.parser(self.cleaned_data['start_date'] + self.cleaned_data['start_time'])
         context['success'] = 1
     else:
         context['failure'] = 1
