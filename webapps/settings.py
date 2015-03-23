@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'travelpad',
+    'bootstrap3_datetime',
 )
 
 MIDDLEWARE_CLASSES = (
