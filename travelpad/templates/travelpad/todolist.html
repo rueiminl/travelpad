@@ -6,58 +6,28 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-<h1>Todo List</h1>
-    <div class="container">
-		
-	<table>
-	<!--
-	<tr>
-    {% for field in form.visible_fields %}
-	<th>{{field.label_tag}}</th>
-	{% endfor %}
-	<th><!-- update or submit button -- </th>
-	<th><-- delete button -- </th>
-	</tr>
-	-->
-	{% for todo in todoes %}
-	<tr>
-		<form action="{% url 'update_todo' todo.id %}" method="post" enctype="multipart/form-data">
-		<td><input type="hidden" id="id_created_by" type="text" name="created_by" value="{{todo.created_by}}"/></td>
-		<td><input id="id_task" type="text" name="task" value="{{todo.task}}" readonly /></td>
-		<td><input id="id_status" type="hidden" name="status" value="{{todo.status}}"/></td>
-		<td><input id="id_related_event" type="hidden" name="related_event" value="{{todo.related_event}}"/></td>
-		<td><input id="id_related_itinerary" type="hidden" name="related_itinerary" value="{{todo.related_itinerary}}"/></td>
-		<td><input id="id_owner" type="hidden" name="owner" value="{{todo.owner}}"/></td>
-		<td><input id="id_note" type="hidden" name="note" value="{{todo.note}}"/></td>
-		<td><input type="hidden" value="update"/></td>
-        <td><a data-toggle="modal" class="btn btn-info" href="{% url 'update_todo_dlg' todo.id %}" data-target="#myModal">Update </a></td>
-		{% csrf_token %}
-		<td><input type="hidden" value="delete" onclick="javascript:location.href='{% url 'delete_todo' todo.id %}'"/></td>
-		</form>
-	</tr>
-	{% endfor %}
-	<!--
-	<tr><form action="{% url 'create_todo' %}" method="post" enctype="multipart/form-data">
-		{% for field in form.visible_fields %}
-		<td>{{field}}</td>
-		{% endfor %}
-	<td><input type="submit" value="add"/></td>
-	{% csrf_token %}
-	</form></tr>
-	-->
-	</table>
-	
-        <a data-toggle="modal" class="btn btn-info" href="{% url 'add_todo_dlg' %}" data-target="#myModal">Add Todo</a>
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                </div> <!-- /.modal-content -->
-            </div> <!-- /.modal-dialog -->
-        </div>
-		
+	<h1>Todo List</h1>
+    <div class="tab-content">	
+		<table>
+			{% for todo in todoes %}
+			<tr>
+				<td><input class="form-control" id="id_task" type="text" name="task" value="{{todo.task}}" readonly /></td>
+				<td><a data-toggle="modal" class="btn btn-info" href="{% url 'update_todo_dlg' todo.id %}" data-target="#myTodoModal">Update</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+		<a data-toggle="modal" class="btn btn-info" href="{% url 'add_todo_dlg' %}" data-target="#myTodoModal">Add Todo</a>
     </div>
+	<div class="modal fade" id="myTodoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+			</div> <!-- /.modal-content -->
+		</div> <!-- /.modal-dialog -->
+	</div>
+	
 </body>
 </html>
