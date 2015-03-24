@@ -47,6 +47,8 @@ def eventedit(request):
         return render(request, 'travelpad/EventWindow.html', context)
     context = {}
     context['test'] = "active"
+    print request.POST['coordinate']
+    print request.POST['placeId']
     if 'save' in request.POST:
         isproposed = False;
     elif 'propose' in request.POST:
@@ -57,7 +59,6 @@ def eventedit(request):
         new_user = User.objects.create_user(username="username", password="password1")
         new_user.save()
         
-    print new_user
     #newevent = Event(user=request.user, type="attraction",proposed = isproposed)
     newevent = Event(user = new_user, type="attraction",proposed = isproposed)
     form = AttractionForm(request.POST)
@@ -70,6 +71,12 @@ def eventedit(request):
         newevent.start_datetime = datetime.combine(form.cleaned_data['start_date'], form.cleaned_data['start_time'])
         newevent.end_datetime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
         newevent.note = form.cleaned_data['note']
+        newevent.place_id = request.POST['placeId']
+        newevent.place_name = request.POST['placeName']
+        s = request.POST['coordinate'][1:-1]
+        tmp = s.split(', ')
+        newevent.place_latitude = tmp[0]
+        newevent.place_longitude = tmp[1]
         newevent.save()
         if (form.cleaned_data['todo']):
             newtodo = Todo(task = form.cleaned_data['todo'], status = "New", created_by = "username", related_event = form.cleaned_data['title'])

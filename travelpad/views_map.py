@@ -18,7 +18,7 @@ def save_place(request):
 	except Event.DoesNotExist:
 		new_place = Event.objects.create(place_latitude=tmp[0],
 										 place_longitude=tmp[1],
-										 place_id=place_id,)
+										 place_id=place_id,place_name = request.POST["placeName"])
 		new_place.save()
 		print "New Item"
 	places = Event.objects.all()
