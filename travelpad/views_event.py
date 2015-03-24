@@ -27,6 +27,7 @@ from django.template.loader import render_to_string
 
 from travelpad.models import *
 from travelpad.forms_event import *
+from travelpad.views_itinerary import demo
 
 def home_page(request):
     # render takes: (1) the request,
@@ -85,5 +86,6 @@ def eventedit(request):
         context['success'] = 1
     else:
         context['failure'] = 1
-    return render(request, 'travelpad/addevent.html', context)
+    #return render(request, 'travelpad/addevent.html', context)
+    return demo(request)
  
