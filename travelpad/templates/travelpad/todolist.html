@@ -16,13 +16,21 @@
 			{% for todo in todoes %}
 			<tr>
 				<td><input class="form-control" id="id_task" type="text" name="task" value="{{todo.task}}" readonly /></td>
-				<td><a data-toggle="modal" class="btn btn-info" href="{% url 'update_todo_dlg' todo.id %}" data-target="#myTodoModal">Update</a></td>
+				<td><a data-toggle="modal" class="btn btn-info" href="{% url 'update_todo_dlg' todo.id %}" data-target="#myTodoModal{{todo.id}}">Update</a></td>
 			</tr>
 			{% endfor %}
 		</table>
 		<a data-toggle="modal" class="btn btn-info" href="{% url 'add_todo_dlg' %}" data-target="#myTodoModal">Add Todo</a>
     </div>
-	<div class="modal fade" id="myTodoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	{% for todo in todoes %}
+	<div class="modal fade" id="myTodoModal{{todo.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+			</div>
+		</div>
+	</div>	
+	{% endfor %}
+	<div class="modal fade" id="myTodoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 			</div> <!-- /.modal-content -->

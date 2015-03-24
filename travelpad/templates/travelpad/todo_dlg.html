@@ -8,11 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
-<script>
-$("#mimodal").on('hidden.bs.modal', function () {
-	$(this).data('bs.modal', null);
-});
-</script>
 </head>
 <body>
 <h1>Todo</h1>
@@ -25,7 +20,7 @@ $("#mimodal").on('hidden.bs.modal', function () {
 			<table>
 			{% for field in form.visible_fields %}
 				<tr>
-				<td>{{field.label_tag}}</td>
+				<td><label class="inputlabel" for="{{field.name}}">{{field.label_tag}}</label></td>
 				<td>{{field}}</td>
 				</tr>
 			{% endfor %}
