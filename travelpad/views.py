@@ -3,6 +3,7 @@ from django.http import HttpResponse, Http404
 from django.db import transaction
 from travelpad.models import *
 from travelpad.forms import *
+from travelpad.views_itinerary import demo
 
 def todolist(request):
 	todoes = Todo.objects.all()
@@ -19,7 +20,7 @@ def create_todo(request):
 	if not form.is_valid():
 		return todolist(request)
 	form.save()
-	return todolist(request)
+	return demo(request)
 
 @transaction.atomic
 def update_todo(request, id):
@@ -32,7 +33,7 @@ def update_todo(request, id):
 	if not form.is_valid():
 		return todolist(request)
 	form.save()
-	return todolist(request)
+	return demo(request)
 
 @transaction.atomic
 def delete_todo(request, id):
@@ -43,7 +44,7 @@ def delete_todo(request, id):
 	return todolist(request)
 
 def add_todo_dlg(request):
-	todo = Todo(task="123", status="456")
+	todo = Todo()
 	form = TodoForm(instance = todo)
 	context = {'form' : form}
 	return render(request, 'travelpad/todo_dlg.html', context)
