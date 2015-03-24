@@ -16,7 +16,7 @@
 			},
 			defaultView:'agendaWeek',
 			allDaySlot: false,
-			defaultDate: '2015-03-23',
+			defaultDate: '{{ itinerary.start_date }}',//'2015-03-23',
 			selectable: true,
 			selectHelper: true,
 			select: function(start, end) {
@@ -35,7 +35,7 @@
 			},
 			editable: true,
 			eventLimit: true, // allow "more" link when too many events
-			events: '/get-calendar-events-json/' + "1",//+ itenarary_id,
+			events: '/get-calendar-events-json/' + '{{itinerary.id}}',
 		});
 		
 	});

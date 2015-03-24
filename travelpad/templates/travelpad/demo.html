@@ -3,6 +3,7 @@
 <head>
 <meta charset='utf-8' />
 {% load staticfiles %}
+{% load widget_tags %}
 <!-- Bootstrap core CSS -->
 <link rel="stylesheet" type="text/css" href="{% static 'travelpad/bootstrap-3.3.2-dist/css/bootstrap.min.css' %}" />
 <!-- Bootstrap theme -->
@@ -130,7 +131,7 @@
 				{% include "travelpad/todolist.html" %}
 			</div>
 			<div class="col-md-10">
-				{% include "travelpad/calendar.html" %}
+				{% calendar itinerary %}
 			</div>
 		</div>
 	
