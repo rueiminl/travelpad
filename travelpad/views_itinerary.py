@@ -9,7 +9,10 @@ import json
 
 def demo(request):
 	context = {}
-    
+	places = Event.objects.all()
+	#places = [obj.get_json() for obj in Place.objects.all()]
+	#context = json.dumps({'lat': tmp[0], 'lng': tmp[1], 'placeId': request.POST['placeId'], 'places': places})
+	context['places'] = places
 	return render(request, 'travelpad/demo.html', context)
 
 def calendar(request):
