@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+{% load staticfiles %}
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet" type="text/css" href="{% static 'travelpad/bootstrap-3.3.2-dist/css/bootstrap.min.css' %}" />
+<!-- Bootstrap theme -->
+<link rel="stylesheet" type="text/css" href="{% static 'travelpad/bootstrap-3.3.2-dist/css/bootstrap-theme.min.css' %}" />
+	
+<script src="{% static 'travelpad/js/jquery-2.1.3.min.js' %}"></script>
+<script src="{% static 'travelpad/bootstrap-3.3.2-dist/js/bootstrap.min.js' %}"></script>
+
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-2">
+				<a data-toggle="modal" class="btn btn-danger" href="/eventedit" data-target="#myModal">Add Event</a>
+        
+			        <!-- Modal -->
+			        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			            <div class="modal-dialog">
+			                <div class="modal-content">
+			                </div> <!-- /.modal-content -->
+			            </div> <!-- /.modal-dialog -->
+			        </div>
+				{% include "travelpad/todolist.html" %}
+			</div>
+			<div class="col-md-10">
+				<!-- <div id='calendar'></div> -->
+				{% include "travelpad/calendar.html" %}
+			</div>
+		</div>
+		
+	
+		
+	</div>
+</body>
+</html>
