@@ -41,3 +41,10 @@ def delete_todo(request, id):
 		raise Http404
 	todo.delete()
 	return todolist(request)
+
+def add_todo_dlg(request):
+	todoes = Todo.objects.all()
+	form = TodoForm()
+	context = {'todoes' : todoes, 'form' : form}
+	return render(request, 'travelpad/todo_dlg.html', context)
+	return todolist(request)

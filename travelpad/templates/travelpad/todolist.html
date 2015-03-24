@@ -1,9 +1,17 @@
 <html>
 <head>
-<title>todo list</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>todo list</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 </head>
 <body>
 <h1>Todo List</h1>
+    <div class="container">
+		
 	<table>
 	<tr>
         {% for field in form.visible_fields %}
@@ -39,5 +47,15 @@
 	{% csrf_token %}
 	</form></tr>
 	</table>
+	
+        <a data-toggle="modal" class="btn btn-info" href="{% url 'add_todo_dlg' %}" data-target="#myModal">Add Todo</a>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div> <!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
+        </div>
+		
+    </div>
 </body>
 </html>
