@@ -15,3 +15,9 @@ register = template.Library()
 @register.inclusion_tag('travelpad/calendar.html')
 def calendar(itinerary):
 	return {'itinerary' : itinerary}
+
+@register.inclusion_tag('travelpad/todolist.html')
+def todolist(itinerary):
+    todoes = Todo.objects.all()
+    form = TodoForm()
+    return {'todoes' : todoes, 'form' : form}
