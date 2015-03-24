@@ -14,6 +14,7 @@ class AttractionForm(forms.Form):
     end_date = forms.DateField(widget = DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
     end_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
     note = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}))
+    todo = forms.CharField(max_length=60, required=False, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'add things to do'}))
         
     def clean(self):
         cleaned_data = super(AttractionForm, self).clean()

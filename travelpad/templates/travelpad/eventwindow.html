@@ -149,7 +149,13 @@ var ready; // Where to store the function
                     <div id="Attractions" class="tab-pane fade in active">
                         <table>
                         {% for field in attractionform.visible_fields %}
-                            <tr>
+                            {% if field.label == "Note" %}
+                                </table>
+                                    <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
+                                    <div id="map-canvas" class="col-md-6"></div>
+                                <table>
+                            {% endif %}
+                            <tr>                                                        
                                 <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
                                 {% if field.field.required %}
                                     *
@@ -164,8 +170,6 @@ var ready; // Where to store the function
                             </tr>
                         {% endfor %}
                         </table>
-                    <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
-                    <div id="map-canvas" class="col-md-6"></div>
                     </div>
                     <div id="Hotel" class="tab-pane fade">
                     <p>Hotel</p>

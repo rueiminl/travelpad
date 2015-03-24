@@ -71,6 +71,9 @@ def eventedit(request):
         newevent.end_datetime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
         newevent.note = form.cleaned_data['note']
         newevent.save()
+        if (form.cleaned_data['todo']):
+            newtodo = Todo(task = form.cleaned_data['todo'], status = "New", created_by = "username", related_event = form.cleaned_data['title'])
+            newtodo.save()
         #dateutil.parser(self.cleaned_data['start_date'] + self.cleaned_data['start_time'])
         context['success'] = 1
     else:
