@@ -7,6 +7,11 @@ import dateutil.parser
 from json import dumps
 import json
 
+def demo(request):
+	context = {}
+    
+	return render(request, 'travelpad/demo.html', context)
+
 def calendar(request):
 	context = {}
     
