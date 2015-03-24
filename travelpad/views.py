@@ -43,8 +43,15 @@ def delete_todo(request, id):
 	return todolist(request)
 
 def add_todo_dlg(request):
-	todoes = Todo.objects.all()
-	form = TodoForm()
-	context = {'todoes' : todoes, 'form' : form}
+	todo = Todo(task="123", status="456")
+	form = TodoForm(instance = todo)
+	context = {'form' : form}
 	return render(request, 'travelpad/todo_dlg.html', context)
-	return todolist(request)
+
+def update_todo_dlg(request, id):
+	todo = get_object_or_404(Todo, id=id)
+	if not todo:
+		raise Http404
+	form = TodoForm(instance = todo)
+	context = {'id' : id, 'form' : form}
+	return render(request, 'travelpad/todo_dlg.html', context)

@@ -13,32 +13,33 @@
     <div class="container">
 		
 	<table>
+	<!--
 	<tr>
-        {% for field in form.visible_fields %}
+    {% for field in form.visible_fields %}
 	<th>{{field.label_tag}}</th>
 	{% endfor %}
-	<th><!-- update or submit button --></th>
-	<th><!-- delete button --></th>
+	<th><!-- update or submit button -- </th>
+	<th><-- delete button -- </th>
 	</tr>
+	-->
 	{% for todo in todoes %}
 	<tr>
 		<form action="{% url 'update_todo' todo.id %}" method="post" enctype="multipart/form-data">
-		<td>
-		<input type="hidden" id="id_created_by" type="text" name="created_by" value="{{todo.created_by}}"/>
-		{{todo.created_by}}
-		</td>
-		<td><input id="id_task" type="text" name="task" value="{{todo.task}}"/></td>
-		<td><input id="id_status" type="text" name="status" value="{{todo.status}}"/></td>
-		<td><input id="id_related_event" type="text" name="related_event" value="{{todo.related_event}}"/></td>
-		<td><input id="id_related_itinerary" type="text" name="related_itinerary" value="{{todo.related_itinerary}}"/></td>
-		<td><input id="id_owner" type="text" name="owner" value="{{todo.owner}}"/></td>
-		<td><input id="id_note" type="text" name="note" value="{{todo.note}}"/></td>
-		<td><input type="submit" value="update"/></td>
+		<td><input type="hidden" id="id_created_by" type="text" name="created_by" value="{{todo.created_by}}"/></td>
+		<td><input id="id_task" type="text" name="task" value="{{todo.task}}" readonly /></td>
+		<td><input id="id_status" type="hidden" name="status" value="{{todo.status}}"/></td>
+		<td><input id="id_related_event" type="hidden" name="related_event" value="{{todo.related_event}}"/></td>
+		<td><input id="id_related_itinerary" type="hidden" name="related_itinerary" value="{{todo.related_itinerary}}"/></td>
+		<td><input id="id_owner" type="hidden" name="owner" value="{{todo.owner}}"/></td>
+		<td><input id="id_note" type="hidden" name="note" value="{{todo.note}}"/></td>
+		<td><input type="hidden" value="update"/></td>
+        <td><a data-toggle="modal" class="btn btn-info" href="{% url 'update_todo_dlg' todo.id %}" data-target="#myModal">Update </a></td>
 		{% csrf_token %}
-		<td><input type="button" value="delete" onclick="javascript:location.href='{% url 'delete_todo' todo.id %}'"/></td>
+		<td><input type="hidden" value="delete" onclick="javascript:location.href='{% url 'delete_todo' todo.id %}'"/></td>
 		</form>
 	</tr>
 	{% endfor %}
+	<!--
 	<tr><form action="{% url 'create_todo' %}" method="post" enctype="multipart/form-data">
 		{% for field in form.visible_fields %}
 		<td>{{field}}</td>
@@ -46,6 +47,7 @@
 	<td><input type="submit" value="add"/></td>
 	{% csrf_token %}
 	</form></tr>
+	-->
 	</table>
 	
         <a data-toggle="modal" class="btn btn-info" href="{% url 'add_todo_dlg' %}" data-target="#myModal">Add Todo</a>
