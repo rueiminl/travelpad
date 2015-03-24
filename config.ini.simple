@@ -1,6 +1,6 @@
 [Database]
 Name: travelpad
 User: root
-Password: 123
+Password: root
 Host: localhost
 Port: 3306
