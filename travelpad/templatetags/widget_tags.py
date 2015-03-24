@@ -3,7 +3,6 @@ from django.http import HttpResponse, Http404
 from django.db import transaction
 from travelpad.models import *
 from travelpad.forms import *
-import dateutil.parser
 from json import dumps
 import json
 from django import template
