@@ -3,6 +3,7 @@ from django.http import HttpResponse, Http404
 from django.db import transaction
 from travelpad.models import *
 from travelpad.forms import *
+from travelpad.forms_event import *
 from json import dumps
 import json
 from django import template
@@ -20,3 +21,8 @@ def todolist(itinerary):
     todoes = Todo.objects.all()
     form = TodoForm()
     return {'todoes' : todoes, 'form' : form}
+
+@register.inclusion_tag('travelpad/addevent.html')
+def addevent():
+    attractionform = AttractionForm()
+    return {'attractionform' : attractionform}

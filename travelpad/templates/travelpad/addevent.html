@@ -6,19 +6,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Event Edit Page</title>
     
-    <!-- Latest compiled and minified CSS -->
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-
-    <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>-->
    
     <!--{% load static from staticfiles %}
     <link rel="stylesheet" type="text/css" href="{% static "socialnetwork/css/social.css" %}">-->
+            {{ attractionform.media }}
+        
+    <style>
+      html, body {
+        width: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+      .controls {
+        background-color: #fff;
+        border-radius: 2px;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        height: 32px;
+        margin-left: 17px;
+        margin-top: 16px;
+        outline: none;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+      }
+
+      .controls:focus {
+        border-color: #4d90fe;
+      }
+      .pac-container {
+  z-index: 1050 !important;
+}
+      #map-eventcanvas { height: 300px }
+    </style>
+    
+    <!--
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&signed_in=true"></script>
+    -->
+    <script>
+// This sample uses the Place Autocomplete widget to allow the user to search
+// for and select a place. The sample then displays an info window containing
+// the place ID and other information about the place that the user has
+// selected.
+      function initialize_event() {
+
+        var markers = [];
+        var map = new google.maps.Map(document.getElementById('map-eventcanvas'), {
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+
+        var defaultBounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(-33.8902, 151.1759),
+            new google.maps.LatLng(-33.8474, 151.2631));
+        map.fitBounds(defaultBounds);
+
+        // Create the search box and link it to the UI element.
+        var input = /** @type {HTMLInputElement} */(
+            document.getElementById('pac-input'));
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        var searchBox = new google.maps.places.SearchBox(
+          /** @type {HTMLInputElement} */(input));
+
+        // [START region_getplaces]
+        // Listen for the event fired when the user selects an item from the
+        // pick list. Retrieve the matching places for that item.
+        google.maps.event.addListener(searchBox, 'places_changed', function() {
+          var places = searchBox.getPlaces();
+
+          if (places.length == 0) {
+            return;
+          }
+          if(places.length > 1){
+            document.getElementById("testMsg").innerHTML = "You can not submit more than one place, be more specified!"
+            return;
+          }
+          for (var i = 0, marker; marker = markers[i]; i++) {
+            marker.setMap(null);
+          }
+
+          // For each place, get the icon, place name, and location.
+          markers = [];
+          var bounds = new google.maps.LatLngBounds();
+          for (var i = 0, place; place = places[i]; i++) {
+            var image = {
+              url: place.icon,
+              size: new google.maps.Size(71, 71),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(17, 34),
+              scaledSize: new google.maps.Size(25, 25)
+            };
+            // Create a marker for each place.
+            var marker = new google.maps.Marker({
+              map: map,
+              icon: image,
+              title: place.name,
+              position: place.geometry.location
+            });
+            document.getElementById("coordinate").value = place.geometry.location;
+            document.getElementById("placeId").value = place.place_id;
+            document.getElementById("placeName").value = place.name;
+            markers.push(marker);
+
+            bounds.extend(place.geometry.location);
+          }
+
+          map.fitBounds(bounds);
+        });
+        // [END region_getplaces]
+
+        // Bias the SearchBox results towards places that are within the bounds of the
+        // current map's viewport.
+        google.maps.event.addListener(map, 'bounds_changed', function() {
+          var bounds = map.getBounds();
+          searchBox.setBounds(bounds);
+        });
+        var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
+          google.maps.event.trigger(map, 'resize');
+          google.maps.event.removeListener(idleListener);
+        });
+      }
+
+//google.maps.event.addDomListener(window, 'load', initialize);
+var ready; // Where to store the function
+
+    ready = function() {
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&signed_in=true&language=en-us&callback=initialize_event';
+      document.body.appendChild(script);
+    };
+    
+ $("#mimodal").on('hidden.bs.modal', function () {
+    $(this).data('bs.modal', null);
+});
+
+    </script>
 </head>
 
 <body>  
@@ -35,12 +169,76 @@
           Launch demo modal
         </button>-->
         
-        <a data-toggle="modal" class="btn btn-info" href="{% url 'eventedit' %}" data-target="#myModal">Add Event</a>
+        <a data-toggle="modal" class="btn btn-info" href="#" data-target="#myModal">Add Event</a>
         
         <!-- Modal -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
+                    <form id="Event_Form" method='post' class="form" role="form" action='{% url 'eventedit' %}'>
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                         <h4 class="modal-title">Add/Edit Event</h4>
+                    </div>			<!-- /modal-header -->
+                    <div class="modal-body">
+                    
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#Attractions">Attractions</a></li>
+                            <li><a data-toggle="tab" href="#Hotel">Hotel</a></li>
+                            <li><a data-toggle="tab" href="#Restaurant">Restaurant</a></li>
+                            <li><a data-toggle="tab" href="#Transportation">Transportation</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="Attractions" class="tab-pane fade in active">
+                                <table>
+                                {% for field in attractionform.visible_fields %}
+                                    {% if field.label == "Note" %}
+                                        </table>
+                                            <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
+                                            <div id="map-eventcanvas"></div>
+                                        <table>
+                                    {% endif %}
+                                    <tr>                                                        
+                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
+                                        {% if field.field.required %}
+                                            *
+                                        {% endif %}
+                                        </label></td>
+                                        <td>{{field}}</td>
+                                        <td>{% for error in field.errors %}
+                                        <p class="errorlabel" for="{{ error }}">{{ error }}
+                                        </p>
+                                        {% endfor %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </table>
+                            </div>
+                            <div id="Hotel" class="tab-pane fade">
+                            <p>Hotel</p>
+                            </div>
+                            <div id="Restaurant" class="tab-pane fade">
+                            <p>Restaurant</p>
+                            </div>
+                            <div id="Transportation" class="tab-pane fade">
+                            <p>Transportation</p>
+                            </div>
+                        </div>
+
+                    </div>			<!-- /modal-body -->
+                    <input id="coordinate" name="coordinate" type="hidden">
+                    <input id="placeId" name="placeId" type="hidden">
+                    <input id="placeName" name="placeName" type="hidden">
+                    <div class="modal-footer">
+                        <button type="submit" name="save" class="btn btn-primary">Save Event</button>
+                        <button type="submit" name="propose" class="btn btn-primary">Propose Event</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>			<!-- /modal-footer -->
+                    </form>
+                    <script>
+                          ready();
+                    </script>
                 </div> <!-- /.modal-content -->
             </div> <!-- /.modal-dialog -->
         </div>

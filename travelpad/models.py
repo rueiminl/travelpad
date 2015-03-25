@@ -14,7 +14,7 @@ class Event(models.Model):
     start_datetime = models.DateTimeField(null=True, blank=True)
     end_datetime = models.DateTimeField(null=True, blank=True)
     place_id = models.CharField(max_length=30,blank=True)
-    place_name = models.CharField(max_length=30,blank=True)
+    place_name = models.CharField(max_length=100,blank=True)
     place_latitude = models.CharField(max_length=30,blank=True)
     place_longitude = models.CharField(max_length=30,blank=True)
     route = models.CharField(max_length=100, blank=True)

@@ -39,6 +39,7 @@ def home_page(request):
     #context = {'posts' : posts, 'user' : request.user}
     #return render(request, 'socialnetwork/profile.html', context)
     context = {}
+    context['attractionform'] = AttractionForm()
     return render(request, 'travelpad/addevent.html', context)
     
 def eventedit(request):
@@ -87,5 +88,6 @@ def eventedit(request):
     else:
         context['failure'] = 1
     #return render(request, 'travelpad/addevent.html', context)
-    return demo(request)
+    #return demo(request)
+    return redirect(reverse('demo'))
  
