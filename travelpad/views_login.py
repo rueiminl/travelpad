@@ -9,12 +9,6 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
 
-def login(request):
-	todoes = Todo.objects.all()
-	form = TodoForm()
-	context = {'todoes' : todoes, 'form' : form}
-	return render(request, 'travelpad/todolist.html', context)
-
 @transaction.atomic
 def register(request):
 	context = {}
