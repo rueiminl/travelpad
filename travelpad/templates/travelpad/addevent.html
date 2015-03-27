@@ -146,7 +146,22 @@ var ready; // Where to store the function
       script.type = 'text/javascript';
       script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&signed_in=true&language=en-us&callback=initialize_event';
       document.body.appendChild(script);
+      $("#mybutton").click( function()
+        {
+            showeventmodal("title","2015-03-25","13:15","2015-03-25","14:15")
+        }
+      );
     };
+    
+function showeventmodal(title, sdate, stime, edate, etime) {
+    $('#myModal').modal('show');
+    $('#id_title').val(title);
+    $('#id_start_date').val(sdate);
+    $('#id_start_time').val(stime);
+    $('#id_end_date').val(edate);
+    $('#id_end_time').val(etime);
+
+}
     
  $("#mimodal").on('hidden.bs.modal', function () {
     $(this).data('bs.modal', null);
@@ -170,6 +185,7 @@ var ready; // Where to store the function
         </button>-->
         
         <a data-toggle="modal" class="btn btn-info" href="#" data-target="#myModal">Add Event</a>
+        <button type="button" id= "mybutton" class="btn btn-default">test</button>
         
         <!-- Modal -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
