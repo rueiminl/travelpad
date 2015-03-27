@@ -4,4 +4,5 @@ urlpatterns = patterns('',
     url(r'', include('travelpad.urls_itinerary')),
     url(r'', include('travelpad.urls_event')),
     url(r'', include('travelpad.urls_map')),
+    url(r'', include('travelpad.urls_login')),
 )

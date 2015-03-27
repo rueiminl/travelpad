@@ -93,3 +93,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     '/var/www/travelpad/travelpad/static',
 )
+
+EMAIL_HOST = config.get('Email', 'Host')
+EMAIL_PORT = config.get('Email', 'Port')
+EMAIL_HOST_USER = config.get('Email', 'User')
+EMAIL_HOST_PASSWORD = config.get('Email', 'Password')
+EMAIL_USE_SSL = True

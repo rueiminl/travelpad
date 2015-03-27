@@ -42,3 +42,9 @@ class Todo(models.Model):
 	def __unicode__(self):
 		return self.task
 
+class TravelPadUser(models.Model):
+	user = models.ForeignKey(User, related_name = 'user_user')
+	picture = models.FileField(upload_to = "pictures", blank = True)
+	content_type = models.CharField(max_length=50, blank = True)
+	def __unicode__(self):
+		return self.user.username + "(" + self.user.first_name + " " + self.user.last_name + "); pic: " + self.content_type;

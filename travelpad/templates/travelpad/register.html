@@ -1,0 +1,20 @@
+{% extends "travelpad/template.html" %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block register_active %}
+class="active"
+{% endblock %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data" action="{% url 'register' %}" class="form-signin">
+        <table>
+            {{form}}
+        </table>
+        {% csrf_token %}
+        <input type="submit" value="Register" class="btn btn-lg btn-primary btn-block"/>
+    </form>
+{% endblock %}
+
