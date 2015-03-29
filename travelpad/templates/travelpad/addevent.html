@@ -17,6 +17,9 @@
     <!--{% load static from staticfiles %}
     <link rel="stylesheet" type="text/css" href="{% static "socialnetwork/css/social.css" %}">-->
             {{ attractionform.media }}
+            {{ hotelform.media }}
+            {{ transportationform.media }}
+            {{ restaurantform.media }}
         
     <style>
       html, body {
@@ -49,6 +52,9 @@
   z-index: 1050 !important;
 }
       #map-eventcanvas { height: 300px }
+      #map-eventcanvas2 { height: 300px }
+      #map-eventcanvas3 { height: 300px }
+      #map-eventcanvas4 { height: 300px }
     </style>
     
     <!--
@@ -60,6 +66,13 @@
 // the place ID and other information about the place that the user has
 // selected.
       function initialize_event() {
+        initialize_attraction();
+        initialize_hotel();
+        initialize_transportation();
+        initialize_restaurant();
+      }
+      
+      function initialize_attraction() {
 
         var markers = [];
         var map = new google.maps.Map(document.getElementById('map-eventcanvas'), {
@@ -134,7 +147,241 @@
         });
         var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
           google.maps.event.trigger(map, 'resize');
-          google.maps.event.removeListener(idleListener);
+          //google.maps.event.removeListener(idleListener);
+        });
+      }
+      
+      function initialize_hotel() {
+        var markers = [];
+        var map = new google.maps.Map(document.getElementById('map-eventcanvas2'), {
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+
+        var defaultBounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(-33.8902, 151.1759),
+            new google.maps.LatLng(-33.8474, 151.2631));
+        map.fitBounds(defaultBounds);
+
+        // Create the search box and link it to the UI element.
+        var input = /** @type {HTMLInputElement} */(
+            document.getElementById('pac-input2'));
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        var searchBox = new google.maps.places.SearchBox(
+          /** @type {HTMLInputElement} */(input));
+
+        // [START region_getplaces]
+        // Listen for the event fired when the user selects an item from the
+        // pick list. Retrieve the matching places for that item.
+        google.maps.event.addListener(searchBox, 'places_changed', function() {
+          var places = searchBox.getPlaces();
+
+          if (places.length == 0) {
+            return;
+          }
+          if(places.length > 1){
+            document.getElementById("testMsg").innerHTML = "You can not submit more than one place, be more specified!"
+            return;
+          }
+          for (var i = 0, marker; marker = markers[i]; i++) {
+            marker.setMap(null);
+          }
+
+          // For each place, get the icon, place name, and location.
+          markers = [];
+          var bounds = new google.maps.LatLngBounds();
+          for (var i = 0, place; place = places[i]; i++) {
+            var image = {
+              url: place.icon,
+              size: new google.maps.Size(71, 71),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(17, 34),
+              scaledSize: new google.maps.Size(25, 25)
+            };
+            // Create a marker for each place.
+            var marker = new google.maps.Marker({
+              map: map,
+              icon: image,
+              title: place.name,
+              position: place.geometry.location
+            });
+            document.getElementById("coordinate").value = place.geometry.location;
+            document.getElementById("placeId").value = place.place_id;
+            document.getElementById("placeName").value = place.name;
+            markers.push(marker);
+
+            bounds.extend(place.geometry.location);
+          }
+
+          map.fitBounds(bounds);
+        });
+        // [END region_getplaces]
+
+        // Bias the SearchBox results towards places that are within the bounds of the
+        // current map's viewport.
+        google.maps.event.addListener(map, 'bounds_changed', function() {
+          var bounds = map.getBounds();
+          searchBox.setBounds(bounds);
+        });
+        var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
+          google.maps.event.trigger(map, 'resize');
+          //google.maps.event.removeListener(idleListener);
+        });
+      }
+      
+      function initialize_transportation() {
+        var markers = [];
+        var map = new google.maps.Map(document.getElementById('map-eventcanvas3'), {
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+
+        var defaultBounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(-33.8902, 151.1759),
+            new google.maps.LatLng(-33.8474, 151.2631));
+        map.fitBounds(defaultBounds);
+
+        // Create the search box and link it to the UI element.
+        var input = /** @type {HTMLInputElement} */(
+            document.getElementById('pac-input3'));
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        var searchBox = new google.maps.places.SearchBox(
+          /** @type {HTMLInputElement} */(input));
+
+        // [START region_getplaces]
+        // Listen for the event fired when the user selects an item from the
+        // pick list. Retrieve the matching places for that item.
+        google.maps.event.addListener(searchBox, 'places_changed', function() {
+          var places = searchBox.getPlaces();
+
+          if (places.length == 0) {
+            return;
+          }
+          if(places.length > 1){
+            document.getElementById("testMsg").innerHTML = "You can not submit more than one place, be more specified!"
+            return;
+          }
+          for (var i = 0, marker; marker = markers[i]; i++) {
+            marker.setMap(null);
+          }
+
+          // For each place, get the icon, place name, and location.
+          markers = [];
+          var bounds = new google.maps.LatLngBounds();
+          for (var i = 0, place; place = places[i]; i++) {
+            var image = {
+              url: place.icon,
+              size: new google.maps.Size(71, 71),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(17, 34),
+              scaledSize: new google.maps.Size(25, 25)
+            };
+            // Create a marker for each place.
+            var marker = new google.maps.Marker({
+              map: map,
+              icon: image,
+              title: place.name,
+              position: place.geometry.location
+            });
+            document.getElementById("coordinate").value = place.geometry.location;
+            document.getElementById("placeId").value = place.place_id;
+            document.getElementById("placeName").value = place.name;
+            markers.push(marker);
+
+            bounds.extend(place.geometry.location);
+          }
+
+          map.fitBounds(bounds);
+        });
+        // [END region_getplaces]
+
+        // Bias the SearchBox results towards places that are within the bounds of the
+        // current map's viewport.
+        google.maps.event.addListener(map, 'bounds_changed', function() {
+          var bounds = map.getBounds();
+          searchBox.setBounds(bounds);
+        });
+        var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
+          google.maps.event.trigger(map, 'resize');
+          //google.maps.event.removeListener(idleListener);
+        });
+      }
+      
+      function initialize_restaurant() {
+        var markers = [];
+        var map = new google.maps.Map(document.getElementById('map-eventcanvas4'), {
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+
+        var defaultBounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(-33.8902, 151.1759),
+            new google.maps.LatLng(-33.8474, 151.2631));
+        map.fitBounds(defaultBounds);
+
+        // Create the search box and link it to the UI element.
+        var input = /** @type {HTMLInputElement} */(
+            document.getElementById('pac-input4'));
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        var searchBox = new google.maps.places.SearchBox(
+          /** @type {HTMLInputElement} */(input));
+
+        // [START region_getplaces]
+        // Listen for the event fired when the user selects an item from the
+        // pick list. Retrieve the matching places for that item.
+        google.maps.event.addListener(searchBox, 'places_changed', function() {
+          var places = searchBox.getPlaces();
+
+          if (places.length == 0) {
+            return;
+          }
+          if(places.length > 1){
+            document.getElementById("testMsg").innerHTML = "You can not submit more than one place, be more specified!"
+            return;
+          }
+          for (var i = 0, marker; marker = markers[i]; i++) {
+            marker.setMap(null);
+          }
+
+          // For each place, get the icon, place name, and location.
+          markers = [];
+          var bounds = new google.maps.LatLngBounds();
+          for (var i = 0, place; place = places[i]; i++) {
+            var image = {
+              url: place.icon,
+              size: new google.maps.Size(71, 71),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(17, 34),
+              scaledSize: new google.maps.Size(25, 25)
+            };
+            // Create a marker for each place.
+            var marker = new google.maps.Marker({
+              map: map,
+              icon: image,
+              title: place.name,
+              position: place.geometry.location
+            });
+            document.getElementById("coordinate").value = place.geometry.location;
+            document.getElementById("placeId").value = place.place_id;
+            document.getElementById("placeName").value = place.name;
+            markers.push(marker);
+
+            bounds.extend(place.geometry.location);
+          }
+
+          map.fitBounds(bounds);
+        });
+        // [END region_getplaces]
+
+        // Bias the SearchBox results towards places that are within the bounds of the
+        // current map's viewport.
+        google.maps.event.addListener(map, 'bounds_changed', function() {
+          var bounds = map.getBounds();
+          searchBox.setBounds(bounds);
+        });
+        var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
+          google.maps.event.trigger(map, 'resize');
+          //google.maps.event.removeListener(idleListener);
         });
       }
 
@@ -151,15 +398,38 @@ var ready; // Where to store the function
             showeventmodal("title","2015-03-25","13:15","2015-03-25","14:15")
         }
       );
+      $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+  console.log("testt");
+  $('#tabName').val($('.nav-tabs .active').text());
+});
     };
     
 function showeventmodal(title, sdate, stime, edate, etime) {
     $('#myModal').modal('show');
-    $('#id_title').val(title);
-    $('#id_start_date').val(sdate);
-    $('#id_start_time').val(stime);
-    $('#id_end_date').val(edate);
-    $('#id_end_time').val(etime);
+    $('#id_a_-title').val(title);
+    $('#id_h_-title').val(title);
+    $('#id_t_-title').val(title);
+    $('#id_r_-title').val(title);
+    
+    $('#id_a_-start_date').val(sdate);
+    $('#id_h_-start_date').val(sdate);
+    $('#id_t_-start_date').val(sdate);
+    $('#id_r_-start_date').val(sdate);
+    
+    $('#id_a_-start_time').val(stime);
+    $('#id_h_-start_time').val(stime);
+    $('#id_t_-start_time').val(stime);
+    $('#id_r_-start_time').val(stime);
+    
+    $('#id_a_-end_date').val(edate);
+    $('#id_h_-end_date').val(edate);
+    $('#id_t_-end_date').val(edate);
+    $('#id_r_-end_date').val(edate);
+    
+    $('#id_a_-end_time').val(etime);
+    $('#id_h_-end_time').val(etime);
+    $('#id_t_-end_time').val(etime);
+    $('#id_r_-end_time').val(etime);
 
 }
     
@@ -200,10 +470,10 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                     <div class="modal-body">
                     
                         <ul class="nav nav-tabs">
-                            <li class="active"><a data-toggle="tab" href="#Attractions">Attractions</a></li>
+                            <li class="active"><a data-toggle="tab" href="#Attraction">Attraction</a></li>
                             <li><a data-toggle="tab" href="#Hotel">Hotel</a></li>
-                            <li><a data-toggle="tab" href="#Restaurant">Restaurant</a></li>
                             <li><a data-toggle="tab" href="#Transportation">Transportation</a></li>
+                            <li><a data-toggle="tab" href="#Restaurant">Restaurant</a></li>
                         </ul>
                         <div class="tab-content">
                             <div id="Attractions" class="tab-pane fade in active">
@@ -232,13 +502,79 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                                 </table>
                             </div>
                             <div id="Hotel" class="tab-pane fade">
-                            <p>Hotel</p>
-                            </div>
-                            <div id="Restaurant" class="tab-pane fade">
-                            <p>Restaurant</p>
+                                <table>
+                                {% for field in hotelform.visible_fields %}
+                                    {% if field.label == "Note" %}
+                                        </table>
+                                            <input id="pac-input2" class="controls" type="text" placeholder="Enter a location">
+                                            <div id="map-eventcanvas2"></div>
+                                        <table>
+                                    {% endif %}
+                                    <tr>                                                        
+                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
+                                        {% if field.field.required %}
+                                            *
+                                        {% endif %}
+                                        </label></td>
+                                        <td>{{field}}</td>
+                                        <td>{% for error in field.errors %}
+                                        <p class="errorlabel" for="{{ error }}">{{ error }}
+                                        </p>
+                                        {% endfor %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </table>
                             </div>
                             <div id="Transportation" class="tab-pane fade">
-                            <p>Transportation</p>
+                                <table>
+                                {% for field in transportationform.visible_fields %}
+                                    {% if field.label == "Note" %}
+                                        </table>
+                                            <input id="pac-input3" class="controls" type="text" placeholder="Enter a location">
+                                            <div id="map-eventcanvas3"></div>
+                                        <table>
+                                    {% endif %}
+                                    <tr>                                                        
+                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
+                                        {% if field.field.required %}
+                                            *
+                                        {% endif %}
+                                        </label></td>
+                                        <td>{{field}}</td>
+                                        <td>{% for error in field.errors %}
+                                        <p class="errorlabel" for="{{ error }}">{{ error }}
+                                        </p>
+                                        {% endfor %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </table>
+                            </div>
+                            <div id="Restaurant" class="tab-pane fade">
+                                <table>
+                                {% for field in restaurantform.visible_fields %}
+                                    {% if field.label == "Note" %}
+                                        </table>
+                                            <input id="pac-input4" class="controls" type="text" placeholder="Enter a location">
+                                            <div id="map-eventcanvas4"></div>
+                                        <table>
+                                    {% endif %}
+                                    <tr>                                                        
+                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
+                                        {% if field.field.required %}
+                                            *
+                                        {% endif %}
+                                        </label></td>
+                                        <td>{{field}}</td>
+                                        <td>{% for error in field.errors %}
+                                        <p class="errorlabel" for="{{ error }}">{{ error }}
+                                        </p>
+                                        {% endfor %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </table>
                             </div>
                         </div>
 
@@ -246,6 +582,7 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                     <input id="coordinate" name="coordinate" type="hidden">
                     <input id="placeId" name="placeId" type="hidden">
                     <input id="placeName" name="placeName" type="hidden">
+                    <input id="tabName" name="tabName" type="hidden">
                     <div class="modal-footer">
                         <button type="submit" name="save" class="btn btn-primary">Save Event</button>
                         <button type="submit" name="propose" class="btn btn-primary">Propose Event</button>

@@ -39,18 +39,21 @@ def home_page(request):
     #context = {'posts' : posts, 'user' : request.user}
     #return render(request, 'socialnetwork/profile.html', context)
     context = {}
-    context['attractionform'] = AttractionForm()
+    context['attractionform'] = AttractionForm(prefix = "a_")
+    context['hotelform'] = HotelForm(prefix = "h_")
+    context['transportationform'] = TransportationForm(prefix = "t_")
+    context['restaurantform'] = RestaurantForm(prefix = "r_")
     return render(request, 'travelpad/addevent.html', context)
     
 def eventedit(request):
     if request.method == 'GET':
         context = {}
-        context['attractionform'] = AttractionForm()
+        context['attractionform'] = AttractionForm(prefix = "a_")
+        context['hotelform'] = HotelForm(prefix = "h_")
+        context['transportationform'] = TransportationForm(prefix = "t_")
+        context['restaurantform'] = RestaurantForm(prefix = "r_")
         return render(request, 'travelpad/EventWindow.html', context)
     context = {}
-    context['test'] = "active"
-    print request.POST['coordinate']
-    print request.POST['placeId']
     if 'save' in request.POST:
         isproposed = False;
     elif 'propose' in request.POST:
@@ -62,8 +65,19 @@ def eventedit(request):
         new_user.save()
         
     #newevent = Event(user=request.user, type="attraction",proposed = isproposed)
-    newevent = Event(user = new_user, type="attraction",proposed = isproposed)
-    form = AttractionForm(request.POST)
+    print request.POST['tabName']
+    if (not request.POST['tabName']) or (request.POST['tabName']=="Attraction"):
+        newevent = Event(user = new_user, type="attraction",proposed = isproposed)
+        form = AttractionForm(request.POST, prefix = "a_")
+    elif request.POST['tabName']=="Hotel":
+        newevent = Event(user = new_user, type="hotel",proposed = isproposed)
+        form = HotelForm(request.POST, prefix = "h_")
+    elif request.POST['tabName']=="Transportation":
+        newevent = Event(user = new_user, type="transportation",proposed = isproposed)
+        form = TransportationForm(request.POST, prefix = "t_")
+    elif request.POST['tabName']=="Restaurant":
+        newevent = Event(user = new_user, type="restaurant",proposed = isproposed)
+        form = RestaurantForm(request.POST, prefix = "r_")
     if form.is_valid():
         newevent.title = form.cleaned_data['title']
         #newevent.start_date = form.cleaned_data['start_date']

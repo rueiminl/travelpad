@@ -24,5 +24,8 @@ def todolist(itinerary):
 
 @register.inclusion_tag('travelpad/addevent.html')
 def addevent():
-    attractionform = AttractionForm()
-    return {'attractionform' : attractionform}
+    attractionform = AttractionForm(prefix = "a_")
+    hotelform = HotelForm(prefix = "h_")
+    transportationform = TransportationForm(prefix = "t_")
+    restaurantform = RestaurantForm(prefix = "r_")
+    return {'attractionform' : attractionform, 'hotelform' : hotelform, 'transportationform' : transportationform, 'restaurantform' : restaurantform}

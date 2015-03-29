@@ -4,7 +4,7 @@ from datetime import datetime
 
 class Event(models.Model):
     user = models.ForeignKey(User)
-    type = models.CharField(max_length=10)
+    type = models.CharField(max_length=30)
     title = models.CharField(max_length=30)
     note = models.CharField(max_length=60, blank=True)
     #start_date = models.DateField()

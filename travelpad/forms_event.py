@@ -21,4 +21,49 @@ class AttractionForm(forms.Form):
 
         # We must return the cleaned data we got from our parent.
         return cleaned_data
+        
+class HotelForm(forms.Form):
+    title = forms.CharField(max_length=30, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'the name of this event'}))
+    start_date = forms.DateField(widget = DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
+    start_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
+    end_date = forms.DateField(widget = DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
+    end_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
+    note = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}))
+    todo = forms.CharField(max_length=60, required=False, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'add things to do'}))
+        
+    def clean(self):
+        cleaned_data = super(HotelForm, self).clean()
+
+        # We must return the cleaned data we got from our parent.
+        return cleaned_data
+        
+class TransportationForm(forms.Form):
+    title = forms.CharField(max_length=30, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'the name of this event'}))
+    start_date = forms.DateField(widget = DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
+    start_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
+    end_date = forms.DateField(widget = DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
+    end_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
+    note = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}))
+    todo = forms.CharField(max_length=60, required=False, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'add things to do'}))
+        
+    def clean(self):
+        cleaned_data = super(TransportationForm, self).clean()
+
+        # We must return the cleaned data we got from our parent.
+        return cleaned_data
+        
+class RestaurantForm(forms.Form):
+    title = forms.CharField(max_length=30, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'the name of this event'}))
+    start_date = forms.DateField(widget = DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
+    start_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
+    end_date = forms.DateField(widget = DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
+    end_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
+    note = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}))
+    todo = forms.CharField(max_length=60, required=False, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'add things to do'}))
+        
+    def clean(self):
+        cleaned_data = super(RestaurantForm, self).clean()
+
+        # We must return the cleaned data we got from our parent.
+        return cleaned_data
 
