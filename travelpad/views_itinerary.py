@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.db import transaction
@@ -7,13 +8,15 @@ import dateutil.parser
 from json import dumps
 import json
 
+#@login_required
 def demo(request):
     context = {}
     places = Event.objects.all()
     context['itinerary'] = {'id':1, 'start_date':'2015-03-23'}
     context['places'] = places
     return render(request, 'travelpad/demo.html', context)
-    
+
+@login_required    
 def todo(request):
     context = {}
     todoes = Todo.objects.all()
@@ -22,12 +25,13 @@ def todo(request):
     print 'get ' + str(len(todoes)) + ' todoes'
     return render(request, 'travelpad/todo.html', context)
 
+@login_required
 def calendar(request):
 	context = {}
     
 	return render(request, 'travelpad/calendar.html', context)
     
-    
+@login_required    
 def get_calendar_events_json(request, itinerary_id):
     try:
         #request example: /myfeed.php?start=2013-12-01&end=2014-01-12&_=1386054751381
@@ -54,6 +58,7 @@ def get_calendar_events_json(request, itinerary_id):
     except Exception as inst:
         print inst
 
+@login_required
 @transaction.atomic
 def add_todo(request):
     errors = []   
