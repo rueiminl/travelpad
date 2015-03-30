@@ -13,6 +13,14 @@ def demo(request):
     context['itinerary'] = {'id':1, 'start_date':'2015-03-23'}
     context['places'] = places
     return render(request, 'travelpad/demo.html', context)
+    
+def todo(request):
+    context = {}
+    todoes = Todo.objects.all()
+    context['todoes'] = todoes
+    context['todo_form'] = TodoForm()
+    print 'get ' + str(len(todoes)) + ' todoes'
+    return render(request, 'travelpad/todo.html', context)
 
 def calendar(request):
 	context = {}
@@ -46,3 +54,19 @@ def get_calendar_events_json(request, itinerary_id):
     except Exception as inst:
         print inst
 
+@transaction.atomic
+def add_todo(request):
+    errors = []   
+    try:
+        entry = Todo(created_by=request.user)
+        todo_form = TodoForm(request.POST, instance=entry)
+        if not todo_form.is_valid():
+            errors.append('You must enter content to post.')
+            return HttpResponse(json.dumps({'errors':errors}), content_type='application/json')
+        else:
+            todo_form.save()
+            return get_post_json(request)
+    except ObjectDoesNotExist:
+        return HttpResponseNotFound('<h1>Todo not found</h1>')
+    except Exception as inst:
+        print inst

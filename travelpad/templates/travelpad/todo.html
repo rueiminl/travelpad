@@ -1,3 +1,6 @@
+{% extends "travelpad/base.html" %}
+
+{% block content %}
 <script>
 $(document).on("click", ".add-todo", function () {
      var myBookId = $(this).data('id');
@@ -33,17 +36,34 @@ function onSubmitTodo(form){
 }
 
 </script>
-	<h3>Todo List</h3>
-		<table>
-			{% for todo in todoes %}
-			<tr>
-				<td><input class="form-control" id="id_task" type="text" name="task" value="{{todo.task}}" readonly /></td>
-				<td><a data-toggle="modal" class="btn btn-info" href="{% url 'update_todo_dlg' todo.id %}" data-target="#myTodoModal{{todo.id}}">Update</a></td>
-			</tr>
-			{% endfor %}
-		</table>
-		<a data-toggle="modal" class="add-todo btn btn-info" href="#" data-target="#add_todo_madal">&plus;</a>
-    </div>
+
+	<div class="row">
+		<div class="col-md-2">
+			<ul class="nav nav-pills nav-stacked">
+			  <li role="presentation"><a href="/demo">Schedule</a></li>
+			  <li role="presentation" class="active"><a href="#">Todo</a></li>
+			  <li role="presentation"><a href="#">Cost</a></li>
+			  <li role="presentation"><a href="#">Chatroom</a></li>
+			  <li role="presentation"><a href="#">Invitations</a></li>
+			  <li role="presentation"><a href="#">Export</a></li>
+			</ul>			        
+			
+		</div>
+		<div class="col-md-10">
+			<h3>Todo List</h3>
+				<table>
+					{% for todo in todoes %}
+					<tr>
+						<td><input class="form-control" id="id_task" type="text" name="task" value="{{todo.task}}" readonly /></td>
+						<td><a data-toggle="modal" class="btn btn-info" href="{% url 'update_todo_dlg' todo.id %}" data-target="#myTodoModal{{todo.id}}">Update</a></td>
+					</tr>
+					{% endfor %}
+				</table>
+				<a data-toggle="modal" class="add-todo btn btn-info" href="#" data-target="#add_todo_madal">&plus;</a>
+		    </div>
+		</div>
+	</div>
+	
 	
 	<!-- <div class="modal fade" id="myTodoModal{{todo.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -104,3 +124,4 @@ function onSubmitTodo(form){
 			</div> <!-- /.modal-content -->
 		</div> <!-- /.modal-dialog -->
 	</div>
+{% endblock %}
