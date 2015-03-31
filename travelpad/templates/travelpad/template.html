@@ -4,11 +4,10 @@
 	    <meta charset="utf-8">
 	    {% load staticfiles %}
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="{% static 'travelpad/css/general.css' %}" />
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-		{% if login %}
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-		{% endif %}
-		<title> SocialNetwork - {% block title %}{% endblock %} </title>
+		<title> TravelPad - {% block title %}{% endblock %} </title>
 	</head>
 
 	<body>
@@ -39,63 +38,11 @@
 				</div><!--/.nav-collapse -->
 			</div>
 		</nav>
-		
-		<div class="container">
+
+		<div class="container" {% block content_id %}{% endblock %}>
 			{% block content %}
 			{% endblock %}
-		
-			{% if messages %}
-			<div class="messages">
-				<ul id="messages">
-					{% for message in messages reversed %}
-					<li style="list-style-type: none">
-						<table id="{{message.id}}">
-							<tr>
-							<td><img src="{% url 'photo' message.user.id %}" alt="no picture yet" width="100px" style="text-align: left;">
-								<a class="talker" href="{% url 'profile' message.user.id %}">{{message.user}}</a> said:
-							</td></tr>
-							<tr><td>
-								<div class="mwt_border">
-									<span class="arrow_t_int"></span>
-									<span class="arrow_t_out"></span>
-									{{message.text}}
-								</div>
-							</td></tr>
-							<tr><td style="text-align: right;">
-								<span class="timestamp">at {{message.timestamp}}</span>
-							</td></tr>
-							{% for comment in message.comments.all %}
-							<tr>
-							<td><img src="{% url 'photo' comment.user.id %}" alt="no picture yet" width="50px" style="text-align: left;">
-								<a class="talker" href="{% url 'profile' comment.user.id %}">{{comment.user}}</a> comment:
-							</td></tr>
-							<tr><td>
-								<div class="mwt_sborder">
-									<span class="arrow_t_int"></span>
-									<span class="arrow_t_out"></span>
-									{{comment.text}}
-								</div>
-							</td></tr>
-							<tr><td style="text-align: right;">
-								<span class="timestamp">at {{comment.timestamp}}</span>
-							</td></tr>							
-							{% endfor %}
-							<tr><td>
-							</td></tr>
-						</table>
-						<form class="lead" action="/socialnetwork/post-comment/{{message.id}}" method="post">
-							<label for="id_text" class="sr-only">Comment</label>
-							<input id="id_text" class="input-comment" placeholder="Comment" name="text" required>
-							<input type="submit" value="Post" class="btn btn-lg btn-primary" role="button"/>
-							{% csrf_token %}
-						</form>
-					</li>
-					{% endfor %}
-				</ul>
-			</div>
-			{% endif %}
 		</div>
-		<div id="last_message" hidden>{{last_message}}</div>
-		<div id="last_comment" hidden>{{last_comment}}</div>
+				
 	</body>
 </html>
