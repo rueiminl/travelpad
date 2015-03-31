@@ -21,26 +21,42 @@ class Event(models.Model):
     source = models.CharField(max_length=30, blank=True)
     destination = models.CharField(max_length=30, blank=True)
     proposed = models.BooleanField(default = False)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now=True)
 
 class Itinerary(models.Model):
-	timestamp = models.DateTimeField(auto_now_add = True)
+	timestamp = models.DateTimeField(auto_now = True)
 
 class Todo(models.Model):
-	# create_by = models.ForeignKey(User, related_name="create_todoes")
-	created_by = models.CharField(max_length=64)
+	create_by = models.ForeignKey(User)
+    # created_by = models.CharField(max_length=64)
 	task = models.CharField(max_length=300)
 	status = models.CharField(max_length=64)
-	# related_event = models.ForeignKey(Event)
-	related_event = models.CharField(max_length=64)
-	# related_itinerary = models.ForeignKey(Itinerary)
-	related_itinerary = models.CharField(max_length=64)
+	related_event = models.ForeignKey(Event, blank=True)
+    # related_event = models.CharField(max_length=64)
+	related_itinerary = models.ForeignKey(Itinerary)
+    # related_itinerary = models.CharField(max_length=64)
 	# owner = models.ForeignKey(User, related_name="own_todoes")
-	owner = models.CharField(max_length=64)
-	note = models.CharField(max_length=300)
-	timestamp = models.DateTimeField(auto_now_add = True)
+	owner = models.CharField(max_length=64, blank=True)
+	note = models.CharField(max_length=300, blank=True)
+	timestamp = models.DateTimeField(auto_now = True)
 	def __unicode__(self):
 		return self.task
+
+class Message(models.Model):
+    content = models.CharField(max_length=160)
+    created_by = models.ForeignKey(User)
+    creation_time = models.DateTimeField(auto_now_add=True)    
+    timestamp = models.DateTimeField(auto_now=True)
+
+        
+        
+class Reply(models.Model):
+    content = models.CharField(max_length=160)
+    created_by = models.ForeignKey(User)
+    related_message = models.ForeignKey(Message)
+    creation_time = models.DateTimeField(auto_now_add=True)    
+    timestamp = models.DateTimeField(auto_now=True)
+
 
 class TravelPadUser(models.Model):
 	user = models.ForeignKey(User, related_name = 'user_user')
