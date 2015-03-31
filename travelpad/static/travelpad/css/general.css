@@ -1,5 +1,5 @@
-#index_container {
+#index_container { /* login, register */
 	position: relative;
 	top: 100px;
-	width: 600px;
+	width: 300px;
 }
