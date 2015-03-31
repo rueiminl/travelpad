@@ -44,16 +44,18 @@ class Todo(models.Model):
 
 class Message(models.Model):
     content = models.CharField(max_length=160)
-    timestamp = models.DateTimeField(auto_now=True)    
     created_by = models.ForeignKey(User)
+    creation_time = models.DateTimeField(auto_now_add=True)    
+    timestamp = models.DateTimeField(auto_now=True)
 
         
         
 class Reply(models.Model):
     content = models.CharField(max_length=160)
-    timestamp = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User)
     related_message = models.ForeignKey(Message)
+    creation_time = models.DateTimeField(auto_now_add=True)    
+    timestamp = models.DateTimeField(auto_now=True)
 
 
 class TravelPadUser(models.Model):
