@@ -6,11 +6,9 @@
 
 {% block content %}
 			<form method="post" enctype="multipart/form-data" action="{% url 'register' %}" class="form-signin">
-				{% if form.errors %}
-				<p style="color:red">
-					<!-- show error messages -->
-				</p>
-				{% endif %}
+				{% for _,error in form.errors.items %}
+					<strong>{{ error }}</strong>
+				{% endfor %}
 				<div class="col-md-10">
 				<table>
 					<tr><td>
