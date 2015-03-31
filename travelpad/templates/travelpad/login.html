@@ -1,31 +1,24 @@
 {% extends "travelpad/template.html" %}
 
-{% block title %}
-Login
-{% endblock %}
+{% block title %}Login{% endblock %}
+{% block login_active %}class="active"{% endblock %}
 
-{% block login_active %}
-class="active"
-{% endblock %}
-
+{% block content_id %}id="index_container"{% endblock %}
 {% block content %}
-
 <form class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login' %}">
-        {% if form.errors %}
-                <p style="color:red">
-                        Incorrect user name and password.
-                </p>
-        {% endif %}
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <label for="inputUsername" class="sr-only">Username</label>
-        <input id="inputUsername" class="form-control" placeholder="Username" required autofocus name="username">
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required name="password">
-        <input type="submit" value="Login" class="btn btn-lg btn-primary btn-block"/>
-        <input type="hidden" name="next" value="{{ next }}" />
-        {% csrf_token %}
-        <a href="/travelpad/register">Not registered yet? Click HERE to register one.</a>
+	{% if form.errors %}
+			<p style="color:red">
+					Incorrect user name and password.
+			</p>
+	{% endif %}
+	<h2 class="form-signin-heading">Please sign in</h2>
+	<label for="inputUsername" class="sr-only">Username</label>
+	<input id="inputUsername" class="form-control" placeholder="Username" required autofocus name="username">
+	<label for="inputPassword" class="sr-only">Password</label>
+	<input type="password" id="inputPassword" class="form-control" placeholder="Password" required name="password">
+	<input type="submit" value="Login" class="btn btn-lg btn-primary btn-block"/>
+	<input type="hidden" name="next" value="{{ next }}" />
+	{% csrf_token %}
+	<a href="/travelpad/register">Not registered yet? Click HERE to register one.</a>
 </form>
-
 {% endblock %}
-
