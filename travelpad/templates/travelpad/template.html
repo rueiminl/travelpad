@@ -11,34 +11,7 @@
 	</head>
 
 	<body>
-		<nav class="navbar navbar-inverse navbar-fixed-top">
-			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="#">Social Network</a>
-				</div>
-				<div id="navbar" class="collapse navbar-collapse">
-					<ul class="nav navbar-nav">
-						{% if login %}
- 						<li {% block lobby_active %}{% endblock %}><a href="{% url 'lobby' %}">Lobby</a></li>
-						<li {% block follow_active %}{% endblock %}><a href="{% url 'follow' %}">Follow</a></li>
-						<li {% block profile_active %}{% endblock %}><a href="{% url 'self_profile' %}">Profile</a></li>
-						<li {% block edit_active %}{% endblock %}><a href="{% url 'edit' %}">Edit</a></li>
-						<li {% block logout_active %}{% endblock %}><a href="{% url 'logout' %}">Logout</a></li>
-						{% else %}
- 						<li {% block login_active %}{% endblock %}><a href="{% url 'login' %}">Login</a></li>
-						<li {% block register_active %}{% endblock %}><a href="{% url 'register' %}">Register</a></li>
-						{% endif %}
-					</ul>
-				</div><!--/.nav-collapse -->
-			</div>
-		</nav>
-
+		{% include "travelpad/nav.html" %}
 		<div class="container" {% block content_id %}{% endblock %}>
 			{% block content %}
 			{% endblock %}
