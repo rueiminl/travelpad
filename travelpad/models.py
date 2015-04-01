@@ -45,6 +45,7 @@ class Todo(models.Model):
 class Message(models.Model):
     content = models.CharField(max_length=160)
     created_by = models.ForeignKey(User)
+    related_itinerary = models.ForeignKey(Itinerary)
     creation_time = models.DateTimeField(auto_now_add=True)    
     timestamp = models.DateTimeField(auto_now=True)
 

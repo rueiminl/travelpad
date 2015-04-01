@@ -17,3 +17,18 @@ class TodoForm(forms.ModelForm):
     # owner = forms.CharField(widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'owner'}))
     # note = forms.CharField(widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'note'}))
 
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        exclude = (
+            'related_itinerary',
+            'created_by',
+        )
+        
+class ReplyForm(forms.ModelForm):
+    class Meta:
+        model = Reply
+        exclude = (
+            'related_message',
+            'created_by',
+        )
