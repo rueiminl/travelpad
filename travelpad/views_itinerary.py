@@ -100,10 +100,11 @@ def feed(request, itinerary_id):
 
 @login_required
 @transaction.atomic
-def add_message(request, itinerary_id):
+def add_message(request):
     errors = []   
     try:
-        itinerary = Itinerary.objects.get(id=itinerary_id)
+        #TODO:
+        itinerary = Itinerary.objects.get(id=request.POST.get('itinerary_id'))
         entry = Message(created_by=request.user, related_itinerary=itinerary)
         message_form = MessageForm(request.POST, instance=entry)
         if not message_form.is_valid():
@@ -161,6 +162,56 @@ def get_message_json(request, itinerary_id):
         return HttpResponse(response_text, content_type='application/json')
     except Exception as inst:
         print inst
-    
+
+@login_required
+@transaction.atomic
+def add_reply(request):
+    errors = []   
+    # try:
+#         post_id = request.POST.get('post_id')
+#         last_update = request.POST.get('last_update_comment')
+#         # add comment
+#         post = Post.objects.get(id=post_id)
+#         entry = Comment(created_by=request.user, related_post=post)
+#         comment_form = CommentForm(request.POST, instance=entry)
+#         if not comment_form.is_valid():
+#             errors.append('You must enter content to comment.')
+#             return HttpResponse(json.dumps({'errors':errors}), content_type='application/json')
+#         else:
+#             comment_form.save()
+#         # query new comments
+#         comments = Comment.objects.all().filter(
+#             related_post=post,
+#             creation_time__gt=timestamp_to_datetime(last_update)
+#         ).order_by('creation_time')
+#         print 'get ' + str(len(comments)) + ' comments'
+#         comments_json = []
+#         for comment in comments:
+#             comments_json.append({
+#                 'created_by_username':comment.created_by.username,
+#                 'created_by_uid': comment.created_by.id,
+#                 'content': comment.content,
+#                 'creation_time': datetime_to_timestamp(comment.creation_time),
+#                 'photo_url' : reverse('photo', kwargs={'uid':comment.created_by.id})
+#             })
+#         # update last update time
+#         new_update = last_update
+#         max_creation_time = Comment.objects.filter(
+#             related_post=post,
+#             creation_time__gt=timestamp_to_datetime(last_update)
+#         ).order_by('creation_time').aggregate(Max('creation_time'))
+#         if max_creation_time['creation_time__max']:
+#             new_update = datetime_to_timestamp(max_creation_time['creation_time__max'])
+#         # generate json
+#         data = {
+#             'last_update_comment' : new_update,
+#             'comments': comments_json,
+#         }
+#         response_text = json.dumps(data)
+#         return HttpResponse(response_text, content_type='application/json')
+#     except ObjectDoesNotExist:
+#         return HttpResponseNotFound('<h1>Post not found</h1>')
+#     except Exception as inst:
+#         print inst
     
     
