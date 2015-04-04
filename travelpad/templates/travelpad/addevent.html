@@ -407,6 +407,22 @@ var ready; // Where to store the function
       $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         $('#tabName').val($('.nav-tabs .active').text());
       });
+       $("#myModal").on('hidden.bs.modal', function () {
+            $(this).find('form')[0].reset();
+            $('#map-eventcanvas').show();
+            $('#map-eventcanvas2').show();
+            $('#map-eventcanvas3').show();
+            $('#map-eventcanvas4').show();
+            $('#tabBar').show();
+            $('#placelabel_a').text("");
+            $('#placetext_a').text("");
+            $('#placelabel_h').text("");
+            $('#placetext_h').text("");
+            $('#placelabel_t').text("");
+            $('#placetext_t').text("");
+            $('#placelabel_r').text("");
+            $('#placetext_r').text("");
+       });
     };
     
 var csrftoken = $.cookie('csrftoken');
@@ -504,9 +520,6 @@ function showeventmodal(title, sdate, stime, edate, etime) {
 
 }
     
- $("#mimodal").on('hidden.bs.modal', function () {
-    $(this).data('bs.modal', null);
-});
 
     </script>
 </head>

@@ -410,7 +410,27 @@ var ready; // Where to store the function
       {% else %}
             $('.nav-tabs a[href="#Restaurant"]').tab('show');
       {% endif %}
+      {% if id %}
+            setupedit({{ id }});
+      {% endif %}
     };
+
+    function setupedit(id) {
+        $('#tabBar').hide();
+        $('#placelabel_a').text("Place:");
+        $('#placetext_a').text("{{ place }}");
+        $('#placelabel_h').text("Place:");
+        $('#placetext_h').text("{{ place }}");
+        $('#placelabel_t').text("Place:");
+        $('#placetext_t').text("{{ place }}");
+        $('#placelabel_r').text("Place:");
+        $('#placetext_r').text("{{ place }}");
+        $('#map-eventcanvas').hide();
+        $('#map-eventcanvas2').hide();
+        $('#map-eventcanvas3').hide();
+        $('#map-eventcanvas4').hide();
+        $('#eventId').val(id);
+    }
     
 function showeventmodal(title, sdate, stime, edate, etime) {
     $('#myModal').modal('show');
@@ -484,7 +504,7 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                     </div>			<!-- /modal-header -->
                     <div class="modal-body">
                     
-                        <ul class="nav nav-tabs">
+                        <ul id = "tabBar" class="nav nav-tabs">
                             <li class="active"><a data-toggle="tab" href="#Attraction">Attraction</a></li>
                             <li><a data-toggle="tab" href="#Hotel">Hotel</a></li>
                             <li><a data-toggle="tab" href="#Transportation">Transportation</a></li>
@@ -495,6 +515,14 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                                 <table>
                                 {% for field in attractionform.visible_fields %}
                                     {% if field.label == "Note" %}
+                                        <tr>
+                                            <td>
+                                                <label id="placelabel_a" class="inputlabel"></label>
+                                            </td>
+                                            <td>
+                                                <p id="placetext_a"></p>
+                                            </td>
+                                        </tr>
                                         </table>
                                             <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
                                             <div id="map-eventcanvas"></div>
@@ -520,6 +548,14 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                                 <table>
                                 {% for field in hotelform.visible_fields %}
                                     {% if field.label == "Note" %}
+                                        <tr>
+                                            <td>
+                                                <label id="placelabel_h" class="inputlabel"></label>
+                                            </td>
+                                            <td>
+                                                <p id="placetext_h"></p>
+                                            </td>
+                                        </tr>
                                         </table>
                                             <input id="pac-input2" class="controls" type="text" placeholder="Enter a location">
                                             <div id="map-eventcanvas2"></div>
@@ -545,6 +581,14 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                                 <table>
                                 {% for field in transportationform.visible_fields %}
                                     {% if field.label == "Note" %}
+                                        <tr>
+                                            <td>
+                                                <label id="placelabel_t" class="inputlabel"></label>
+                                            </td>
+                                            <td>
+                                                <p id="placetext_t"></p>
+                                            </td>
+                                        </tr>
                                         </table>
                                             <input id="pac-input3" class="controls" type="text" placeholder="Enter a location">
                                             <div id="map-eventcanvas3"></div>
@@ -570,6 +614,14 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                                 <table>
                                 {% for field in restaurantform.visible_fields %}
                                     {% if field.label == "Note" %}
+                                        <tr>
+                                            <td>
+                                                <label id="placelabel_r" class="inputlabel"></label>
+                                            </td>
+                                            <td>
+                                                <p id="placetext_r"></p>
+                                            </td>
+                                        </tr>
                                         </table>
                                             <input id="pac-input4" class="controls" type="text" placeholder="Enter a location">
                                             <div id="map-eventcanvas4"></div>
@@ -598,6 +650,7 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                     <input id="placeId" name="placeId" type="hidden">
                     <input id="placeName" name="placeName" type="hidden">
                     <input id="tabName" name="tabName" type="hidden">
+                    <input id="eventId" name="eventId" type="hidden">
                     <div class="modal-footer">
                         <button type="submit" name="save" class="btn btn-primary">Save Event</button>
                         <button type="submit" name="propose" class="btn btn-primary">Propose Event</button>

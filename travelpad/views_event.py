@@ -187,6 +187,8 @@ def eventeditwithID(request):
         context['transportationform'] = TransportationForm(request.POST, prefix = "t_")
         context['restaurantform'] = RestaurantForm(request.POST, prefix = "r_")
         context['tabName'] = newevent.type
+        context['id'] = newevent.id
+        context['place'] = newevent.place_name
         return render(request, 'travelpad/addevent_error.html', context)
         
 def getevent(request):
