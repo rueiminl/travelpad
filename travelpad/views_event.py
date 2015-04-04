@@ -54,6 +54,8 @@ def eventedit(request):
         context['transportationform'] = TransportationForm(prefix = "t_")
         context['restaurantform'] = RestaurantForm(prefix = "r_")
         return render(request, 'travelpad/EventWindow.html', context)
+    if request.POST['eventId']:
+        return eventeditwithID(request)
     context = {}
     errors = []
     context['errors'] = errors
@@ -125,4 +127,71 @@ def eventedit(request):
         context['restaurantform'] = RestaurantForm(request.POST, prefix = "r_")
         context['tabName'] = newevent.type
         return render(request, 'travelpad/addevent_error.html', context)
+        
+def eventeditwithID(request):
+    print request.user
+    if request.method == 'GET':
+        context = {}
+        context['attractionform'] = AttractionForm(prefix = "a_")
+        context['hotelform'] = HotelForm(prefix = "h_")
+        context['transportationform'] = TransportationForm(prefix = "t_")
+        context['restaurantform'] = RestaurantForm(prefix = "r_")
+        return render(request, 'travelpad/EventWindow.html', context)
+
+    context = {}
+    errors = []
+    context['errors'] = errors
+    success = 1
+    if 'save' in request.POST:
+        isproposed = False;
+    elif 'propose' in request.POST:
+        isproposed = True;
+
+    newevent = Event.objects.get(id = request.POST['eventId'])
+    newevent.isproposed = isproposed
+    if (not request.POST['tabName']) or (request.POST['tabName']=="Attraction"):
+        form = AttractionForm(request.POST, prefix = "a_")
+    elif request.POST['tabName']=="Hotel":
+        form = HotelForm(request.POST, prefix = "h_")
+    elif request.POST['tabName']=="Transportation":
+        form = TransportationForm(request.POST, prefix = "t_")
+    elif request.POST['tabName']=="Restaurant":
+        form = RestaurantForm(request.POST, prefix = "r_")
+    if form.is_valid():
+        newevent.title = form.cleaned_data['title']
+        stime = datetime.combine(form.cleaned_data['start_date'], form.cleaned_data['start_time'])
+        etime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
+        newevent.start_datetime  = timezone.make_aware(stime, timezone.get_current_timezone())
+        newevent.end_datetime = timezone.make_aware(etime, timezone.get_current_timezone())
+        newevent.note = form.cleaned_data['note']
+        overlap = Event.objects.filter(start_datetime__lt=newevent.end_datetime).filter(end_datetime__gt=newevent.start_datetime).exclude(id = request.POST['eventId'])
+        if overlap.count() > 0: #overlap
+            success = 0
+            errors.append("The time overlaps with another event:");
+        if success == 1:
+            newevent.save()
+            if (form.cleaned_data['todo']):
+                newtodo = Todo(task = form.cleaned_data['todo'], status = "New", created_by = "username", related_event = form.cleaned_data['title'])
+                newtodo.save()
+            context['success'] = 1
+    else:
+        errors.append("Please check the message below:");
+        success = 0
+    #return render(request, 'travelpad/addevent.html', context)
+    #return demo(request)
+    if success == 1:
+        return redirect(reverse('demo'))
+    else:
+        context['attractionform'] = AttractionForm(request.POST, prefix = "a_")
+        context['hotelform'] = HotelForm(request.POST, prefix = "h_")
+        context['transportationform'] = TransportationForm(request.POST, prefix = "t_")
+        context['restaurantform'] = RestaurantForm(request.POST, prefix = "r_")
+        context['tabName'] = newevent.type
+        return render(request, 'travelpad/addevent_error.html', context)
+        
+def getevent(request):
+    print request.POST['eid']
+    event = Event.objects.get(id = request.POST['eid'])
+    dictionary = event.as_dict()
+    return HttpResponse(json.dumps({"data": dictionary}), content_type='application/json')
  

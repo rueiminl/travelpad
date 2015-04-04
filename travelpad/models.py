@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import datetime    
+from datetime import datetime
+from django.utils import timezone
 
 class Event(models.Model):
     user = models.ForeignKey(User)
@@ -22,6 +23,19 @@ class Event(models.Model):
     destination = models.CharField(max_length=30, blank=True)
     proposed = models.BooleanField(default = False)
     timestamp = models.DateTimeField(auto_now=True)
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "startdate": timezone.localtime(self.start_datetime).strftime("%Y-%m-%d"),
+            "starttime": timezone.localtime(self.start_datetime).strftime("%H:%M"),
+            "enddate": timezone.localtime(self.end_datetime).strftime("%Y-%m-%d"),
+            "endtime": timezone.localtime(self.end_datetime).strftime("%H:%M"),
+            "place": self.place_name,
+            "note": self.note,
+            "type": self.type,
+            #"time": timezone.localtime(self.time).strftime("%b. %d, %Y, %I:%M %p"),
+        }
 
 class Itinerary(models.Model):
 	timestamp = models.DateTimeField(auto_now = True)
