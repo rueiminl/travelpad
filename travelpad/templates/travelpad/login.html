@@ -1,8 +1,11 @@
-{% extends "travelpad/template.html" %}
+{% extends "travelpad/base.html" %}
+{% load staticfiles %}
+{% block head %}
+		<title>TravelPad - Login</title>
+		<link rel="stylesheet" type="text/css" href="{% static 'travelpad/css/general.css' %}" />
+{% endblock %}
 
-
-{% block title %}Login{% endblock %}
-{% block content_id %}id="index_container"{% endblock %}
+{% block content_id %} id="index_container"{% endblock %}
 
 {% block nav %}
 {% include "travelpad/nav.html" with login_active='class="active"' %}
