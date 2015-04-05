@@ -11,7 +11,8 @@
 	</head>
 
 	<body>
-		{% include "travelpad/nav.html" %}
+		{% block nav %}
+		{% endblock %}
 		<div class="container" {% block content_id %}{% endblock %}>
 			{% block content %}
 			{% endblock %}

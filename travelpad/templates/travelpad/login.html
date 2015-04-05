@@ -1,8 +1,12 @@
 {% extends "travelpad/template.html" %}
 
+
 {% block title %}Login{% endblock %}
-{% block login_active %}class="active"{% endblock %}
 {% block content_id %}id="index_container"{% endblock %}
+
+{% block nav %}
+{% include "travelpad/nav.html" with login_active='class="active"' %}
+{% endblock %}
 
 {% block content %}
 			<form class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login' %}">

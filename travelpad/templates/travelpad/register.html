@@ -1,8 +1,12 @@
 {% extends "travelpad/template.html" %}
 
 {% block title %}Register{% endblock %}
-{% block register_active %}class="active"{% endblock %}
 {% block content_id %}id="index_container"{% endblock %}
+
+{% block nav %}
+{% include "travelpad/nav.html" with register_active='class="active"' %}
+{% endblock %}
+
 
 {% block content %}
 			<form method="post" enctype="multipart/form-data" action="{% url 'register' %}" class="form-signin">

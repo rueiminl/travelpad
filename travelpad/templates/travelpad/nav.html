@@ -18,10 +18,10 @@
 						<li {% block profile_active %}{% endblock %}><a href="{% url 'self_profile' %}">Profile</a></li>
 						<li {% block edit_active %}{% endblock %}><a href="{% url 'edit' %}">Edit</a></li>
 						-->
-						<li {% block logout_active %}{% endblock %}><a href="{% url 'logout' %}">Logout</a></li>
+						<li {{ logout_active }}><a href="{% url 'logout' %}">Logout</a></li>
 						{% else %}
- 						<li {% block login_active %}{% endblock %}><a href="{% url 'login' %}">Login</a></li>
-						<li {% block register_active %}{% endblock %}><a href="{% url 'register' %}">Register</a></li>
+ 						<li {{ login_active }}><a href="{% url 'login' %}">Login</a></li>
+						<li {{ register_active }}><a href="{% url 'register' %}">Register</a></li>
 						{% endif %}
 					</ul>
 				</div><!--/.nav-collapse -->
