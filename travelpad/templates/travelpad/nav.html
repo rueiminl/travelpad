@@ -1,29 +1,9 @@
 		<nav class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="#">TravelPad</a>
-				</div>
-				<div id="navbar" class="collapse navbar-collapse">
-					<ul class="nav navbar-nav">
-						{% if login %}
- 						<!-- 
-						<li {% block lobby_active %}{% endblock %}><a href="{% url 'lobby' %}">Lobby</a></li>
-						<li {% block follow_active %}{% endblock %}><a href="{% url 'follow' %}">Follow</a></li>
-						<li {% block profile_active %}{% endblock %}><a href="{% url 'self_profile' %}">Profile</a></li>
-						<li {% block edit_active %}{% endblock %}><a href="{% url 'edit' %}">Edit</a></li>
-						-->
-						<li {{ logout_active }}><a href="{% url 'logout' %}">Logout</a></li>
-						{% else %}
- 						<li {{ login_active }}><a href="{% url 'login' %}">Login</a></li>
-						<li {{ register_active }}><a href="{% url 'register' %}">Register</a></li>
-						{% endif %}
-					</ul>
-				</div><!--/.nav-collapse -->
+				<a class="navbar-brand" href="#">TravelPad</a>
+				<ul class="nav navbar-nav">
+					<li><a style="display:block;" href="{% url 'logout' %}">Logout</a></li>
+				</ul>
 			</div>
 		</nav>
+		<div style="padding-top: 20px;"/>
