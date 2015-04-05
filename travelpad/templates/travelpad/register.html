@@ -1,8 +1,15 @@
-{% extends "travelpad/template.html" %}
+{% extends "travelpad/base.html" %}
+{% load staticfiles %}
+{% block head %}
+		<title>TravelPad - Register</title>
+		<link rel="stylesheet" type="text/css" href="{% static 'travelpad/css/general.css' %}" />		
+{% endblock %}
 
-{% block title %}Register{% endblock %}
-{% block register_active %}class="active"{% endblock %}
-{% block content_id %}id="index_container"{% endblock %}
+{% block content_id %} id="index_container"{% endblock %}
+
+{% block nav %}
+{% include "travelpad/nav_unlogin.html" with register_active='class="active"' %}
+{% endblock %}
 
 {% block content %}
 			<form method="post" enctype="multipart/form-data" action="{% url 'register' %}" class="form-signin">

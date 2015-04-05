@@ -1,8 +1,15 @@
-{% extends "travelpad/template.html" %}
+{% extends "travelpad/base.html" %}
+{% load staticfiles %}
+{% block head %}
+		<title>TravelPad - Login</title>
+		<link rel="stylesheet" type="text/css" href="{% static 'travelpad/css/general.css' %}" />
+{% endblock %}
 
-{% block title %}Login{% endblock %}
-{% block login_active %}class="active"{% endblock %}
-{% block content_id %}id="index_container"{% endblock %}
+{% block content_id %} id="index_container"{% endblock %}
+
+{% block nav %}
+{% include "travelpad/nav_unlogin.html" with login_active='class="active"' %}
+{% endblock %}
 
 {% block content %}
 			<form class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login' %}">
@@ -19,6 +26,6 @@
 				<input type="submit" value="Login" class="btn btn-sm btn-primary btn-block"/>
 				<input type="hidden" name="next" value="{{ next }}" />
 				{% csrf_token %}
-				<a href="/travelpad/register">Not registered yet? Click HERE to register one.</a>
+				<a href="{% url 'register' %}">Not registered yet? Click HERE to register one.</a>
 			</form>
 {% endblock %}
