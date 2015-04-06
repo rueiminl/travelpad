@@ -36,6 +36,17 @@ class Event(models.Model):
             "type": self.type,
             #"time": timezone.localtime(self.time).strftime("%b. %d, %Y, %I:%M %p"),
         }
+        
+class Transportation(models.Model):
+    user = models.ForeignKey(User)
+    type = models.CharField(max_length=30)
+    note = models.CharField(max_length=60, blank=True)
+    start_datetime = models.DateTimeField(null=True, blank=True)
+    end_datetime = models.DateTimeField(null=True, blank=True)
+    route = models.CharField(max_length=100, blank=True)
+    source = models.ForeignKey(Event, related_name="pre")
+    destination = models.ForeignKey(Event, related_name="next")
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 class Itinerary(models.Model):
 	created_by = models.ForeignKey(User, related_name="itineraries")

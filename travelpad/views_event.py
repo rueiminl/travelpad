@@ -196,4 +196,10 @@ def getevent(request):
     event = Event.objects.get(id = request.POST['eid'])
     dictionary = event.as_dict()
     return HttpResponse(json.dumps({"data": dictionary}), content_type='application/json')
+    
+def deleteevent(request):
+    print request.POST['eid']
+    event = Event.objects.get(id = request.POST['eid'])
+    event.delete()
+    return HttpResponse("success")
  
