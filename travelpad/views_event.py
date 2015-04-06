@@ -17,7 +17,7 @@ from django.db import transaction
 # for reverse url
 from django.core.urlresolvers import reverse
 
-from datetime import datetime
+from datetime import datetime, time
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 import json
@@ -112,6 +112,34 @@ def eventedit(request):
             if (form.cleaned_data['todo']):
                 newtodo = Todo(task = form.cleaned_data['todo'], status = "New", created_by = "username", related_event = form.cleaned_data['title'])
                 newtodo.save()
+            strange = datetime.combine(form.cleaned_data['start_date'], time(0, 0, 0))
+            srange = timezone.make_aware(strange, timezone.get_current_timezone())
+            erange = srange + timezone.timedelta(days=1)
+            print srange
+            print erange
+            try:
+                pevent = Event.objects.filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                try:
+                    ptrans = pevent.pre
+                    tempplace = ptrans.destination
+                    temptime = ptrans.end_datetime
+                    ptrans.end_datetime = newevent.start_datetime
+                    ptrans.destination = newevent
+                    ptrans.save()
+                    newtrans = Transportation(user = new_user, type = "car", start_datetime = newevent.end_datetime, end_datetime = temptime, source = newevent, destination = tempplace)
+                    newtrans.save()
+                except ObjectDoesNotExist:
+                    newtrans = Transportation(user = new_user, type = "car", start_datetime = pevent.end_datetime, end_datetime = newevent.start_datetime, source = pevent, destination = newevent)
+                    newtrans.save()
+            # first event of the day
+            except ObjectDoesNotExist:
+                try:
+                    nevent = Event.objects.filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                    newtrans = Transportation(user = new_user, type = "car", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent)
+                    newtrans.save()
+                except ObjectDoesNotExist:
+                    print "first event"
+                    pass
             context['success'] = 1
     else:
         errors.append("Please check the message below:");
@@ -158,7 +186,6 @@ def eventeditwithID(request):
     elif request.POST['tabName']=="Restaurant":
         form = RestaurantForm(request.POST, prefix = "r_")
     if form.is_valid():
-        newevent.title = form.cleaned_data['title']
         stime = datetime.combine(form.cleaned_data['start_date'], form.cleaned_data['start_time'])
         etime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
         newevent.start_datetime  = timezone.make_aware(stime, timezone.get_current_timezone())
@@ -167,7 +194,7 @@ def eventeditwithID(request):
         overlap = Event.objects.filter(start_datetime__lt=newevent.end_datetime).filter(end_datetime__gt=newevent.start_datetime).exclude(id = request.POST['eventId'])
         if overlap.count() > 0: #overlap
             success = 0
-            errors.append("The time overlaps with another event:");
+            errors.append("The time overlaps with another event:")
         if success == 1:
             newevent.save()
             if (form.cleaned_data['todo']):
@@ -175,7 +202,7 @@ def eventeditwithID(request):
                 newtodo.save()
             context['success'] = 1
     else:
-        errors.append("Please check the message below:");
+        errors.append("Please check the message below:")
         success = 0
     #return render(request, 'travelpad/addevent.html', context)
     #return demo(request)

@@ -44,8 +44,8 @@ class Transportation(models.Model):
     start_datetime = models.DateTimeField(null=True, blank=True)
     end_datetime = models.DateTimeField(null=True, blank=True)
     route = models.CharField(max_length=100, blank=True)
-    source = models.ForeignKey(Event, related_name="pre")
-    destination = models.ForeignKey(Event, related_name="next")
+    source = models.OneToOneField(Event, related_name="pre")
+    destination = models.OneToOneField(Event, related_name="next")
     timestamp = models.DateTimeField(auto_now_add=True)
 
 class Itinerary(models.Model):
