@@ -35,7 +35,7 @@
 			{% endfor %}
 			</div>
 			<div>{{itinerary.photo}}</div>
-			<div><input type="button" value="withdraw photo" onclick="withdrawItineraryPhoto({{itinerary.id}})" /></div>
+			<div><input type="button" value="delete" onclick="deleteItinerary({{itinerary.id}})" /></div>
 		</div>
 		{% endfor %}
 
@@ -52,10 +52,10 @@
 
 {% block tail %}
 		<script>
-			function withdrawItineraryPhoto(id) {
+			function deleteItinerary(id) {
 				$.ajax( {
 					method: "POST",
-					url: "debug_delete_itinerary_photo",
+					url: "debug_delete_itinerary",
 					data: {"id":id},
 					success: function(data, status) {
 						window.location.replace("{% url 'debug_database' %}");

@@ -73,17 +73,16 @@ def debug_add_itinerary(request):
 
 @login_required
 @transaction.atomic
-def debug_delete_itinerary_photo(request):
-	logger.debug("debug_delete_itinerary_photo")
+def debug_delete_itinerary(request):
+	logger.debug("debug_delete_itinerary")
 	if request.method == "GET":
-		logger.warn("debug_delete_itinerary_photo POST only")
+		logger.warn("debug_delete_itinerary POST only")
 		return debug_database(request)
 	if not "id" in request.POST:
-		logger.warn("debug_delete_itinerary_photo not id in request.POST")
+		logger.warn("debug_delete_itinerary not id in request.POST")
 		return debug_database(request)
 	id = request.POST["id"]
 	itinerary = get_itinerary(id)
-	itinerary.photo = None
-	itinerary.save()
+	itinerary.delete()
 	return redirect("debug_database")
 	

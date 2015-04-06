@@ -12,9 +12,7 @@ class DebugItineraryForm(forms.ModelForm):
 	def clean_photo(self):
 		photo = self.cleaned_data['photo']
 		if not photo:
-			print "1 photo=", photo
 			return None
-		print "2 photo=", photo
 		if not photo.content_type or not photo.content_type.startswith('image'):
 			raise forms.ValidationError('File type is not image')
 		if photo.size > MAX_UPLOAD_SIZE:
