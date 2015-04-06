@@ -1,6 +1,13 @@
 [Database]
 Name: travelpad
 User: root
-Password: root
+Password: ********
 Host: localhost
 Port: 3306
+
+[Email]
+Host: smtp.andrew.cmu.edu
+Port: 465
+User: rueiminl
+Password: ********
+
