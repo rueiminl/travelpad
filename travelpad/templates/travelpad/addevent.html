@@ -401,7 +401,8 @@ var ready; // Where to store the function
       );
       $("#mybutton2").click( function()
         {
-            editevent(1);
+            //editevent(1);
+            editevent(3);
         }
       );
       $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -422,6 +423,13 @@ var ready; // Where to store the function
             $('#placetext_t').text("");
             $('#placelabel_r').text("");
             $('#placetext_r').text("");
+            $('#placetext_r').text("");
+            $('#deletebtn').hide();
+            $('#eventId').val("");
+            $('#coordinate').val("");
+            $('#placeId').val("");
+            $('#placeName').val("");
+            $('#tabName').val("");
        });
     };
     
@@ -483,10 +491,25 @@ function editevent(id) {
             $('#map-eventcanvas3').hide();
             $('#map-eventcanvas4').hide();
             $('#eventId').val(items.data.id);
+            $('#deletebtn').show();
 
         }
     });
 };
+
+function deleteevent() {
+    id = $('#eventId').val();
+    $.ajax({
+        url: "/deleteevent",
+        data: {
+            eid: id,
+        },
+        type:'POST',
+        success: function(items){
+           $(location).attr('href',"./demo");
+        }
+    });
+}
     
 function showeventmodal(title, sdate, stime, edate, etime) {
     $('#myModal').modal('show');
@@ -514,6 +537,8 @@ function showeventmodal(title, sdate, stime, edate, etime) {
     $('#id_h_-end_time').val(etime);
     $('#id_t_-end_time').val(etime);
     $('#id_r_-end_time').val(etime);
+    
+    $('.nav-tabs a[href="#Attraction"]').tab('show');
     
     //$('#pac-input').val("TTTP");
     //google.maps.event.trigger(searchBox1, 'places_changed');
@@ -702,6 +727,7 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                     <input id="tabName" name="tabName" type="hidden">
                     <input id="eventId" name="eventId" type="hidden">
                     <div class="modal-footer">
+                        <button type="button" id="deletebtn" class="btn btn-danger" onclick="deleteevent()" style="display: none;">Delete Event</button>
                         <button type="submit" name="save" class="btn btn-primary">Save Event</button>
                         <button type="submit" name="propose" class="btn btn-primary">Propose Event</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
