@@ -8,7 +8,7 @@ import dateutil.parser
 from json import dumps
 import json
 
-#@login_required
+@login_required
 def demo(request):
     context = {}
     places = Event.objects.all()

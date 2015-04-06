@@ -38,7 +38,15 @@ class Event(models.Model):
         }
 
 class Itinerary(models.Model):
-	timestamp = models.DateTimeField(auto_now = True)
+	created_by = models.ForeignKey(User, related_name="itineraries")
+	title = models.CharField(max_length=100)
+	description = models.CharField(max_length=3000, blank=True)
+	location = models.CharField(max_length=100, blank=True)
+	start_date = models.DateField()
+	end_date = models.DateField()
+	participants = models.ManyToManyField(User, blank=True)
+	photo = models.FileField(upload_to="pictures", blank=True)
+	timestamp = models.DateTimeField(auto_now=True)
 
 class Todo(models.Model):
 	create_by = models.ForeignKey(User)
@@ -76,6 +84,3 @@ class Reply(models.Model):
 class TravelPadUser(models.Model):
 	user = models.ForeignKey(User, related_name = 'user_user')
 	picture = models.FileField(upload_to = "pictures", blank = True)
-	content_type = models.CharField(max_length=50, blank = True)
-	def __unicode__(self):
-		return self.user.username + "(" + self.user.first_name + " " + self.user.last_name + "); pic: " + self.content_type;

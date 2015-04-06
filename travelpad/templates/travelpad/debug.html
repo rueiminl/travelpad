@@ -1,8 +1,66 @@
-<html>
-<head>
-</head>
-<body>
-<h1>{{form.errors}}</h1>
-<h1>{{ form.non_field_errors }}</h1>
-</body>
-</html>
+{% extends "travelpad/base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+	<title>debug database</title>
+	<style>
+		.table { display: table; } 
+		.table>* { display: table-row; }
+		.table>*>* { display: table-cell; }	
+	</style>
+{% endblock %}
+
+{% block content %}
+	<div class="table">
+		<div>
+			<div>ID</div>
+			{% for field in itinerary_form.visible_fields %}
+			<div>{{field.label_tag}}</div>
+			{% endfor %}
+			<div></div>
+		</div>
+		
+		{% for itinerary in itineraries %}
+		<div>
+			<div>{{itinerary.id}}</div>
+			<div>{{itinerary.created_by}}</div>
+			<div>{{itinerary.title}}</div>
+			<div>{{itinerary.description}}</div>
+			<div>{{itinerary.location}}</div>
+			<div>{{itinerary.start_date}}</div>
+			<div>{{itinerary.end_date}}</div>
+			<div>
+			{% for participant in itinerary.participants.all %}
+				{{participant}},
+			{% endfor %}
+			</div>
+			<div>{{itinerary.photo}}</div>
+			<div><input type="button" value="withdraw photo" onclick="withdrawItineraryPhoto({{itinerary.id}})" /></div>
+		</div>
+		{% endfor %}
+
+		<form id="itineraryForm" enctype="multipart/form-data" action="{% url 'debug_add_itinerary' %}" method="POST">
+			<div><input type="text" name="exist_id" /></div>
+			{% for field in itinerary_form.visible_fields %}
+			<div>{{field}}</div>
+			{% endfor %}
+			{% csrf_token %}
+			<div><input type="submit" /></div>
+		</form>
+	</div>
+{% endblock %}
+
+{% block tail %}
+		<script>
+			function withdrawItineraryPhoto(id) {
+				$.ajax( {
+					method: "POST",
+					url: "debug_delete_itinerary_photo",
+					data: {"id":id},
+					success: function(data, status) {
+						window.location.replace("{% url 'debug_database' %}");
+					}
+				});
+			}
+		</script>
+{% endblock %}
