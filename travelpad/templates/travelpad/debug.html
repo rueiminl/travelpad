@@ -10,6 +10,10 @@
 	</style>
 {% endblock %}
 
+{% block nav %}
+{% include "travelpad/nav.html" with debug_database_active='class="active"' %}
+{% endblock %}
+
 {% block content %}
 	<!-- itineraries -->
 	<div class="table">
@@ -65,7 +69,7 @@
 			<div>{{user.id}}</div>
 			<div>{{user.user.id}}</div>
 			<div>{{user.photo}}</div>
-			<div><input type="button" value="delete" onclick="deleteTravelPadUserPhoto({{itinerary.id}})" /></div>
+			<div></div>
 		</div>
 		{% endfor %}
 		<form id="travelpaduserForm" enctype="multipart/form-data" action="{% url 'debug_add_travelpaduser' %}" method="POST">

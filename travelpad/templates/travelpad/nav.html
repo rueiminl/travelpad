@@ -3,6 +3,7 @@
 				<a class="navbar-brand" href="#">TravelPad</a>
 				<ul class="nav navbar-nav">
 					<li {{ itineraries_active }}><a href="{% url 'itineraries' %}">Itineraries</a></li>
+					<li {{ debug_database_active }}><a href="{% url 'debug_database' %}">Database</a></li>
 					<li><a href="{% url 'logout' %}">Logout</a></li>
 				</ul>
 			</div>
