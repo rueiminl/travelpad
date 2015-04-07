@@ -5,17 +5,17 @@ var map;
 var placeArr = [];
 var markers = [];
 var countNum = 0;
-function initialize() {
+function initialize(arr) {
     //deleteMarkers();
     directionsDisplay = new google.maps.DirectionsRenderer();
     placeArr = [];
     markers = [];
-   // for(var i=0; i<arr.length; i++){
-   //   placeArr.push(new google.maps.LatLng(arr[i][0], arr[i][1]));
-    //}
-    {% for place in places %}
-        placeArr.push(new google.maps.LatLng("{{place.latitude}}", "{{place.longitude}}"));
-    {% endfor %}
+    for(var i=0; i<arr.length; i++){
+      placeArr.push(new google.maps.LatLng(arr[i][0], arr[i][1]));
+    }
+    //{% for place in places %}
+    //    placeArr.push(new google.maps.LatLng("{{place.latitude}}", "{{place.longitude}}"));
+    //{% endfor %}
 
     var myLatlng = new google.maps.LatLng(document.getElementById("lat").getAttribute("value"), document.getElementById("lng").getAttribute("value"));
     var mapOptions = {
