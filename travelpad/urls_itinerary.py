@@ -6,6 +6,8 @@ urlpatterns = patterns('',
     
     url(r'^demo$', 'travelpad.views_itinerary.demo', name='demo'),
     
+     url(r'^itinerary/(?P<itinerary_id>\d+)$', 'travelpad.views_itinerary.itinerary', name = 'itinerary'),
+    
     url(r'^todo$', 'travelpad.views_itinerary.todo', name = 'todo'),
     url(r'^add-todo$', 'travelpad.views_itinerary.add_todo', name = 'add-todo'),
     

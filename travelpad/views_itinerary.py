@@ -18,6 +18,19 @@ def demo(request):
     context['itinerary'] = {'id':1, 'start_date':'2015-03-23'}
     context['places'] = places
     return render(request, 'travelpad/demo.html', context)
+    
+@login_required
+def itinerary(request, itinerary_id):
+    try:
+        itinerary = Itinerary.objects.get(id=itinerary_id)
+        places = Event.objects.all()
+        return render(request, 'travelpad/itinerary.html', {'itinerary' : itinerary, 'places' : places})
+    except ObjectDoesNotExist:
+        return HttpResponseNotFound('<h1>Todo not found</h1>')
+    except Exception as inst:
+        print inst
+    
+    
 
 @login_required    
 def todo(request):
