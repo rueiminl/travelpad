@@ -55,7 +55,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'webapps.urls'
 LOGIN_URL = '/login'
-LOGIN_REDIRECT_URL = '/demo'
+LOGIN_REDIRECT_URL = '/'
 
 WSGI_APPLICATION = 'webapps.wsgi.application'
 
