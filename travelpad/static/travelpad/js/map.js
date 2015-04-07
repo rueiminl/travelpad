@@ -13,11 +13,15 @@ function initialize() {
    // for(var i=0; i<arr.length; i++){
    //   placeArr.push(new google.maps.LatLng(arr[i][0], arr[i][1]));
     //}
-    {% for place in places %}
-        placeArr.push(new google.maps.LatLng("{{place.latitude}}", "{{place.longitude}}"));
-    {% endfor %}
-
-    var myLatlng = new google.maps.LatLng(document.getElementById("lat").getAttribute("value"), document.getElementById("lng").getAttribute("value"));
+    //{% for place in places %}
+    //    placeArr.push(new google.maps.LatLng("{{place.latitude}}", "{{place.longitude}}"));
+    //{% endfor %}
+    placeArr.push(new google.maps.LatLng(40.442492, -79.94255299999998));
+    placeArr.push(new google.maps.LatLng(40.444353, -79.96083499999997));
+    placeArr.push(new google.maps.LatLng(-33.856898, 151.215281));
+    placeArr.push(new google.maps.LatLng(-37.814107, 144.96327999999994));
+    //var myLatlng = new google.maps.LatLng(document.getElementById("lat").getAttribute("value"), document.getElementById("lng").getAttribute("value"));
+    var myLatlng = new google.maps.LatLng(40.442492, -79.94255299999998);
     var mapOptions = {
         center: myLatlng,
         zoom: 8, 
