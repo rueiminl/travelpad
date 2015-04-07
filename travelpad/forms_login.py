@@ -11,7 +11,7 @@ class RegisterForm(forms.ModelForm):
 	username = forms.CharField(max_length = 20)
 	firstname = forms.CharField(max_length = 20)
 	lastname = forms.CharField(max_length = 20)
-	email = forms.CharField(max_length = 40, validators = [validate_email])
+	# email = forms.CharField(max_length = 40, validators = [validate_email])
 	password1  = forms.CharField(max_length = 200, 
 								 label='Password', 
 								 widget = forms.PasswordInput())
@@ -20,7 +20,7 @@ class RegisterForm(forms.ModelForm):
 								 widget = forms.PasswordInput())		
 	class Meta:
 		model = TravelPadUser
-		exclude = ('user', 'picture', 'content_type',)
+		exclude = ('user', 'photo', )
 	# Customizes form validation for properties that apply to more
 	# than one field.  Overrides the forms.Form.clean function.
 	def clean(self):

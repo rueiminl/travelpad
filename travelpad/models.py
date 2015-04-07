@@ -93,5 +93,5 @@ class Reply(models.Model):
 
 
 class TravelPadUser(models.Model):
-	user = models.ForeignKey(User, related_name = 'user_user')
-	picture = models.FileField(upload_to = "pictures", blank = True)
+	user = models.ForeignKey(User)
+	photo = models.FileField(upload_to = "pictures", blank=True)
