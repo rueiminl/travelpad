@@ -94,8 +94,8 @@ def eventedit(request):
         #newevent.end_time = form.cleaned_data['end_time']
         stime = datetime.combine(form.cleaned_data['start_date'], form.cleaned_data['start_time'])
         etime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
-        newevent.start_datetime  = timezone.make_aware(stime)
-        newevent.end_datetime = timezone.make_aware(etime)
+        newevent.start_datetime  = timezone.make_aware(stime, timezone.get_current_timezone())
+        newevent.end_datetime = timezone.make_aware(etime, timezone.get_current_timezone())
         newevent.note = form.cleaned_data['note']
         newevent.place_id = request.POST['placeId']
         newevent.place_name = request.POST['placeName']
@@ -183,7 +183,8 @@ def eventeditwithID(request):
     elif request.POST['tabName']=="Hotel":
         form = HotelForm(request.POST, prefix = "h_")
     elif request.POST['tabName']=="Transportation":
-        form = TransportationForm(request.POST, prefix = "t_")
+        #form = TransportationForm(request.POST, prefix = "t_")
+        return transporteditwithid(request)
     elif request.POST['tabName']=="Restaurant":
         form = RestaurantForm(request.POST, prefix = "r_")
     if form.is_valid():
@@ -311,10 +312,24 @@ def eventeditwithID(request):
         context['place'] = newevent.place_name
         return render(request, 'travelpad/addevent_error.html', context)
         
+def transporteditwithid(request):
+    trans = Transportation.objects.get(id = request.POST['eventId'])
+    form = TransportationForm(request.POST, prefix = "t_")
+    if form.is_valid():
+        trans.type = form.cleaned_data['format']
+        trans.save()
+    return redirect(reverse('demo'))
+        
 def getevent(request):
     print request.POST['eid']
     event = Event.objects.get(id = request.POST['eid'])
     dictionary = event.as_dict()
+    return HttpResponse(json.dumps({"data": dictionary}), content_type='application/json')
+    
+def gettransport(request):
+    print request.POST['eid']
+    trans = Transportation.objects.get(id = request.POST['eid'])
+    dictionary = trans.as_dict()
     return HttpResponse(json.dumps({"data": dictionary}), content_type='application/json')
     
 def deleteevent(request):
