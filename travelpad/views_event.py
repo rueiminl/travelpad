@@ -146,15 +146,16 @@ def eventedit(request):
         errors.append("Please check the message below:");
         success = 0
     #return render(request, 'travelpad/addevent.html', context)
-    #return demo(request)
     if success == 1:
-        return redirect(reverse('demo'))
+        #return redirect(reverse('demo'))
+        return redirect(reverse('itinerary', args = [request.session["itinerary"]]))
     else:
         context['attractionform'] = AttractionForm(request.POST, prefix = "a_")
         context['hotelform'] = HotelForm(request.POST, prefix = "h_")
         context['transportationform'] = TransportationForm(request.POST, prefix = "t_")
         context['restaurantform'] = RestaurantForm(request.POST, prefix = "r_")
         context['tabName'] = newevent.type
+        context['iid'] = request.session["itinerary"]
         return render(request, 'travelpad/addevent_error.html', context)
         
 def eventeditwithID(request):
@@ -301,7 +302,9 @@ def eventeditwithID(request):
     #return render(request, 'travelpad/addevent.html', context)
     #return demo(request)
     if success == 1:
-        return redirect(reverse('demo'))
+        #return redirect(reverse('demo'))
+        return redirect(reverse('itinerary', args = [request.session["itinerary"]]))
+        
     else:
         context['attractionform'] = AttractionForm(request.POST, prefix = "a_")
         context['hotelform'] = HotelForm(request.POST, prefix = "h_")
@@ -310,15 +313,18 @@ def eventeditwithID(request):
         context['tabName'] = newevent.type
         context['id'] = newevent.id
         context['place'] = newevent.place_name
+        context['iid'] = request.session["itinerary"]
         return render(request, 'travelpad/addevent_error.html', context)
         
 def transporteditwithid(request):
     trans = Transportation.objects.get(id = request.POST['eventId'])
     form = TransportationForm(request.POST, prefix = "t_")
+    #print request.session["itinerary"] 
     if form.is_valid():
         trans.type = form.cleaned_data['format']
         trans.save()
-    return redirect(reverse('demo'))
+    #return redirect(reverse('demo'))
+    return redirect(reverse('itinerary', args = [request.session["itinerary"]]))
         
 def getevent(request):
     print request.POST['eid']
@@ -347,4 +353,3 @@ def deleteevent(request):
         pass
     event.delete()
     return HttpResponse("success")
- 
