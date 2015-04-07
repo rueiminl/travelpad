@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404, HttpResponseNotFound
@@ -8,8 +9,6 @@ from travelpad.forms import *
 import dateutil.parser
 from json import dumps
 import json
-
-demo_itinerary = {'id':1, 'start_date':'2015-03-23'}
 
 @login_required
 def demo(request):
@@ -21,20 +20,30 @@ def demo(request):
     
 @login_required
 def itinerary(request, itinerary_id):
+    request.session['itinerary_id'] = itinerary_id
+    return redirect(reverse('schedule'))
+
+@login_required
+def schedule(request):
+    if 'itinerary_id' not in request.session:
+        return redirect(reverse(''))
     try:
+        itinerary_id = request.session['itinerary_id']
         itinerary = Itinerary.objects.get(id=itinerary_id)
         events = Event.objects.all()
         request.session['itinerary_id'] = itinerary_id
-        return render(request, 'travelpad/itinerary.html', {'itinerary' : itinerary, 'events' : events})
+        return render(request, 'travelpad/schedule.html', {'itinerary' : itinerary, 'events' : events})
     except ObjectDoesNotExist:
         return HttpResponseNotFound('<h1>Todo not found</h1>')
     except Exception as inst:
-        print inst
-    
+        print inst    
     
 
 @login_required    
-def todo(request, itinerary_id):
+def todo(request):
+    if 'itinerary_id' not in request.session:
+        return redirect(reverse(''))
+    itinerary_id = request.session['itinerary_id']
     context = {}
     todoes = Todo.objects.all()
     context['todoes'] = todoes
@@ -96,9 +105,12 @@ def get_calendar_events_json(request, itinerary_id):
 
 
 @login_required    
-def feed(request, itinerary_id):
-    context = {}
+def feed(request):
+    if 'itinerary_id' not in request.session:
+        return redirect(reverse(''))
     try:
+        context = {}
+        itinerary_id = request.session['itinerary_id']
         itinerary = Itinerary.objects.get(id=itinerary_id)
         messages = Message.objects.filter(related_itinerary=itinerary).order_by('-creation_time')
         # context['itinerary'] = {'id':1, 'start_date':'2015-03-23'}
