@@ -148,7 +148,7 @@ def eventedit(request):
     #return render(request, 'travelpad/addevent.html', context)
     if success == 1:
         #return redirect(reverse('demo'))
-        return redirect(reverse('itinerary', args = [request.session["itinerary"]]))
+        return redirect(reverse('schedule'))
     else:
         context['attractionform'] = AttractionForm(request.POST, prefix = "a_")
         context['hotelform'] = HotelForm(request.POST, prefix = "h_")
@@ -303,7 +303,7 @@ def eventeditwithID(request):
     #return demo(request)
     if success == 1:
         #return redirect(reverse('demo'))
-        return redirect(reverse('itinerary', args = [request.session["itinerary"]]))
+        return redirect(reverse('schedule'))
         
     else:
         context['attractionform'] = AttractionForm(request.POST, prefix = "a_")
@@ -324,7 +324,7 @@ def transporteditwithid(request):
         trans.type = form.cleaned_data['format']
         trans.save()
     #return redirect(reverse('demo'))
-    return redirect(reverse('itinerary', args = [request.session["itinerary"]]))
+    return redirect(reverse('schedule'))
         
 def getevent(request):
     print request.POST['eid']
