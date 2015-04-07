@@ -1,0 +1,20 @@
+{% extends "travelpad/base.html" %}
+
+{% block nav %}
+{% include "travelpad/nav.html" %}
+{% endblock %}
+
+{% block content %}
+		<form id="itineraryForm" enctype="multipart/form-data" action="{% block action %}{% endblock %}" method="POST">
+			<table>
+				{% for field in itinerary_form.visible_fields %}
+				<tr>
+					<td>{{field.label_tag}}</td>
+					<td>{{field}}</td>
+				</tr>
+				{% endfor %}
+				<tr><td/><td><input type="submit" /></td></tr>
+			</table>
+			{% csrf_token %}
+		</form>
+{% endblock %}
