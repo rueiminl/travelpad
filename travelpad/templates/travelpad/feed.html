@@ -1,0 +1,215 @@
+{% extends "travelpad/base.html" %}
+
+{% block head %}
+<script>
+	// window.setInterval(function () {
+// 			var last_update = $("#last_update").val();
+//     		$.ajax({
+//         		url: "/get-message-json/" + '{{itinerary.id}}',
+// 				type: 'POST',
+//         		data: { last_update: last_update} ,
+//         		dataType : "json",
+//         		success: function( data ) {
+// 					loadMessage(data.messages, data.last_update);
+//         		}
+//     		});
+// 		}, 5000);
+		
+function onSubmitMessage(form){
+	try {
+		form = $(form);
+		var params = form.serialize() + '&last_update=' + $("#last_update").val();
+		console.log(params);
+		$.ajax({
+	    	url: "/add-message",
+			type: 'POST',
+	    	data: params ,
+	    	dataType : "json",
+			success: function(data){
+				form[0].reset();
+				console.log(data);
+				if(typeof data.errors !== 'undefined'){
+					alert(data.errors);
+				}else{
+					loadMessage(data.messages, data.last_update);
+				}
+			},		
+		});
+	}catch(err) {
+	    console.log(err);
+	}
+}
+
+function onSubmitReply(form){
+	form = $(form);
+	console.log(form.serialize());
+	$.ajax({
+    	url: "/add-reply",
+		type: 'POST',
+    	data: form.serialize() ,
+    	dataType : "json",
+		success: function(data){
+			form[0].reset();
+			console.log(data);
+			if(typeof data.errors !== 'undefined'){
+				alert(data.errors);
+			}else{
+				//console.log('last_update_comment:' + form.find("#last_update_comment").val());
+				form.find("#last_update_reply").val(data.last_update_reply);
+				//console.log('update to:' + form.find("#last_update_comment").val());
+				//TODO: 
+				$(data.replies).each(function() {
+					var element = createReply(this);
+					$(element).hide().appendTo(form.prev("#reply-list")).fadeIn('slow');
+				});
+			}
+		},		
+	});
+}
+
+function loadMessage(messages, last_update){
+	$("#last_update").val(last_update);
+    $(messages.reverse()).each(function() {
+		//TODO: update messages that are already displayed
+		var element = createMessage(this);
+		$(element).hide().prependTo("#message-list").fadeIn('slow');
+    });
+}
+
+function createMessage(message) {
+	// generate comments
+	var replies = '<div id="reply-list">';
+	$(message.replies).each(function() {
+		replies += createReply(this);
+	});
+	replies += '</div>'
+    var element = (	'<h4>' + 
+			'<img src=\"\" alt=\"' + message.created_by_username + '\" width="40px" height="40px">\n' + 
+			'<a href=\"#\">' + message.created_by_username + '</a>\n' +
+			'<span class="label label-default">' + message.creation_time + '</span>' +
+		'</h4>' + 
+		'<div class="well well-sm">' + 
+			'<p>' + message.content + '</p>' +		
+			// comments
+			replies +
+			//comment form		
+			'<form class="form-group reply_form" action="#" onsubmit="onSubmitReply(this);return false;">' + 
+				'<div class="input-group">' +  
+		    		'<input type="text" placeholder="Write a reply..." class="form-control" name="content" autocomplete="off"> \
+		       		<span class="input-group-btn"> \
+					<input type="submit" id="add_reply" value="Reply" class="btn btn-success"> \
+					</span> \
+				</div>' + 
+				'<input type="hidden" id="last_update_reply" name="last_update_reply" value=\"' + message.last_update_reply + '\">' + 
+				'<input type="hidden" id="message_id" name="message_id" value=\"' + message.id + '\">' +
+			'</form>' +
+		'</div>'
+    );
+	console.log(element);
+	return element;
+}	
+
+function createReply(reply){
+	var element = ('<div class="media"> \
+  	  		<div class="media-left">' + 
+      			'<img class="media-object" src=\"\" alt=\"' + reply.created_by_username + '\" width="30px" height="30px">' + 
+  	  		'</div> \
+  	  		<div class="media-body"> \
+    			<h6 class="media-heading">' + 
+				reply.created_by_username + 
+				'<span class="label label-default">' + reply.creation_time + '</span>' + 
+				'</h6>' + 
+				'<h6>' + reply.content + '</h6>' + 
+  		 	'</div> \
+		</div>'
+    );
+	return element;
+}
+
+</script>
+{% endblock %}
+
+
+{% block message %}
+	{% if errors %}
+		<div class="alert alert-danger" role="alert">
+    		{% for error in errors %}	    
+            <p>{{ error }}</p>		
+    		{% endfor %}
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+
+	<div class="row">
+		<div class="col-md-2">
+			<ul class="nav nav-pills nav-stacked">
+			  <li role="presentation"><a href="{% url 'schedule' %}"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> Schedule</a></li>
+			  <li role="presentation" class="active"><a href="#"><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> Feed</a></li>
+			  <li role="presentation"><a href="{% url 'todo' %}"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Todo</a></li>
+			  <li role="presentation"><a href="#"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> Expense</a></li>	  
+			  <li role="presentation"><a href="#"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Invitations</a></li>
+			  <li role="presentation"><a href="#"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Export</a></li>
+			</ul>			        
+			
+		</div>
+		<div class="col-md-10">
+			<form class="form-group message_form" action="#" onsubmit="onSubmitMessage(this);return false;">
+				<div class="input-group">
+					<input type="text" placeholder="What's on your mind?" class="form-control" name="content" autocomplete="off">
+						<span class="input-group-btn">
+							<input type="submit" value="Post" class="btn btn-success">
+						</span>
+				</div>
+				<input type="hidden" id="itinerary_id" name="itinerary_id" value="{{itinerary.id}}">
+				{% csrf_token %}
+			</form>
+
+			<div id="message-list">
+				<input type="hidden" id="last_update" name="last_update" value="{{last_update}}">
+			{% for message in messages %}
+				<h4>
+					<img src="" alt="{{message.created_by}}" width="40px" height="40px">
+					<a href="#">{{message.created_by}}</a>
+					<span class="label label-default">{{message.creation_time}}</span>
+				</h4>
+				<div class="well well-sm">
+					<p>{{message.content}}</p>		
+					<div id="reply-list">
+					{% for reply in message.replies %}
+						<div class="media">
+						  <div class="media-left">
+						      <img class="media-object" src="" alt="{{reply.created_by}}" width="30px" height="30px">
+						  </div>
+						  <div class="media-body">
+						    <h6 class="media-heading">
+								{{reply.created_by}}
+								<span class="label label-default">{{reply.creation_time}}</span>
+							</h6>
+							<h6>{{reply.content}}</h6>
+						  </div>
+						</div>
+					{% endfor %}
+					</div>
+					<form class="form-group reply_form" action="#" onsubmit="onSubmitReply(this);return false;">
+						<div class="input-group">
+						    <input type="text" placeholder="Write a reply..." class="form-control" name="content" autocomplete="off">
+						       <span class="input-group-btn">
+								<input type="submit" value="Reply" class="btn btn-success">
+								</span>
+						</div>
+						<input type="hidden" id="last_update_reply" name="last_update_reply" value="{{message.last_update_reply}}">
+						<input type="hidden" id="message_id" name="message_id" value="{{message.id}}">
+						{% csrf_token %}
+					</form>
+				</div>
+			{% endfor %}
+			</div>
+		</div>
+	</div>
+
+	
+{% endblock %}
+
+
