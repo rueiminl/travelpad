@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
-    # url('^$', 'travelpad.views.demo', name='default'),
-    url('^$', 'travelpad.views_itineraries.itineraries', name='itineraries'),
+    url('^$', 'travelpad.views_itineraries.itineraries', name='default'),
     # url('^todolist$', 'travelpad.views.todolist', name='todolist'),
 #     url('^create_todo$', 'travelpad.views.create_todo', name='create_todo'),
 #     url('^add_todo_dlg$', 'travelpad.views.add_todo_dlg', name='add_todo_dlg'),
