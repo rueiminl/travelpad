@@ -17,8 +17,8 @@ def get_itinerary(id):
 @login_required
 def itineraries(request):
 	context = {}
-	# todo filter itineraries related to the request.user 
-	context["itineraries"] = Itinerary.objects.all()
+	# todo created_by
+	context["itineraries"] = Itinerary.objects.filter(participants=request.user)
 	return render(request, 'travelpad/itineraries.html', context)
 
 @login_required
