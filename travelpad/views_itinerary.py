@@ -43,38 +43,81 @@ def schedule(request):
 def todo(request):
     if 'itinerary_id' not in request.session:
         return redirect(reverse(''))
-    itinerary_id = request.session['itinerary_id']
-    context = {}
-    todoes = Todo.objects.all()
-    context['todoes'] = todoes
-    context['todo_form'] = TodoForm()
-    print 'get ' + str(len(todoes)) + ' todoes'
-    return render(request, 'travelpad/todo.html', context)
+    try:
+        itinerary_id = request.session['itinerary_id']
+        itinerary = Itinerary.objects.get(id=itinerary_id)
+        context = {}
+        todoes = Todo.objects.filter(related_itinerary=itinerary)
+        if todoes:
+            request.session['todo_last_update'] = max(todo.creation_time for todo in todoes).isoformat()
+        context['todoes'] = todoes
+        context['todo_form'] = TodoForm()
+        print 'get ' + str(len(todoes)) + ' todoes'
+        return render(request, 'travelpad/todo.html', context)
+    except ObjectDoesNotExist:
+        return HttpResponseNotFound('<h1>Todo not found</h1>')
+    except Exception as inst:
+        print inst
 
 @login_required
 @transaction.atomic
 def add_todo(request):
     errors = []   
     try:
-        entry = Todo(created_by=request.user)
+        itinerary_id = request.session['itinerary_id']
+        itinerary = Itinerary.objects.get(id=itinerary_id)
+        entry = Todo(created_by=request.user, related_itinerary=itinerary)
         todo_form = TodoForm(request.POST, instance=entry)
         if not todo_form.is_valid():
             errors.append('You must enter content to post.')
             return HttpResponse(json.dumps({'errors':errors}), content_type='application/json')
         else:
             todo_form.save()
-            return get_post_json(request)
+            return get_todo_json(request)
     except ObjectDoesNotExist:
         return HttpResponseNotFound('<h1>Todo not found</h1>')
     except Exception as inst:
         print inst
 
-
 @login_required
-def calendar(request):
-	context = {}
-    
-	return render(request, 'travelpad/calendar.html', context)
+def get_todo_json(request):
+    context = {}
+    try:
+        itinerary_id = request.session['itinerary_id']
+        itinerary = Itinerary.objects.get(id=itinerary_id)
+        if 'todo_last_update' in request.session:
+            last_update = dateutil.parser.parse(request.session['todo_last_update'])
+            todoes = Todo.objects.filter(related_itinerary=itinerary, creation_time__gt=last_update)
+        else:
+            todoes = Todo.objects.filter(related_itinerary=itinerary)
+        print 'get ' + str(len(todoes)) + ' todoes'
+        if todoes:
+            request.session['todo_last_update'] = max(todo.creation_time for todo in todoes).isoformat()
+        
+        todoes_json = [] 
+        for todo in todoes:
+            todoes_json.append(
+                {'id' : todo.id,
+                'created_by_username':todo.created_by.username, 
+                'created_by_uid': todo.created_by.id, 
+                'task': todo.task,
+                'status': todo.status,
+                'onwer_username':todo.onwer.username, 
+                'onwer_uid': todo.onwer.id,
+                'note': todo.note,
+                'creation_time': todo.creation_time.isoformat(),
+            })
+        context['todoes'] = todoes_json
+        response_text = json.dumps(context)
+        return HttpResponse(response_text, content_type='application/json')
+    except Exception as inst:
+        print inst
+
+# @login_required
+# def calendar(request):
+#     context = {}
+#
+#     return render(request, 'travelpad/calendar.html', context)
     
 @login_required    
 def get_calendar_events_json(request, itinerary_id):

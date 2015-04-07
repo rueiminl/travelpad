@@ -60,20 +60,15 @@ class Itinerary(models.Model):
 	timestamp = models.DateTimeField(auto_now=True)
 
 class Todo(models.Model):
-	create_by = models.ForeignKey(User)
-    # created_by = models.CharField(max_length=64)
-	task = models.CharField(max_length=300)
-	status = models.CharField(max_length=64)
-	related_event = models.ForeignKey(Event, blank=True)
-    # related_event = models.CharField(max_length=64)
-	related_itinerary = models.ForeignKey(Itinerary)
-    # related_itinerary = models.CharField(max_length=64)
-	# owner = models.ForeignKey(User, related_name="own_todoes")
-	owner = models.CharField(max_length=64, blank=True)
-	note = models.CharField(max_length=300, blank=True)
-	timestamp = models.DateTimeField(auto_now = True)
-	def __unicode__(self):
-		return self.task
+    created_by = models.ForeignKey(User)
+    task = models.CharField(max_length=300)
+    status = models.CharField(max_length=64)
+    related_event = models.ForeignKey(Event, blank=True,null=True)
+    related_itinerary = models.ForeignKey(Itinerary)
+    owner = models.CharField(max_length=64, blank=True)
+    note = models.CharField(max_length=300, blank=True)
+    creation_time = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now=True)
 
 class Message(models.Model):
     content = models.CharField(max_length=160)

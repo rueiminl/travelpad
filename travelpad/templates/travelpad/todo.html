@@ -22,7 +22,7 @@ function onSubmitTodo(form){
 	    	dataType : "json",
 			success: function(data){
 				form[0].reset();
-				// console.log(data);
+				console.log(data);
 				if(typeof data.errors !== 'undefined'){
 					alert(data.errors);
 				}else{
@@ -54,6 +54,8 @@ function onSubmitTodo(form){
 				<table>
 					{% for todo in todoes %}
 					<tr>
+						<td>{{todo.task}}</td>
+						<td>{{todo.status}}</td>
 						<td><input class="form-control" id="id_task" type="text" name="task" value="{{todo.task}}" readonly /></td>
 						<td><a data-toggle="modal" class="btn btn-info" href="{% url 'update_todo_dlg' todo.id %}" data-target="#myTodoModal{{todo.id}}">Update</a></td>
 					</tr>
