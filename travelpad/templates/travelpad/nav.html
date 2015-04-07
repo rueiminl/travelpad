@@ -2,7 +2,8 @@
 			<div class="container">
 				<a class="navbar-brand" href="#">TravelPad</a>
 				<ul class="nav navbar-nav">
-					<li><a style="display:block;" href="{% url 'logout' %}">Logout</a></li>
+					<li {{ itineraries_active }}><a href="{% url 'itineraries' %}">Itineraries</a></li>
+					<li><a href="{% url 'logout' %}">Logout</a></li>
 				</ul>
 			</div>
 		</nav>
