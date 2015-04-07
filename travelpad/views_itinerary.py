@@ -23,8 +23,9 @@ def demo(request):
 def itinerary(request, itinerary_id):
     try:
         itinerary = Itinerary.objects.get(id=itinerary_id)
-        places = Event.objects.all()
-        return render(request, 'travelpad/itinerary.html', {'itinerary' : itinerary, 'places' : places})
+        events = Event.objects.all()
+        request.session['itinerary_id'] = itinerary_id
+        return render(request, 'travelpad/itinerary.html', {'itinerary' : itinerary, 'events' : events})
     except ObjectDoesNotExist:
         return HttpResponseNotFound('<h1>Todo not found</h1>')
     except Exception as inst:
@@ -33,7 +34,7 @@ def itinerary(request, itinerary_id):
     
 
 @login_required    
-def todo(request):
+def todo(request, itinerary_id):
     context = {}
     todoes = Todo.objects.all()
     context['todoes'] = todoes
@@ -119,8 +120,11 @@ def feed(request, itinerary_id):
  #            last_update = max(update_times)
  #        else:
  #            last_update = ''
-        context['last_update'] = ''
-        context['last_update'] = max(message.creation_time for message in messages)
+        if messages:
+            context['last_update'] = max(message.creation_time for message in messages)
+        else:
+            context['last_update'] = ''
+        
     except ObjectDoesNotExist:
         return HttpResponseNotFound('<h1>Itinerary not found</h1>')
     return render(request, 'travelpad/feed.html', context)
