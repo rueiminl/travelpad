@@ -74,6 +74,3 @@ def update_itinerary(request, id):
 		return redirect("itineraries")
 	itinerary_form.save()
 	return redirect("itineraries")
-
-def itinerary(request, id):
-	return redirect("default")
