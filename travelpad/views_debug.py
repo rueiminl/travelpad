@@ -23,23 +23,30 @@ def get_itinerary(id):
 		raise Http404
 	return itinerary
 
+def get_travelpaduser(id):
+	travelpaduser = get_object_or_404(TravelPadUser, id=id)
+	if not travelpaduser:
+		logger.warn("get_travelpaduser(" + id + ") not found")
+		raise Http404
+	return travelpaduser
+	
 @login_required
 def debug_database(request):
 	logger.debug("debug_database")
 	context = {}
 	context['itineraries'] = Itinerary.objects.all()
 	itinerary = Itinerary()
-	if request.method == "GET":
-		itinerary_form = DebugItineraryForm(instance = itinerary)
-	else:
-		itinerary_form = DebugItineraryForm(request.POST, instance = itinerary)
+	itinerary_form = DebugItineraryForm(request.POST, instance = itinerary)
 	context['itinerary_form'] = itinerary_form
+	context['travelpadusers'] = TravelPadUser.objects.all()
+	travelpaduser = TravelPadUser()
+	travelpaduser_form = DebugTravelPadUserForm(request.POST, instance = travelpaduser)
+	context['travelpaduser_form'] = travelpaduser_form
 	return render(request, 'travelpad/debug.html', context)
 	
 @login_required
 def debug_get_itinerary_photo(request, id):
 	logger.debug("debug_get_itinerary_photo(" + id + ")")
-	# itinerary = get_object_or_404(Itinerary, id=id)
 	itinerary = get_itinerary(id)
 	if not itinerary:
 		logger.warn("itinerary with id=" + id + " not found")
@@ -48,6 +55,18 @@ def debug_get_itinerary_photo(request, id):
 		logger.warn("itinerary[" + id + "].photo not found")
 		raise Http404
 	return HttpResponse(itinerary.photo, content_type="image")
+
+@login_required
+def debug_get_travelpaduser_photo(request, id):
+	logger.debug("debug_get_travelpad_photo(" + id + ")")
+	travelpaduser = get_travelpaduser(id)
+	if not travelpaduser:
+		logger.warn("travelpaduser with id=" + id + " not found")
+		raise Http404
+	if not travelpaduser.photo:
+		logger.warn("travelpaduser[" + id + "].photo not found")
+		raise Http404
+	return HttpResponse(travelpaduser.photo, content_type="image")
 	
 @login_required
 @transaction.atomic
@@ -85,4 +104,25 @@ def debug_delete_itinerary(request):
 	itinerary = get_itinerary(id)
 	itinerary.delete()
 	return redirect("debug_database")
-	
+
+@login_required
+@transaction.atomic
+def debug_add_travelpaduser(request):
+	logger.debug("debug_add_travelpaduser")
+	if request.method == "GET":
+		logger.warn("debug_add_travelpaduser POST only")
+		return debug_database(request)
+	travelpaduser = TravelPadUser()
+	if "exist_id" in request.POST:
+		id = request.POST["exist_id"]
+		if id:
+			travelpaduser = get_travelpaduser(id)
+	if not request.FILES:
+		travelpaduser.photo = None
+	travelpaduser_form = DebugTravelPadUserForm(request.POST, request.FILES, instance = travelpaduser)
+	if not travelpaduser_form.is_valid():
+		print travelpaduser_form.errors
+		logger.warn("debug_add_travelpaduser form.is_valid fail")
+		return debug_database(request)
+	travelpaduser_form.save()
+	return redirect("debug_database")
