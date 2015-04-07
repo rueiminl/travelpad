@@ -11,6 +11,7 @@
 {% endblock %}
 
 {% block content %}
+	<!-- itineraries -->
 	<div class="table">
 		<div>
 			<div>ID</div>
@@ -48,7 +49,37 @@
 			<div><input type="submit" /></div>
 		</form>
 	</div>
+	
+	<!-- users -->
+	<div class="table">
+		<div>
+			<div>ID</div>
+			{% for field in travelpaduser_form.visible_fields %}
+			<div>{{field.label_tag}}</div>
+			{% endfor %}
+			<div></div>
+		</div>
+	
+		{% for user in travelpadusers %}
+		<div>
+			<div>{{user.id}}</div>
+			<div>{{user.user.id}}</div>
+			<div>{{user.photo}}</div>
+			<div><input type="button" value="delete" onclick="deleteTravelPadUserPhoto({{itinerary.id}})" /></div>
+		</div>
+		{% endfor %}
+		<form id="travelpaduserForm" enctype="multipart/form-data" action="{% url 'debug_add_travelpaduser' %}" method="POST">
+			<div><input type="text" name="exist_id" /></div>
+			{% for field in travelpaduser_form.visible_fields %}
+			<div>{{field}}</div>
+			{% endfor %}
+			{% csrf_token %}
+			<div><input type="submit" /></div>
+		</form>		
+	</div>
 {% endblock %}
+
+
 
 {% block tail %}
 		<script>
