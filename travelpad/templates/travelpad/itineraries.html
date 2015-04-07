@@ -2,6 +2,17 @@
 {% load staticfiles %}
 {% block head %}
 		<title>TravelPad - Itinerary List</title>
+		<style>
+			.itinerary {
+				padding-top:70px;
+			}
+			.thumbnail {
+				width:600px;
+			}
+			.info {
+				vertical-align: top;
+			}
+		</style>
 {% endblock %}
 
 {% block nav %}
@@ -10,11 +21,16 @@
 
 {% block content %}
 		<input class="btn btn-info" id="addItineraryButton" type="button" value="&plus;" />
+		<table>
 		{% for itinerary in itineraries %}
-		<div>
-			<h2>{{itinerary.title}}</h2>
-			<div>{{itinerary.description}}</div>
-			<a href="{% url 'itinerary' itinerary.id %}"><img src="{% url 'debug_get_itinerary_photo' itinerary.id %}" alt="no picture uploaded yet"></a>
-		</div>
+			<tr>
+				<td><a href="{% url 'itinerary' itinerary.id %}"><img src="{% url 'debug_get_itinerary_photo' itinerary.id %}" alt="no picture uploaded yet" class="thumbnail"></a></td>
+				<td class="info">
+					<input class="btn btn-info" id="editItineraryButton" type="button" value="Edit" />
+					<h2>{{itinerary.title}}</h2>
+					{{itinerary.description}}
+				</td>
+			</tr>
 		{% endfor %}
+		</table>
 {% endblock %}
