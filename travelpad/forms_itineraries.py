@@ -9,6 +9,7 @@ MAX_UPLOAD_SIZE = 2500000
 class ItineraryForm(forms.ModelForm):
 	class Meta:
 		model = Itinerary
+		exclude = ('created_by',)
 	def clean_photo(self):
 		photo = self.cleaned_data['photo']
 		if not photo:
@@ -18,4 +19,3 @@ class ItineraryForm(forms.ModelForm):
 		if photo.size > MAX_UPLOAD_SIZE:
 			raise forms.ValidationError('File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
 		return photo
-		

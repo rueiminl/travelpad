@@ -6,6 +6,7 @@ from travelpad.models import *
 from travelpad.forms import *
 from travelpad.forms_debug import *
 from travelpad.views_itinerary import demo
+from travelpad.views_itineraries import get_itinerary
 import logging
 import sys
 
@@ -15,13 +16,6 @@ formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 hdlr.setFormatter(formatter)
 logger.addHandler(hdlr) 
 logger.setLevel(logging.DEBUG)
-
-def get_itinerary(id):
-	itinerary = get_object_or_404(Itinerary, id=id)
-	if not itinerary:
-		logger.warn("get_itinerary(" + id + ") not found")
-		raise Http404
-	return itinerary
 
 def get_travelpaduser(id):
 	travelpaduser = get_object_or_404(TravelPadUser, id=id)
