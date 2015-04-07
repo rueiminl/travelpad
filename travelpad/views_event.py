@@ -64,13 +64,16 @@ def eventedit(request):
         isproposed = False;
     elif 'propose' in request.POST:
         isproposed = True;
-    try:
-        new_user = User.objects.get(username="username")
-    except ObjectDoesNotExist:
-        new_user = User.objects.create_user(username="username", password="password1")
-        new_user.save()
+    
+    if request.user:
+        new_user = request.user
+    else:
+        try:
+            new_user = User.objects.get(username="username")
+        except ObjectDoesNotExist:
+            new_user = User.objects.create_user(username="username", password="password1")
+            new_user.save()
         
-    #newevent = Event(user=request.user, type="attraction",proposed = isproposed)
     if (not request.POST['tabName']) or (request.POST['tabName']=="Attraction"):
         newevent = Event(user = new_user, type="attraction",proposed = isproposed)
         form = AttractionForm(request.POST, prefix = "a_")
@@ -91,8 +94,8 @@ def eventedit(request):
         #newevent.end_time = form.cleaned_data['end_time']
         stime = datetime.combine(form.cleaned_data['start_date'], form.cleaned_data['start_time'])
         etime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
-        newevent.start_datetime  = timezone.make_aware(stime, timezone.get_current_timezone())
-        newevent.end_datetime = timezone.make_aware(etime, timezone.get_current_timezone())
+        newevent.start_datetime  = timezone.make_aware(stime)
+        newevent.end_datetime = timezone.make_aware(etime)
         newevent.note = form.cleaned_data['note']
         newevent.place_id = request.POST['placeId']
         newevent.place_name = request.POST['placeName']
@@ -115,8 +118,6 @@ def eventedit(request):
             strange = datetime.combine(form.cleaned_data['start_date'], time(0, 0, 0))
             srange = timezone.make_aware(strange, timezone.get_current_timezone())
             erange = srange + timezone.timedelta(days=1)
-            print srange
-            print erange
             try:
                 pevent = Event.objects.filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
                 try:
@@ -200,6 +201,98 @@ def eventeditwithID(request):
             if (form.cleaned_data['todo']):
                 newtodo = Todo(task = form.cleaned_data['todo'], status = "New", created_by = "username", related_event = form.cleaned_data['title'])
                 newtodo.save()
+            # begin edit transportation
+            strange = datetime.combine(form.cleaned_data['start_date'], time(0, 0, 0))
+            srange = timezone.make_aware(strange, timezone.get_current_timezone())
+            erange = srange + timezone.timedelta(days=1)
+            needrelocate = False;
+            hasprevious = False;
+            
+            try:
+                ptrans = newevent.next
+                hasprevious = True;
+                try:
+                    pevent = Event.objects.filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                    if ptrans.source == pevent:
+                        pass    #previous event unchanged, implies next event unchanged
+                    else:
+                        needrelocate = True    #previous event changed
+                except ObjectDoesNotExist:
+                    needrelocate = True    #has previous event, now hasnot
+            except ObjectDoesNotExist:
+                try:
+                    ntrans = newevent.pre
+                    try:
+                        nevent = Event.objects.filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                        if ntrans.destination == nevent:
+                            pass    #next event unchanged
+                        else:
+                            needrelocate = True    #next event changed
+                    except ObjectDoesNotExist:
+                        needrelocate = True    #has next event, now has not
+                except ObjectDoesNotExist:
+                    try:
+                        pevent = Event.objects.filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                        needrelocate = True    #don't have previous event, now has
+                    except ObjectDoesNotExist:
+                        try: 
+                            nevent = Event.objects.filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                            needrelocate = True    #don't have next event, now has
+                        except ObjectDoesNotExist:
+                            pass #only event of the day
+            
+            if needrelocate == True:
+                # remove transporation
+                try:
+                    ntrans = newevent.pre
+                    if hasprevious == True:
+                        ptrans = newevent.next
+                        ptrans.end_datetime = ntrans.end_datetime
+                        ptrans.destination = ntrans.destination
+                        ntrans.delete()
+                        ptrans.save()
+                    else:
+                        ntrans.delete()
+                except ObjectDoesNotExist:
+                    if hasprevious == True:
+                        ptrans.delete()
+                # now add new transporation
+                try:
+                    pevent = Event.objects.filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                    try:
+                        ptrans = pevent.pre
+                        tempplace = ptrans.destination
+                        temptime = ptrans.end_datetime
+                        ptrans.end_datetime = newevent.start_datetime
+                        ptrans.destination = newevent
+                        ptrans.save()
+                        newtrans = Transportation(user = request.user, type = "car", start_datetime = newevent.end_datetime, end_datetime = temptime, source = newevent, destination = tempplace)
+                        newtrans.save()
+                    except ObjectDoesNotExist:
+                        newtrans = Transportation(user = request.user, type = "car", start_datetime = pevent.end_datetime, end_datetime = newevent.start_datetime, source = pevent, destination = newevent)
+                        newtrans.save()
+                # first event of the day
+                except ObjectDoesNotExist:
+                    try:
+                        nevent = Event.objects.filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                        newtrans = Transportation(user = request.user, type = "car", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent)
+                        newtrans.save()
+                    except ObjectDoesNotExist:
+                        print "first event"
+                        pass
+            else:
+                try:
+                    ptrans = newevent.next
+                    ptrans.end_datetime = newevent.start_datetime
+                    ptrans.save()
+                except ObjectDoesNotExist:
+                    pass
+                try:
+                    ntrans = newevent.pre
+                    ntrans.start_datetime = newevent.end_datetime
+                    ntrans.save()
+                except ObjectDoesNotExist:
+                    pass
             context['success'] = 1
     else:
         errors.append("Please check the message below:")
@@ -227,6 +320,16 @@ def getevent(request):
 def deleteevent(request):
     print request.POST['eid']
     event = Event.objects.get(id = request.POST['eid'])
+    try:
+        ptrans = event.next
+        ntrans = event.pre
+        ptrans.end_datetime = ntrans.end_datetime
+        ptrans.destination = ntrans.destination
+        ntrans.delete()
+        ptrans.save()
+    except ObjectDoesNotExist:
+        #don't care because django will delete foreign key for us
+        pass
     event.delete()
     return HttpResponse("success")
  
