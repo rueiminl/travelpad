@@ -88,6 +88,10 @@ def eventedit(request):
         form = RestaurantForm(request.POST, prefix = "r_")
     if form.is_valid():
         newevent.title = form.cleaned_data['title']
+        print "hhh"
+        print request.session["itinerary_id"]
+        thistinery = Itinerary.objects.get(id = request.session["itinerary_id"])
+        newevent.related_itinerary = thistinery 
         #newevent.start_date = form.cleaned_data['start_date']
         #newevent.start_time = form.cleaned_data['start_time']
         #newevent.end_date = form.cleaned_data['end_date']
@@ -155,7 +159,7 @@ def eventedit(request):
         context['transportationform'] = TransportationForm(request.POST, prefix = "t_")
         context['restaurantform'] = RestaurantForm(request.POST, prefix = "r_")
         context['tabName'] = newevent.type
-        context['iid'] = request.session["itinerary"]
+        context['iid'] = request.session["itinerary_id"]
         return render(request, 'travelpad/addevent_error.html', context)
         
 def eventeditwithID(request):
@@ -313,13 +317,13 @@ def eventeditwithID(request):
         context['tabName'] = newevent.type
         context['id'] = newevent.id
         context['place'] = newevent.place_name
-        context['iid'] = request.session["itinerary"]
+        context['iid'] = request.session["itinerary_id"]
         return render(request, 'travelpad/addevent_error.html', context)
         
 def transporteditwithid(request):
     trans = Transportation.objects.get(id = request.POST['eventId'])
     form = TransportationForm(request.POST, prefix = "t_")
-    #print request.session["itinerary"] 
+    #print request.session["itinerary_id"] 
     if form.is_valid():
         trans.type = form.cleaned_data['format']
         trans.save()

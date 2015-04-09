@@ -406,6 +406,11 @@ var ready; // Where to store the function
             editevent(13);
         }
       );
+      $("#mybutton3").click( function()
+        {
+            edittransport(14);
+        }
+      );
       $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         $('#tabName').val($('.nav-tabs .active').text());
       });
@@ -431,7 +436,12 @@ var ready; // Where to store the function
             $('#placeId').val("");
             $('#placeName').val("");
             $('#tabName').val("");
+            $('#map-eventcanvas3').hide();
+            $('.nav-tabs a[href="#Transportation"]').hide();
+            $('.nav-tabs a[href="#Attraction"]').tab('show');
        });
+       $('#map-eventcanvas3').hide();
+       $('.nav-tabs a[href="#Transportation"]').hide();
     };
     
 var csrftoken = $.cookie('csrftoken');
@@ -497,6 +507,41 @@ function editevent(id) {
         }
     });
 };
+
+function edittransport(id) {
+    $.ajax({
+        url: "./gettransport",
+        data: {
+            eid: id,
+        },
+        type:'POST',
+        dataType: 'json',
+        success: function(items){
+            $('#myModal').modal('show');
+            var fix = "t";
+            $('.nav-tabs a[href="#Transportation"]').show();
+            $('.nav-tabs a[href="#Transportation"]').tab('show');
+            $('#tabName').val($('.nav-tabs .active').text());
+            $('#tabBar').hide();
+            
+            $('#id_' + fix + '_-title').val("Transportation Route");
+            $('#id_' + fix + '_-start_date').val(items.data.startdate);
+            $('#id_' + fix + '_-start_time').val(items.data.starttime);
+            $('#id_' + fix + '_-end_date').val(items.data.enddate);
+            $('#id_' + fix + '_-end_time').val(items.data.endtime);
+            $('#placelabel_' + fix).text("From:");
+            $('#placetext_' + fix).text(items.data.source);
+            $('#placelabel2_' + fix).text("To:");
+            $('#placetext2_' + fix).text(items.data.destination);
+            $('#id_' + fix + '_-note').val(items.data.note);
+            $('#id_' + fix + '_-format').val(items.data.type);
+            $('#eventId').val(items.data.id);
+            $('#map-eventcanvas3').hide();
+
+        }
+    });
+};
+
 
 function deleteevent() {
     id = $('#eventId').val();
@@ -569,7 +614,7 @@ function showeventmodal(title, sdate, stime, edate, etime) {
         <a data-toggle="modal" class="btn btn-info" href="#" data-target="#myModal">Add Event</a>
         <button type="button" id= "mybutton" class="btn btn-default">test</button>
         <button type="button" id= "mybutton2" class="btn btn-default">test2</button>
-        
+        <button type="button" id= "mybutton3" class="btn btn-default">test3</button>
         <!-- Modal -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -665,6 +710,14 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                                             </td>
                                             <td>
                                                 <p id="placetext_t"></p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label id="placelabel2_t" class="inputlabel"></label>
+                                            </td>
+                                            <td>
+                                                <p id="placetext2_t"></p>
                                             </td>
                                         </tr>
                                         </table>
