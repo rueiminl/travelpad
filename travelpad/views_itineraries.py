@@ -6,6 +6,8 @@ from travelpad.forms import *
 from travelpad.forms_itineraries import *
 from travelpad.views_itinerary import demo
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
+from django.http import HttpResponse
 
 def get_itinerary(id):
 	itinerary = get_object_or_404(Itinerary, id=id)
@@ -19,27 +21,16 @@ def itineraries(request):
 	context = {}
 	# todo created_by
 	context["itineraries"] = Itinerary.objects.filter(participants=request.user)
+	context["itinerary_form"] = ItineraryForm()
 	return render(request, 'travelpad/itineraries.html', context)
 
 @login_required
-def add_itinerary_page(request):
-	context = {}
-	itinerary = Itinerary()
-	itinerary_form = ItineraryForm(instance = itinerary)
-	context = {}
-	context["itinerary_form"] = itinerary_form
-	return render(request, 'travelpad/add_itinerary_page.html', context)
-
-@login_required
-def update_itinerary_page(request, id):
-	context = {}
-	itinerary = get_itinerary(id)
-	itinerary_form = ItineraryForm(instance = itinerary)
-	context = {}
-	context["itinerary_id"] = id
-	context["itinerary_form"] = itinerary_form
-	return render(request, 'travelpad/update_itinerary_page.html', context)
-
+def get_itineraryform_json(request, id):
+	print "get_itineraryform_json(" + id + ")"
+	itinerary = Itinerary.objects.filter(id=id)
+	response_text = serializers.serialize('json', itinerary)
+	return HttpResponse(response_text, content_type='application/json')
+	
 @login_required
 @transaction.atomic
 def add_itinerary(request):
@@ -64,12 +55,15 @@ def update_itinerary(request, id):
 	if request.method == "GET":
 		print "update_itinerary POST only"
 		return redirect("itineraries")
-	itinerary = get_itinerary(id)
+	if id == "0":
+		itinerary = Itinerary(created_by=request.user)
+	else:
+		itinerary = get_itinerary(id)
 	if not request.FILES:
 		itinerary.photo = None
 	itinerary_form = ItineraryForm(request.POST, request.FILES, instance = itinerary)
 	if not itinerary_form.is_valid():
-		print "debug_add_itinerary form.is_valid fail"
+		print "update_itinerary form.is_valid fail"
 		print itinerary_form.errors
 		return redirect("itineraries")
 	itinerary_form.save()
