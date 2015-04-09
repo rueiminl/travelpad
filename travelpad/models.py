@@ -59,6 +59,18 @@ class Transportation(models.Model):
     source = models.OneToOneField(Event, related_name="pre")
     destination = models.OneToOneField(Event, related_name="next")
     timestamp = models.DateTimeField(auto_now_add=True)
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "startdate": timezone.localtime(self.start_datetime).strftime("%Y-%m-%d"),
+            "starttime": timezone.localtime(self.start_datetime).strftime("%H:%M"),
+            "enddate": timezone.localtime(self.end_datetime).strftime("%Y-%m-%d"),
+            "endtime": timezone.localtime(self.end_datetime).strftime("%H:%M"),
+            "source": self.source.place_name,
+            "destination": self.destination.place_name,
+            "note": self.note,
+            "type": self.type,
+        }
 
 class Todo(models.Model):
     created_by = models.ForeignKey(User)
