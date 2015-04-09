@@ -2,14 +2,29 @@
 
 {% block content %}
 <script>
-$(document).on("click", ".add-todo", function () {
-     var myBookId = $(this).data('id');
-     $(".modal-body #bookId").val( myBookId );
-     // As pointed out in comments, 
-     // it is superfluous to have to manually call the modal.
-     // $('#addBookDialog').modal('show');
-});
 
+// window.setInterval(function () {
+//    	$.ajax({
+//     	url: "/get-todo-json",
+// 		type: 'GET',
+//         dataType : "json",
+//         success: function( data ) {
+// 			if(typeof data.errors !== 'undefined'){
+// 				// alert(data.errors);
+// 			}else{
+// 				loadTodos(data.todoes);
+// 			}
+//         }
+//     });
+// }, 3000);
+
+// $(document).on("click", ".add-todo", function () {
+//      var myBookId = $(this).data('id');
+//      $(".modal-body #bookId").val( myBookId );
+//      // As pointed out in comments,
+//      // it is superfluous to have to manually call the modal.
+//      // $('#addBookDialog').modal('show');
+// });
 function onSubmitTodo(form){
 	try {
 		form = $(form);
@@ -23,16 +38,30 @@ function onSubmitTodo(form){
 			success: function(data){
 				form[0].reset();
 				console.log(data);
+				$('#add_todo_madal').modal('hide');
 				if(typeof data.errors !== 'undefined'){
-					alert(data.errors);
+					bootstrap_alert.error(data.errors);
 				}else{
-					loadPosts(data.posts, data.last_update);
+					loadTodos(data.todoes);
+					bootstrap_alert.success("Todo added.");
 				}
 			},		
 		});
 	}catch(err) {
 	    console.log(err);
 	}
+}
+
+function loadTodos(todoes){
+    $(todoes).each(function() {
+		var element = '<tr>' + 
+						'<td>' + this.task + '</td>' +
+						'<td>' + this.status + '</td>' + 
+						'<td>' + this.onwer_username + '</td>' + 
+					  '</tr>' ;
+		
+		$(element).hide().appendTo("#todo-list").fadeIn('slow');
+    });
 }
 
 </script>
@@ -50,35 +79,27 @@ function onSubmitTodo(form){
 			
 		</div>
 		<div class="col-md-10">
-			<h3>Todo List</h3>
-				<table>
+			<div class="alert_placeholder">
+			</div>
+				<table id="todo-list">
 					{% for todo in todoes %}
 					<tr>
 						<td>{{todo.task}}</td>
 						<td>{{todo.status}}</td>
-						<td><input class="form-control" id="id_task" type="text" name="task" value="{{todo.task}}" readonly /></td>
-						<td><a data-toggle="modal" class="btn btn-info" href="{% url 'update_todo_dlg' todo.id %}" data-target="#myTodoModal{{todo.id}}">Update</a></td>
+						<td>{{todo.owner.username}}</td>
 					</tr>
 					{% endfor %}
 				</table>
 				<a data-toggle="modal" class="add-todo btn btn-info" href="#" data-target="#add_todo_madal">&plus;</a>
-		    </div>
 		</div>
 	</div>
 	
-	
-	<!-- <div class="modal fade" id="myTodoModal{{todo.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-			</div>
-		</div>
-	</div>	 -->
 	
 	
 	<div class="modal fade" id="add_todo_madal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form class="form-group todo-form" action="#" onsubmit="onSubmitTodo(this);return false;">
+				<form class="form-group todo_form" action="#" onsubmit="onSubmitTodo(this);return false;">
 				{% csrf_token %}
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -97,17 +118,28 @@ function onSubmitTodo(form){
 						    <th>Status</th> 
 						</tr>
 						<tr>
-							<td><select class="form-control" name="status">
+							<!-- <td><select class="form-control" name="status">
 								<option>pending</option>
 								<option>ongoing</option>
 								<option>done</option>
-							</select><td>
+							</select><td> -->
+							<td>
+								<label class="radio-inline"><input type="radio" name="status" value="pending" checked="true">pending</label>
+								<label class="radio-inline"><input type="radio" name="status" value="ongoing">ongoing</label>
+								<label class="radio-inline"><input type="radio" name="status" value="done">done</label>
+							<td>
 						</tr>
 						<tr>
 						    <th>Owner</th>
 						</tr>
 						<tr>
-							<td><input type="text" placeholder="Write a comment..." class="form-control" name="owner" autocomplete="off"></td>
+							<td>
+								{% for participant in participants %}
+								<div class="radio">
+								  <label><input type="radio" name="owner" value="{{participant.id}}">{{participant.username}}</label>
+								</div>
+								{% endfor %}
+							</td>
 						</tr>
 						<tr>
 							<th>Note</th>

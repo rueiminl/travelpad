@@ -12,6 +12,8 @@ urlpatterns = patterns('',
     
     url(r'^todo$', 'travelpad.views_itinerary.todo', name = 'todo'),
     url(r'^add-todo$', 'travelpad.views_itinerary.add_todo', name = 'add-todo'),
+    url(r'^get-todo-json$', 'travelpad.views_itinerary.get_todo_json', name = 'get-todo-json'),
+    
     
     url(r'^feed$', 'travelpad.views_itinerary.feed', name = 'feed'),
     url(r'^add-message$', 'travelpad.views_itinerary.add_message', name = 'add-message'),

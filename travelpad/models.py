@@ -73,12 +73,12 @@ class Transportation(models.Model):
         }
 
 class Todo(models.Model):
-    created_by = models.ForeignKey(User)
+    created_by = models.ForeignKey(User, related_name='created_by')
     task = models.CharField(max_length=300)
     status = models.CharField(max_length=64)
     related_event = models.ForeignKey(Event, blank=True,null=True)
     related_itinerary = models.ForeignKey(Itinerary)
-    owner = models.CharField(max_length=64, blank=True)
+    owner = models.ForeignKey(User, blank=True, null=True, related_name='owned_by')
     note = models.CharField(max_length=300, blank=True)
     creation_time = models.DateTimeField(auto_now_add=True)
     timestamp = models.DateTimeField(auto_now=True)

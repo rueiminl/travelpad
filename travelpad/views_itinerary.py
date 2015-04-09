@@ -51,7 +51,8 @@ def todo(request):
         if todoes:
             request.session['todo_last_update'] = max(todo.creation_time for todo in todoes).isoformat()
         context['todoes'] = todoes
-        context['todo_form'] = TodoForm()
+        context['participants'] = itinerary.participants.all()
+        # context['todo_form'] = TodoForm()
         print 'get ' + str(len(todoes)) + ' todoes'
         return render(request, 'travelpad/todo.html', context)
     except ObjectDoesNotExist:
@@ -69,6 +70,7 @@ def add_todo(request):
         entry = Todo(created_by=request.user, related_itinerary=itinerary)
         todo_form = TodoForm(request.POST, instance=entry)
         if not todo_form.is_valid():
+            print todo_form.errors
             errors.append('You must enter content to post.')
             return HttpResponse(json.dumps({'errors':errors}), content_type='application/json')
         else:
@@ -102,8 +104,8 @@ def get_todo_json(request):
                 'created_by_uid': todo.created_by.id, 
                 'task': todo.task,
                 'status': todo.status,
-                'onwer_username':todo.onwer.username, 
-                'onwer_uid': todo.onwer.id,
+                'onwer_username':todo.owner.username, 
+                'onwer_uid': todo.owner.id,
                 'note': todo.note,
                 'creation_time': todo.creation_time.isoformat(),
             })
