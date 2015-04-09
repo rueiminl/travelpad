@@ -46,8 +46,17 @@
 							<table>
 								{% for field in itinerary_form.visible_fields %}
 								<tr>
-									<td>{{field.label_tag}}</td>
+									<td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
+									{% if field.field.required %}
+										*
+									{% endif %}
+									</label></td>									
 									<td>{{field}}</td>
+									<td>
+									{% for error in field.errors %}
+										<p class="errorlabel" for="{{ error }}">{{ error }}</p>
+									{% endfor %}
+									</td>
 								</tr>
 								{% endfor %}
 							</table>
