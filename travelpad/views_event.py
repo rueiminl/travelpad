@@ -108,7 +108,7 @@ def eventedit(request):
         if (len(tmp) < 2):
             success = 0
             errors.append("You have to input the place you are going:");
-        overlap = Event.objects.filter(start_datetime__lt=newevent.end_datetime).filter(end_datetime__gt=newevent.start_datetime)
+        overlap = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__lt=newevent.end_datetime).filter(end_datetime__gt=newevent.start_datetime)
         if overlap.count() > 0: #overlap
             success = 0
             errors.append("The time overlaps with another event:");
@@ -123,7 +123,7 @@ def eventedit(request):
             srange = timezone.make_aware(strange, timezone.get_current_timezone())
             erange = srange + timezone.timedelta(days=1)
             try:
-                pevent = Event.objects.filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                pevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
                 try:
                     ptrans = pevent.pre
                     tempplace = ptrans.destination
@@ -139,7 +139,7 @@ def eventedit(request):
             # first event of the day
             except ObjectDoesNotExist:
                 try:
-                    nevent = Event.objects.filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                    nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
                     newtrans = Transportation(user = new_user, type = "car", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent)
                     newtrans.save()
                 except ObjectDoesNotExist:
@@ -198,7 +198,7 @@ def eventeditwithID(request):
         newevent.start_datetime  = timezone.make_aware(stime, timezone.get_current_timezone())
         newevent.end_datetime = timezone.make_aware(etime, timezone.get_current_timezone())
         newevent.note = form.cleaned_data['note']
-        overlap = Event.objects.filter(start_datetime__lt=newevent.end_datetime).filter(end_datetime__gt=newevent.start_datetime).exclude(id = request.POST['eventId'])
+        overlap = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__lt=newevent.end_datetime).filter(end_datetime__gt=newevent.start_datetime).exclude(id = request.POST['eventId'])
         if overlap.count() > 0: #overlap
             success = 0
             errors.append("The time overlaps with another event:")
@@ -218,7 +218,7 @@ def eventeditwithID(request):
                 ptrans = newevent.next
                 hasprevious = True;
                 try:
-                    pevent = Event.objects.filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                    pevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
                     if ptrans.source == pevent:
                         pass    #previous event unchanged, implies next event unchanged
                     else:
@@ -229,7 +229,7 @@ def eventeditwithID(request):
                 try:
                     ntrans = newevent.pre
                     try:
-                        nevent = Event.objects.filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                        nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
                         if ntrans.destination == nevent:
                             pass    #next event unchanged
                         else:
@@ -238,11 +238,11 @@ def eventeditwithID(request):
                         needrelocate = True    #has next event, now has not
                 except ObjectDoesNotExist:
                     try:
-                        pevent = Event.objects.filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                        pevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
                         needrelocate = True    #don't have previous event, now has
                     except ObjectDoesNotExist:
                         try: 
-                            nevent = Event.objects.filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                            nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
                             needrelocate = True    #don't have next event, now has
                         except ObjectDoesNotExist:
                             pass #only event of the day
@@ -264,7 +264,7 @@ def eventeditwithID(request):
                         ptrans.delete()
                 # now add new transporation
                 try:
-                    pevent = Event.objects.filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                    pevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
                     try:
                         ptrans = pevent.pre
                         tempplace = ptrans.destination
@@ -280,7 +280,7 @@ def eventeditwithID(request):
                 # first event of the day
                 except ObjectDoesNotExist:
                     try:
-                        nevent = Event.objects.filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                        nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
                         newtrans = Transportation(user = request.user, type = "car", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent)
                         newtrans.save()
                     except ObjectDoesNotExist:
@@ -319,6 +319,36 @@ def eventeditwithID(request):
         context['place'] = newevent.place_name
         context['iid'] = request.session["itinerary_id"]
         return render(request, 'travelpad/addevent_error.html', context)
+        
+def editeventtime(request):
+    if request.method == 'GET':
+        raise Http404  
+
+    context = {}
+    errors = []
+    context['errors'] = errors
+    success = 1
+    newevent = Event.objects.get(id = request.POST['eid'])
+    strange = datetime.combine(newevent.start_datetime.date(), datetime.strptime(request.POST['stime'], '%H:%M').time())
+    srange = timezone.make_aware(strange, timezone.get_current_timezone())
+    etrange = datetime.combine(newevent.end_datetime.date(), datetime.strptime(request.POST['etime'], '%H:%M').time())
+    erange = timezone.make_aware(etrange, timezone.get_current_timezone())
+    newevent.start_datetime = srange
+    newevent.end_datetime = erange
+    newevent.save()
+    try:
+        ptrans = newevent.next
+        ptrans.end_datetime = srange
+        ptrans.save()
+    except ObjectDoesNotExist:
+        pass
+    try:
+        ntrans = newevent.pre
+        ntrans.start_datetime = erange
+        ntrans.save()
+    except ObjectDoesNotExist:
+        pass
+    return HttpResponse("success")
         
 def transporteditwithid(request):
     trans = Transportation.objects.get(id = request.POST['eventId'])
