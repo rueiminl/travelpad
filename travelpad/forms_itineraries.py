@@ -26,3 +26,7 @@ class ItineraryForm(forms.ModelForm):
 			raise forms.ValidationError('File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
 		return photo
 		
+class ItineraryFormWithoutPhoto(forms.ModelForm):
+	class Meta:
+		model = Itinerary
+		exclude = ('created_by', 'photo', )

@@ -59,12 +59,23 @@ def update_itinerary(request, id):
 		itinerary = Itinerary(created_by=request.user)
 	else:
 		itinerary = get_itinerary(id)
-	if not request.FILES:
+	if request.POST.get("clear"):
 		itinerary.photo = None
-	itinerary_form = ItineraryForm(request.POST, request.FILES, instance = itinerary)
+	if not request.FILES:
+		itinerary_form = ItineraryFormWithoutPhoto(request.POST, instance = itinerary)
+	else:
+		itinerary_form = ItineraryForm(request.POST, request.FILES, instance = itinerary)
 	if not itinerary_form.is_valid():
 		print "update_itinerary form.is_valid fail"
 		print itinerary_form.errors
 		return redirect("itineraries")
 	itinerary_form.save()
 	return redirect("itineraries")
+
+@login_required
+def get_itinerary_photo(request, id):
+	itinerary = get_itinerary(id)
+	if not itinerary.photo:
+		print "itinerary[" + id + "].photo not found"
+		raise Http404
+	return HttpResponse(itinerary.photo, content_type="image")

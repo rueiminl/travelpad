@@ -9,6 +9,9 @@
 			.thumbnail {
 				width:600px;
 			}
+			.dialogthumbnail {
+				width:400px;
+			}
 			.info {
 				vertical-align: top;
 			}
@@ -24,7 +27,7 @@
 		<table>
 		{% for itinerary in itineraries %}
 			<tr>
-				<td><a href="{% url 'itinerary' itinerary.id %}"><img src="{% url 'debug_get_itinerary_photo' itinerary.id %}" alt="no picture uploaded yet" class="thumbnail"></a></td>
+				<td><a href="{% url 'itinerary' itinerary.id %}"><img src="{% url 'get_itinerary_photo' itinerary.id %}" alt="no picture uploaded yet" class="thumbnail"></a></td>
 				<td class="info">
 						<input class="btn btn-info" id="editItineraryButton" type="button" value="Edit" onclick="editItinerary({{itinerary.id}})" />
 					<h2>{{itinerary.title}}</h2>
@@ -33,7 +36,7 @@
 			</tr>
 		{% endfor %}
 		</table>
-		
+
 		<div class="modal fade" id="itineraryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -43,6 +46,7 @@
 					</div>
 					<div class="modal-body">
 						<form id="itineraryForm" enctype="multipart/form-data" action="{% url 'update_itinerary' %}" method="POST">
+							<input type="hidden" id="existed_id" />
 							<table>
 								{% for field in itinerary_form.visible_fields %}
 								<tr>
@@ -50,8 +54,14 @@
 									{% if field.field.required %}
 										*
 									{% endif %}
-									</label></td>									
-									<td>{{field}}</td>
+									</label></td>
+									<td>
+										{% if field.label == "Photo" %}
+										<img class="dialogthumbnail" id="modalImg" src="{% url 'get_itinerary_photo' %}/0"  alt="Not uploaded yet" />
+										<input name="clear" type="checkbox">Clear</input>
+										{% endif %}
+										{{field}}
+									</td>
 									<td>
 									{% for error in field.errors %}
 										<p class="errorlabel" for="{{ error }}">{{ error }}</p>
@@ -70,7 +80,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 {% endblock %}
 
 
@@ -78,13 +88,13 @@
 	<script>
 		function addItinerary() {
 			$('#itineraryForm').attr("action", "{% url 'update_itinerary' %}/0");
+			$('#modalImg').attr("src", "{% url 'get_itinerary_photo' %}/0");
 			$('#id_title').val("");
 			$('#id_description').val("");
 			$('#id_location').val("");
 			$('#id_start_date').val("");
 			$('#id_end_date').val("");
 			$('#id_participants').val("");
-			//$('#id_photo').val("");					
 			 $('#myModalLabel').text("Add Itinerary");
 			 $('#itineraryModal').modal('show');
 			 $('#modalButton').text("Create Itinerary");
@@ -96,6 +106,7 @@
 				dataType: "text json",
 				success: function(data, status) {
 					$('#itineraryForm').attr("action", "{% url 'update_itinerary' %}/" + id);
+					$('#modalImg').attr("src", "{% url 'get_itinerary_photo' %}/" + id);
 					var itinerary = data[0].fields;
 					$('#id_title').val(itinerary.title);
 					$('#id_description').val(itinerary.description);
@@ -103,12 +114,27 @@
 					$('#id_start_date').val(itinerary.start_date);
 					$('#id_end_date').val(itinerary.end_date);
 					$('#id_participants').val(itinerary.participants);
-					//$('#id_photo').val(itinerary.photo);					
 					 $('#myModalLabel').text("Update Itinerary");
 					 $('#itineraryModal').modal('show');
 					$('#modalButton').text("Save Change");
 				}
 			});
 		}
+
+		function readURL(input) {
+			if (input.files && input.files[0]) {
+				var reader = new FileReader();
+
+				reader.onload = function (e) {
+					$('#modalImg').attr('src', e.target.result);
+				}
+
+				reader.readAsDataURL(input.files[0]);
+			}
+		}
+
+		$("#id_photo").change(function(){
+			readURL(this);
+		});
 	</script>
 {% endblock %}
