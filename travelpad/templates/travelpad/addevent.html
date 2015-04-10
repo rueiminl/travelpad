@@ -408,7 +408,12 @@ var ready; // Where to store the function
       );
       $("#mybutton3").click( function()
         {
-            edittransport(14);
+            edittransport(1);
+        }
+      );
+      $("#mybutton4").click( function()
+        {
+            editeventtime(4, "11:30", "12:30");
         }
       );
       $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -444,7 +449,7 @@ var ready; // Where to store the function
        $('.nav-tabs a[href="#Transportation"]').hide();
     };
     
-var csrftoken = $.cookie('csrftoken');
+//var csrftoken = $.cookie('csrftoken');
 
 function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
@@ -503,6 +508,22 @@ function editevent(id) {
             $('#map-eventcanvas4').hide();
             $('#eventId').val(items.data.id);
             $('#deletebtn').show();
+
+        }
+    });
+};
+
+function editeventtime(id,start,end) {
+    $.ajax({
+        url: "./editeventtime",
+        data: {
+            eid: id,
+            stime: start,
+            etime: end,
+        },
+        type:'POST',
+        dataType: 'json',
+        success: function(items){
 
         }
     });
@@ -615,6 +636,7 @@ function showeventmodal(title, sdate, stime, edate, etime) {
         <button type="button" id= "mybutton" class="btn btn-default">test</button>
         <button type="button" id= "mybutton2" class="btn btn-default">test2</button>
         <button type="button" id= "mybutton3" class="btn btn-default">test3</button>
+        <button type="button" id= "mybutton4" class="btn btn-default">test4</button>
         <!-- Modal -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
