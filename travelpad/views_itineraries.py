@@ -73,6 +73,19 @@ def update_itinerary(request, id):
 	return redirect("itineraries")
 
 @login_required
+@transaction.atomic
+def delete_itinerary(request):
+	if request.method == "GET":
+		print "delete_itinerary POST only"
+		return redirect("itineraries")
+	if not "id" in request.POST:
+		print "no id in request.POST"
+		return redirect("itineraries")
+	itinerary = get_itinerary(request.POST["id"])
+	itinerary.delete()
+	return redirect("itineraries")
+
+@login_required
 def get_itinerary_photo(request, id):
 	itinerary = get_itinerary(id)
 	if not itinerary.photo:

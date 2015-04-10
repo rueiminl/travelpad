@@ -74,6 +74,11 @@
 						</form>
 					</div>
 					<div class="modal-footer">
+						<form action="{% url 'delete_itinerary' %}" method="POST">
+							<input type="hidden" id="delete_id" name="id" />
+							{% csrf_token %}
+							<input type="submit" id="modalDeleteButton" class="btn btn-danger">Delete</button>
+						</form>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 						<button id="modalButton" type="button" class="btn btn-primary" onclick="$('#itineraryForm').submit();">Save changes</button>
 					</div>
@@ -95,9 +100,10 @@
 			$('#id_start_date').val("");
 			$('#id_end_date').val("");
 			$('#id_participants').val("");
-			 $('#myModalLabel').text("Add Itinerary");
-			 $('#itineraryModal').modal('show');
-			 $('#modalButton').text("Create Itinerary");
+			$('#myModalLabel').text("Add Itinerary");
+			$('#itineraryModal').modal('show');
+			$('#modalButton').text("Create Itinerary");
+			$('#modalDeleteButton').hide();
 		}
 		function editItinerary(id) {
 			$.ajax( {
@@ -114,9 +120,18 @@
 					$('#id_start_date').val(itinerary.start_date);
 					$('#id_end_date').val(itinerary.end_date);
 					$('#id_participants').val(itinerary.participants);
-					 $('#myModalLabel').text("Update Itinerary");
-					 $('#itineraryModal').modal('show');
+					$('#myModalLabel').text("Update Itinerary");
+					$('#itineraryModal').modal('show');
 					$('#modalButton').text("Save Change");
+					$('#modalDeleteButton').click( function() {
+						$.ajax( {
+							url: "{% url 'delete_itinerary' %}",
+							type: "POST",
+							data: {"id": id}
+						});
+					});
+					$('#delete_id').val(id);
+					$('#modalDeleteButton').show();
 				}
 			});
 		}

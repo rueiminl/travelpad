@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
     url(r'^itineraries$', 'travelpad.views_itineraries.itineraries', name='itineraries'),
+    url(r'^delete_itinerary$', 'travelpad.views_itineraries.delete_itinerary', name='delete_itinerary'),
+    url(r'^delete_itinerary/(?P<id>\d+)$', 'travelpad.views_itineraries.delete_itinerary', name='delete_itinerary'),
     url(r'^update_itinerary$', 'travelpad.views_itineraries.update_itinerary', name='update_itinerary'),
     url(r'^update_itinerary/(?P<id>\d+)$', 'travelpad.views_itineraries.update_itinerary', name='update_itinerary'),
     url(r'^get_itinerary_photo$', 'travelpad.views_itineraries.get_itinerary_photo', name='get_itinerary_photo'),
