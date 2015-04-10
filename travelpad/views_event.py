@@ -152,6 +152,7 @@ def eventedit(request):
     #return render(request, 'travelpad/addevent.html', context)
     if success == 1:
         #return redirect(reverse('demo'))
+        request.session["addevent"] = 1;
         return redirect(reverse('schedule'))
     else:
         context['attractionform'] = AttractionForm(request.POST, prefix = "a_")
