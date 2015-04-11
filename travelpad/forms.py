@@ -25,3 +25,15 @@ class TodoForm(forms.ModelForm):
             'related_event',
             'created_by',
         )
+
+class UpdateTodoOwnerForm(forms.ModelForm):
+    class Meta:
+        model = Todo
+        fields = ('owner',)
+
+class UpdateTodoStatusForm(forms.ModelForm):
+    class Meta:
+        model = Todo
+        fields = ('status',)       
+        
+        
