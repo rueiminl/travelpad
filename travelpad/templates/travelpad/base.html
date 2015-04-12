@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html ng-app="itinerary">
 	<head>
     	<meta charset="utf-8">
 		{% load staticfiles %}	
@@ -51,7 +51,7 @@
 		{% endblock %}
 	</head>
 
-	<body>
+	<body ng-controller="TodoController as todoCtrl">
 	
 		<div class="nav">
 			{% block nav %}
