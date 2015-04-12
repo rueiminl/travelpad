@@ -14,7 +14,6 @@
 {% endblock %}
 
 {% block content %}
-
 				<form id="userForm" enctype="multipart/form-data" action="{% url 'update_profile' %}" method="POST">
 					<table>
 						{% for field in travelpaduser_form.visible_fields %}
@@ -27,7 +26,7 @@
 							<td>
 								{% if field.label == "Photo" %}
 								<img class="thumbnail" id="modalImg" src="{% url 'get_user_photo' %}/{{user.id}}"  alt="Not uploaded yet" />
-								<!-- <input name="clear" type="checkbox">Clear</input> -->
+								<input name="clear" type="checkbox">Clear</input>
 								{% endif %}
 								{{field}}
 							</td>
