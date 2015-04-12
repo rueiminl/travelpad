@@ -69,6 +69,9 @@ def update_itinerary(request, id):
 		print itinerary_form.errors
 		return redirect("itineraries")
 	itinerary_form.save()
+	if id == "0":
+		itinerary.participants.add(User.objects.get(id=request.user.id))
+		itinerary.save()
 	return redirect("itineraries")
 
 @login_required

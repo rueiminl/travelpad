@@ -15,7 +15,7 @@ class ItineraryForm(forms.ModelForm):
 	description = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add description here'}))
 	class Meta:
 		model = Itinerary
-		exclude = ('created_by',)
+		exclude = ('created_by', 'participants', )
 	def clean_photo(self):
 		photo = self.cleaned_data['photo']
 		if not photo:
@@ -29,4 +29,4 @@ class ItineraryForm(forms.ModelForm):
 class ItineraryFormWithoutPhoto(forms.ModelForm):
 	class Meta:
 		model = Itinerary
-		exclude = ('created_by', 'photo', )
+		exclude = ('created_by', 'participants', 'photo', )
