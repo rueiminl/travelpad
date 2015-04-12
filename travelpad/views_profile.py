@@ -44,7 +44,7 @@ def update_profile(request):
 	request.user.email = request.POST['email']
 	request.user.save()
 	travelpaduser = get_travelpaduser(request.user.id)
-	if "photo-clear" in request.POST:
+	if request.POST.get("clear"):
 		travelpaduser.photo = None
 		user_form = TravelPadUserForm(request.POST, instance = travelpaduser)
 	elif request.FILES:
