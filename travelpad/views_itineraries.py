@@ -12,7 +12,7 @@ from django.http import HttpResponse
 def get_itinerary(id):
 	itinerary = get_object_or_404(Itinerary, id=id)
 	if not itinerary:
-		logger.warn("get_itinerary(" + id + ") not found")
+		print "get_itinerary(" + id + ") not found"
 		raise Http404
 	return itinerary
 
@@ -26,7 +26,6 @@ def itineraries(request):
 
 @login_required
 def get_itineraryform_json(request, id):
-	print "get_itineraryform_json(" + id + ")"
 	itinerary = Itinerary.objects.filter(id=id)
 	response_text = serializers.serialize('json', itinerary)
 	return HttpResponse(response_text, content_type='application/json')
