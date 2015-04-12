@@ -18,8 +18,7 @@ def get_user(id):
 @login_required
 def profile(request):
 	context = {}
-	context["user_form"] = UserForm()
-	context["travelpaduser_form"] = TravelPadUserForm()
+	context["user_form"] = TravelPadUserForm()
 	return render(request, 'travelpad/profile.html', context)
 
 @login_required

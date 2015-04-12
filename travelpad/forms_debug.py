@@ -18,7 +18,11 @@ class DebugItineraryForm(forms.ModelForm):
 		if photo.size > MAX_UPLOAD_SIZE:
 			raise forms.ValidationError('File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
 		return photo
-		
+
+class DebugUserForm(forms.ModelForm):
+	class Meta:
+		model = User
+		exclude = ('last_login', 'groups', 'user_permissions', 'date_joined', )
 class DebugTravelPadUserForm(forms.ModelForm):
 	class Meta:
 		model = TravelPadUser

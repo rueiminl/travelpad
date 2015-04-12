@@ -9,9 +9,9 @@ MAX_UPLOAD_SIZE = 2500000
        
 class RegisterForm(forms.ModelForm):
 	username = forms.CharField(max_length = 20)
-	firstname = forms.CharField(max_length = 20)
-	lastname = forms.CharField(max_length = 20)
-	# email = forms.CharField(max_length = 40, validators = [validate_email])
+	first_name = forms.CharField(max_length = 20)
+	last_name = forms.CharField(max_length = 20)
+	email = forms.CharField(max_length = 40, validators = [validate_email])
 	password1  = forms.CharField(max_length = 200, 
 								 label='Password', 
 								 widget = forms.PasswordInput())

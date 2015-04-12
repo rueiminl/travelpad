@@ -28,18 +28,15 @@ def register(request):
 		
 	# Creates the new user from the valid form data
 	new_user = User.objects.create_user(username=form.cleaned_data['username'],
-										first_name=form.cleaned_data['firstname'],
-										last_name=form.cleaned_data['lastname'],
+										first_name=form.cleaned_data['first_name'],
+										last_name=form.cleaned_data['last_name'],
 										password=form.cleaned_data['password1'],
-										# email=form.cleaned_data['email']
+										email=form.cleaned_data['email']
 										)
-	# new_user.is_active = False
+	new_user.is_active = False
 	new_user.save()
-	
 	travelpad_user.user = new_user
 	form.save()
-	
-	return redirect('default') # remove email verification temporarily
 	
 	token = default_token_generator.make_token(new_user)
 	email_body = """

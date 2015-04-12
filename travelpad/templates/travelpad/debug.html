@@ -58,6 +58,42 @@
 	<div class="table">
 		<div>
 			<div>ID</div>
+			{% for field in user_form.visible_fields %}
+			<div>{{field.label_tag}}</div>
+			{% endfor %}
+			<div></div>
+		</div>
+	
+		{% for user in users %}
+		<div>
+			<div>{{user.id}}</div>
+			<div>{{user.password}}</div>
+			<!-- <div>{{user.last_login}}</div> -->
+			<div>{{user.is_superuser}}</div>
+			<div>{{user.username}}</div>
+			<div>{{user.first_name}}</div>
+			<div>{{user.last_name}}</div>
+			<div>{{user.email}}</div>
+			<div>{{user.is_staff}}</div>
+			<div>{{user.is_active}}</div>
+			<!-- <div>{{user.date_joined}}</div> -->
+			<div></div>
+		</div>
+		{% endfor %}
+		<form id="userForm" enctype="multipart/form-data" action="{% url 'debug_add_user' %}" method="POST">
+			<div><input type="text" name="exist_id" /></div>
+			{% for field in user_form.visible_fields %}
+			<div>{{field}}</div>
+			{% endfor %}
+			{% csrf_token %}
+			<div><input type="submit" /></div>
+		</form>
+	</div>
+	
+	<!-- travelpadusers -->
+	<div class="table">
+		<div>
+			<div>ID</div>
 			{% for field in travelpaduser_form.visible_fields %}
 			<div>{{field.label_tag}}</div>
 			{% endfor %}

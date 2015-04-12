@@ -3,6 +3,9 @@
 {% block head %}
 		<title>TravelPad - Profile</title>
 		<style>
+			.thumbnail {
+				width:200px;
+			}
 		</style>
 {% endblock %}
 
@@ -35,6 +38,12 @@
 							</td>
 						</tr>
 						{% endfor %}
+						<tr>
+							<td></td>
+							<td>
+								<button id="modalButton" type="button" class="btn btn-primary" onclick="$('#userForm').submit();">Save changes</button>
+							</td>
+						</tr>
 					</table>
 					{% csrf_token %}
 				</form>
