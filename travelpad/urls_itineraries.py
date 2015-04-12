@@ -1,8 +1,12 @@
 from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
     url(r'^itineraries$', 'travelpad.views_itineraries.itineraries', name='itineraries'),
-    url(r'^add_itinerary_page$', 'travelpad.views_itineraries.add_itinerary_page', name='add_itinerary_page'),
-    url(r'^update_itinerary_page/(?P<id>\d+)$', 'travelpad.views_itineraries.update_itinerary_page', name='update_itinerary_page'),
-    url(r'^add_itinerary$', 'travelpad.views_itineraries.add_itinerary', name='add_itinerary'),
+    url(r'^delete_itinerary$', 'travelpad.views_itineraries.delete_itinerary', name='delete_itinerary'),
+    url(r'^delete_itinerary/(?P<id>\d+)$', 'travelpad.views_itineraries.delete_itinerary', name='delete_itinerary'),
+    url(r'^update_itinerary$', 'travelpad.views_itineraries.update_itinerary', name='update_itinerary'),
     url(r'^update_itinerary/(?P<id>\d+)$', 'travelpad.views_itineraries.update_itinerary', name='update_itinerary'),
+    url(r'^get_itinerary_photo$', 'travelpad.views_itineraries.get_itinerary_photo', name='get_itinerary_photo'),
+    url(r'^get_itinerary_photo/(?P<id>\d+)$', 'travelpad.views_itineraries.get_itinerary_photo', name='get_itinerary_photo'),
+    url(r'^get_itineraryform_json$', 'travelpad.views_itineraries.get_itineraryform_json', name='get_itineraryform_json'),
+    url(r'^get_itineraryform_json/(?P<id>\d+)$', 'travelpad.views_itineraries.get_itineraryform_json', name='get_itineraryform_json'),
 )

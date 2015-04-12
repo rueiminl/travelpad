@@ -9,4 +9,7 @@ urlpatterns = patterns('',
     url(r'^eventedit$', 'travelpad.views_event.eventedit', name='eventedit'),
     url(r'^getevent$', 'travelpad.views_event.getevent', name='getevent'),
     url(r'^deleteevent$', 'travelpad.views_event.deleteevent', name='deleteevent'),
+    url(r'^editeventtime$', 'travelpad.views_event.editeventtime', name='editeventtime'),
+    
+    url(r'^gettransport$', 'travelpad.views_event.gettransport', name='gettransport'),
 )

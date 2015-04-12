@@ -9,6 +9,9 @@
 			.thumbnail {
 				width:600px;
 			}
+			.dialogthumbnail {
+				width:400px;
+			}
 			.info {
 				vertical-align: top;
 			}
@@ -20,21 +23,133 @@
 {% endblock %}
 
 {% block content %}
-		<form action="{% url 'add_itinerary_page' %}">
-			<input class="btn btn-info" id="addItineraryButton" type="submit" value="&plus;" />
-		</form>
+		<input class="btn btn-info" id="addItineraryButton" type="button" value="&plus;" onclick="addItinerary()" />
 		<table>
 		{% for itinerary in itineraries %}
 			<tr>
-				<td><a href="{% url 'itinerary' itinerary.id %}"><img src="{% url 'debug_get_itinerary_photo' itinerary.id %}" alt="no picture uploaded yet" class="thumbnail"></a></td>
+				<td><a href="{% url 'itinerary' itinerary.id %}"><img src="{% url 'get_itinerary_photo' itinerary.id %}" alt="no picture uploaded yet" class="thumbnail"></a></td>
 				<td class="info">
-					<form action="{% url 'update_itinerary_page' itinerary.id %}">
-						<input class="btn btn-info" id="editItineraryButton" type="submit" value="Edit" />
-					</form>
+						<input class="btn btn-info" id="editItineraryButton" type="button" value="Edit" onclick="editItinerary({{itinerary.id}})" />
 					<h2>{{itinerary.title}}</h2>
 					{{itinerary.description}}
 				</td>
 			</tr>
 		{% endfor %}
 		</table>
+
+		<div class="modal fade" id="itineraryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel"></h4>
+					</div>
+					<div class="modal-body">
+						<form id="itineraryForm" enctype="multipart/form-data" action="{% url 'update_itinerary' %}" method="POST">
+							<input type="hidden" id="existed_id" />
+							<table>
+								{% for field in itinerary_form.visible_fields %}
+								<tr>
+									<td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
+									{% if field.field.required %}
+										*
+									{% endif %}
+									</label></td>
+									<td>
+										{% if field.label == "Photo" %}
+										<img class="dialogthumbnail" id="modalImg" src="{% url 'get_itinerary_photo' %}/0"  alt="Not uploaded yet" />
+										<input name="clear" type="checkbox">Clear</input>
+										{% endif %}
+										{{field}}
+									</td>
+									<td>
+									{% for error in field.errors %}
+										<p class="errorlabel" for="{{ error }}">{{ error }}</p>
+									{% endfor %}
+									</td>
+								</tr>
+								{% endfor %}
+							</table>
+							{% csrf_token %}
+						</form>
+					</div>
+					<div class="modal-footer">
+						<form id="deleteItineraryForm" action="{% url 'delete_itinerary' %}" method="POST">
+							<input type="hidden" id="delete_id" name="id" />
+							{% csrf_token %}
+						</form>
+						<input type="button" id="modalDeleteButton" class="btn btn-danger" value="Delete" onclick="$('#deleteItineraryForm').submit();"></input>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button id="modalButton" type="button" class="btn btn-primary" onclick="$('#itineraryForm').submit();">Save changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+{% endblock %}
+
+
+{% block tail %}
+	<script>
+		function addItinerary() {
+			$('#itineraryForm').attr("action", "{% url 'update_itinerary' %}/0");
+			$('#modalImg').attr("src", "{% url 'get_itinerary_photo' %}/0");
+			$('#id_title').val("");
+			$('#id_description').val("");
+			$('#id_location').val("");
+			$('#id_start_date').val("");
+			$('#id_end_date').val("");
+			$('#id_participants').val("");
+			$('#myModalLabel').text("Add Itinerary");
+			$('#itineraryModal').modal('show');
+			$('#modalButton').text("Create Itinerary");
+			$('#modalDeleteButton').hide();
+		}
+		function editItinerary(id) {
+			$.ajax( {
+				url: "{% url 'get_itineraryform_json' %}/" + id,
+				type: "GET",
+				dataType: "text json",
+				success: function(data, status) {
+					$('#itineraryForm').attr("action", "{% url 'update_itinerary' %}/" + id);
+					$('#modalImg').attr("src", "{% url 'get_itinerary_photo' %}/" + id);
+					var itinerary = data[0].fields;
+					$('#id_title').val(itinerary.title);
+					$('#id_description').val(itinerary.description);
+					$('#id_location').val(itinerary.location);
+					$('#id_start_date').val(itinerary.start_date);
+					$('#id_end_date').val(itinerary.end_date);
+					$('#id_participants').val(itinerary.participants);
+					$('#myModalLabel').text("Update Itinerary");
+					$('#itineraryModal').modal('show');
+					$('#modalButton').text("Save Change");
+					$('#modalDeleteButton').click( function() {
+						$.ajax( {
+							url: "{% url 'delete_itinerary' %}",
+							type: "POST",
+							data: {"id": id}
+						});
+					});
+					$('#delete_id').val(id);
+					$('#modalDeleteButton').show();
+				}
+			});
+		}
+
+		function readURL(input) {
+			if (input.files && input.files[0]) {
+				var reader = new FileReader();
+
+				reader.onload = function (e) {
+					$('#modalImg').attr('src', e.target.result);
+				}
+
+				reader.readAsDataURL(input.files[0]);
+			}
+		}
+
+		$("#id_photo").change(function(){
+			readURL(this);
+		});
+	</script>
 {% endblock %}

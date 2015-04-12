@@ -2,14 +2,29 @@
 
 {% block content %}
 <script>
-$(document).on("click", ".add-todo", function () {
-     var myBookId = $(this).data('id');
-     $(".modal-body #bookId").val( myBookId );
-     // As pointed out in comments, 
-     // it is superfluous to have to manually call the modal.
-     // $('#addBookDialog').modal('show');
-});
 
+// window.setInterval(function () {
+//    	$.ajax({
+//     	url: "/get-todo-json",
+// 		type: 'GET',
+//         dataType : "json",
+//         success: function( data ) {
+// 			if(typeof data.errors !== 'undefined'){
+// 				// alert(data.errors);
+// 			}else{
+// 				loadTodos(data.todoes);
+// 			}
+//         }
+//     });
+// }, 3000);
+
+// $(document).on("click", ".add-todo", function () {
+//      var myBookId = $(this).data('id');
+//      $(".modal-body #bookId").val( myBookId );
+//      // As pointed out in comments,
+//      // it is superfluous to have to manually call the modal.
+//      // $('#addBookDialog').modal('show');
+// });
 function onSubmitTodo(form){
 	try {
 		form = $(form);
@@ -21,18 +36,118 @@ function onSubmitTodo(form){
 	    	data: params ,
 	    	dataType : "json",
 			success: function(data){
-				form[0].reset();
 				console.log(data);
+				$('#add_todo_madal').modal('hide');
 				if(typeof data.errors !== 'undefined'){
-					alert(data.errors);
+					bootstrap_alert.error(data.errors);
 				}else{
-					loadPosts(data.posts, data.last_update);
+					// loadTodos(data.todoes);
+					window.location.reload();
+					bootstrap_alert.success("Todo added.");
 				}
 			},		
 		});
 	}catch(err) {
 	    console.log(err);
 	}
+}
+
+function showUpdateTodoModal(id, task, sta, owner, note){
+	$('#update_todo_madal #update_task').val(task);
+	$('#update_todo_madal .update_todo_form').attr('onsubmit', 'onUpdateTodo(this, ' + id + ');return false;');
+	if(sta=="pending"){
+		$('#update_todo_madal #update_status_pending').attr('checked', true);
+		$('#update_todo_madal #update_status_ongoing').attr('checked', false);
+		$('#update_todo_madal #update_status_done').attr('checked', false);
+	}else if(sta=="ongoing"){
+		$('#update_todo_madal #update_status_pending').attr('checked', false);
+		$('#update_todo_madal #update_status_ongoing').attr('checked', true);
+		$('#update_todo_madal #update_status_done').attr('checked', false);
+	}else{
+		$('#update_todo_madal #update_status_pending').attr('checked', false);
+		$('#update_todo_madal #update_status_ongoing').attr('checked', false);
+		$('#update_todo_madal #update_status_done').attr('checked', true);
+	}
+	$('#update_todo_madal .update_owner').each(function() {
+		if($(this).val()==owner){
+			console.log($(this).val());
+			console.log(owner);
+			$(this).attr('checked', true);
+		}else{
+			$(this).attr('checked', false);
+		}
+	});
+	$('#update_todo_madal #update_note').val(note);
+	$('#update_todo_madal').modal('show');
+}
+
+function onUpdateTodo(form, id){
+	try {
+		form = $(form);
+		var params = form.serialize();
+		console.log(params);
+		$.ajax({
+	    	url: "/update-todo/" + id,
+			type: 'POST',
+	    	data: params ,
+	    	dataType : "json",
+			success: function(data){
+				console.log(data);
+				if(typeof data.errors !== 'undefined'){
+					bootstrap_alert.error(data.errors);
+				}else{
+					//TODO:
+					window.location.reload();
+					// loadTodos(data.todoes);
+					bootstrap_alert.success("Todo updated.");
+				}
+			},		
+		});
+	}catch(err) {
+	    console.log(err);
+	}
+}
+
+function onDeleteTodo(form, id){
+	try {
+		form = $(form);
+		var params = form.serialize();
+		console.log(params);
+		$.ajax({
+	    	url: "/delete-todo/" + id,
+			type: 'POST',
+	    	data: params ,
+	    	dataType : "json",
+			success: function(data){
+				console.log(data);
+				if(typeof data.errors !== 'undefined'){
+					bootstrap_alert.error(data.errors);
+				}else{
+					//TODO:
+					// window.location.reload();
+					// loadTodos(data.todoes);
+					// $('#todo_' + id).remove();
+					$('#todo_' + id).hide('slow', function(){ $('#todo_' + id).remove(); });
+					bootstrap_alert.success("Todo deleted.");
+				}
+			},		
+		});
+	}catch(err) {
+	    console.log(err);
+	}
+}
+
+
+function loadTodos(todoes){
+    $(todoes).each(function() {
+		var element = '<tr>' + 
+						'<td>' + this.task + '</td>' +
+						'<td>' + this.status + '</td>' + 
+						'<td>' + this.onwer_username + '</td>' + 
+					  '</tr>' ;
+		
+		$(element).hide().appendTo("#todo-list").fadeIn('slow');
+    });
 }
 
 </script>
@@ -50,43 +165,60 @@ function onSubmitTodo(form){
 			
 		</div>
 		<div class="col-md-10">
-			<h3>Todo List</h3>
-				<table>
-					{% for todo in todoes %}
+			<div class="alert_placeholder">
+			</div>
+				<a data-toggle="modal" class="add-todo btn btn-info" href="#" data-target="#add_todo_madal">&plus;</a>
+				<table class="table" id="todo-list">
 					<tr>
-						<td>{{todo.task}}</td>
-						<td>{{todo.status}}</td>
-						<td><input class="form-control" id="id_task" type="text" name="task" value="{{todo.task}}" readonly /></td>
-						<td><a data-toggle="modal" class="btn btn-info" href="{% url 'update_todo_dlg' todo.id %}" data-target="#myTodoModal{{todo.id}}">Update</a></td>
+						<th>Task</th>
+						<th>Status</th>
+						<th>Owner</th>
+						<th>Note</th>
+						<th><br/></th>
+					</tr>
+					{% for todo in todoes %}
+					<tr id="todo_{{todo.id}}">
+						<td class="col-md-2">{{todo.task}}</td>
+						<td class="col-md-1">{{todo.status}}</td>
+						{% if not todo.owner %}
+							<td class="col-md-2">Not Assgined</td>
+						{% else %}
+							<td class="col-md-2">{{todo.owner.username}}</td>
+						{% endif %}
+						{% if todo.note %}
+							<td class="col-md-2">{{todo.note}}</td>
+						{% else %}
+							<td class="col-md-2"><br/></td>
+						{% endif %}
+						<td class="col-md-3">
+							<span style="display: inline;">
+							<form class="form-group update_todo_form" action="#" onsubmit="showUpdateTodoModal({{todo.id}},'{{todo.task}}','{{todo.status}}','{{todo.owner.id}}','{{todo.note}}');return false;" style ='float: left; padding: 5px;'>
+								<input type="submit" value="Edit" class="btn btn-success">
+							</form>
+							<form class="form-group delete_todo_form" action="#" onsubmit="onDeleteTodo(this,{{todo.id}});return false;" style ='float: left; padding: 5px;'>
+								<input type="submit" value="Delete" class="btn btn-danger">
+							</form>
+							</span>
+						</td>
 					</tr>
 					{% endfor %}
-				</table>
-				<a data-toggle="modal" class="add-todo btn btn-info" href="#" data-target="#add_todo_madal">&plus;</a>
-		    </div>
+				</table>	
 		</div>
 	</div>
 	
-	
-	<!-- <div class="modal fade" id="myTodoModal{{todo.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-			</div>
-		</div>
-	</div>	 -->
 	
 	
 	<div class="modal fade" id="add_todo_madal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form class="form-group todo-form" action="#" onsubmit="onSubmitTodo(this);return false;">
+				<form class="form-group todo_form" action="#" onsubmit="onSubmitTodo(this);return false;">
 				{% csrf_token %}
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                      <h4 class="modal-title">Add Todo</h4>
                 </div>
-				<div class="modal-body">
-						
-						<table>			
+				<div class="modal-body">						
+						<table class="table">			
 						<tr>
 						    <th>Task</th>
 						</tr>
@@ -97,17 +229,23 @@ function onSubmitTodo(form){
 						    <th>Status</th> 
 						</tr>
 						<tr>
-							<td><select class="form-control" name="status">
-								<option>pending</option>
-								<option>ongoing</option>
-								<option>done</option>
-							</select><td>
+							<td>
+								<label class="radio-inline"><input type="radio" name="status" value="pending" checked="true">pending</label>
+								<label class="radio-inline"><input type="radio" name="status" value="ongoing">ongoing</label>
+								<label class="radio-inline"><input type="radio" name="status" value="done">done</label>
+							<td>
 						</tr>
 						<tr>
 						    <th>Owner</th>
 						</tr>
 						<tr>
-							<td><input type="text" placeholder="Write a comment..." class="form-control" name="owner" autocomplete="off"></td>
+							<td>
+								{% for participant in participants %}
+								<div class="radio">
+								  <label><input type="radio" name="owner" value="{{participant.id}}">{{participant.username}}</label>
+								</div>
+								{% endfor %}
+							</td>
 						</tr>
 						<tr>
 							<th>Note</th>
@@ -125,5 +263,62 @@ function onSubmitTodo(form){
 				</form>
 			</div> <!-- /.modal-content -->
 		</div> <!-- /.modal-dialog -->
-	</div>
+	</div><!-- /.modal -->
+	
+	<div class="modal fade" id="update_todo_madal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form class="form-group update_todo_form" action="#" onsubmit="onUpdateTodo(this);return false;">
+				{% csrf_token %}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                     <h4 class="modal-title">Update Todo</h4>
+                </div>
+				<div class="modal-body">						
+						<table class="table">			
+						<tr>
+						    <th>Task</th>
+						</tr>
+						<tr>
+							<td><input id="update_task" type="text" placeholder="Write a comment..." class="form-control" name="task" autocomplete="off"></td>
+						</tr>
+						<tr>
+						    <th>Status</th> 
+						</tr>
+						<tr>
+							<td>
+								<label class="radio-inline"><input id="update_status_pending" type="radio" name="status" value="pending">pending</label>
+								<label class="radio-inline"><input id="update_status_ongoing" type="radio" name="status" value="ongoing">ongoing</label>
+								<label class="radio-inline"><input id="update_status_done" type="radio" name="status" value="done">done</label>
+							<td>
+						</tr>
+						<tr>
+						    <th>Owner</th>
+						</tr>
+						<tr>
+							<td>
+								{% for participant in participants %}
+								<div class="radio">
+								  <label><input class="update_owner" type="radio" name="owner" value="{{participant.id}}">{{participant.username}}</label>
+								</div>
+								{% endfor %}
+							</td>
+						</tr>
+						<tr>
+							<th>Note</th>
+						</tr>
+						<tr>
+							<td><input id="update_note" type="textarea" placeholder="Write a comment..." class="form-control" name="note" autocomplete="off"></td>
+						</tr>
+						</table>
+					
+				</div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>			
+				</form>
+			</div> <!-- /.modal-content -->
+		</div> <!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 {% endblock %}

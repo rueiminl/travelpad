@@ -1,0 +1,62 @@
+{% extends "travelpad/base.html" %}
+{% load staticfiles %}
+{% block head %}
+		<title>TravelPad - Profile</title>
+		<style>
+		</style>
+{% endblock %}
+
+{% block nav %}
+{% include "travelpad/nav.html" with profile_active='class="active"' %}
+{% endblock %}
+
+{% block content %}
+
+				<form id="userForm" enctype="multipart/form-data" action="{% url 'update_profile' %}" method="POST">
+					<table>
+						{% for field in user_form.visible_fields %}
+						<tr>
+							<td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
+							{% if field.field.required %}
+								*
+							{% endif %}
+							</label></td>
+							<td>
+								{% if field.label == "Photo" %}
+								<img class="thumbnail" id="modalImg" src="{% url 'get_user_photo' %}/{{user.id}}"  alt="Not uploaded yet" />
+								<input name="clear" type="checkbox">Clear</input>
+								{% endif %}
+								{{field}}
+							</td>
+							<td>
+							{% for error in field.errors %}
+								<p class="errorlabel" for="{{ error }}">{{ error }}</p>
+							{% endfor %}
+							</td>
+						</tr>
+						{% endfor %}
+					</table>
+					{% csrf_token %}
+				</form>
+{% endblock %}
+
+
+{% block tail %}
+	<script>
+		function readURL(input) {
+			if (input.files && input.files[0]) {
+				var reader = new FileReader();
+
+				reader.onload = function (e) {
+					$('#modalImg').attr('src', e.target.result);
+				}
+
+				reader.readAsDataURL(input.files[0]);
+			}
+		}
+
+		$("#id_photo").change(function(){
+			readURL(this);
+		});
+	</script>
+{% endblock %}
