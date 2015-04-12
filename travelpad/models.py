@@ -3,6 +3,13 @@ from django.contrib.auth.models import User
 from datetime import datetime
 from django.utils import timezone
 
+from django.contrib.auth.models import User 
+
+# add as_dict mthod to User
+def as_dict(self):
+    return dict(id=self.id, username=self.username)
+User.add_to_class("as_dict",as_dict)
+
 class Itinerary(models.Model):
 	created_by = models.ForeignKey(User, related_name="itineraries")
 	title = models.CharField(max_length=100)
@@ -85,10 +92,10 @@ class Todo(models.Model):
     #TODO:
     def as_dict(self):
         return dict(
-            created_by=dict(id=self.created_by.id, username=self.created_by.username), 
+            created_by=self.created_by.as_dict(), 
             task=self.task,
             status=self.status, 
-            owner=dict(id=self.owner.id, username=self.owner.username) if self.owner else 'null', 
+            owner=self.owner.as_dict() if self.owner else 'null', 
             note=self.note,
             creation_time=self.creation_time.isoformat(),
             timestamp=self.timestamp.isoformat(),

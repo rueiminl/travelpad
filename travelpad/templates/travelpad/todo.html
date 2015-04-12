@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="todo" ng-app="itinerary" ng-controller="TodoController as todoCtrl">
+<div class="todo">
 	<div class="row">
 		<aside class="col-md-2">
 			<ul class="nav nav-pills nav-stacked">
@@ -28,7 +28,9 @@
 			    <!--  Products Container  -->
 			    <div class="list-group">
 			    	<!--  Product Container  -->
+					<h3>{{todoCtrl.test}}</h3>
 			        <div class="list-group-item" ng-repeat="todo in todoCtrl.todos">
+						
 						
 						<h3>{{todo.task}}</h3>
 						<h3>{{todo.status}}</h3>

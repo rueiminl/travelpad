@@ -8,7 +8,7 @@
   app.controller('ItineraryController', ['$http', function(){
 	var itinerary = this;
 	itinerary.participants = [];
-	$http.get("/participant").success(function(data){
+	$http.get("/participant-json").success(function(data){
 		itinerary.participants = data;
 	});
 	
