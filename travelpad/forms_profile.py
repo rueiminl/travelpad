@@ -6,12 +6,9 @@ from bootstrap3_datetime.widgets import *
 from models import *
 
 MAX_UPLOAD_SIZE = 2500000
-class UserForm(forms.ModelForm):
-	class Meta:
-		model = User
 class TravelPadUserForm(forms.ModelForm):
-	firstname = forms.CharField(max_length=20, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'First Name'}))
-	lastname = forms.CharField(max_length=20, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'Last Name'}))
+	first_name = forms.CharField(max_length=20, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'First Name'}))
+	last_name = forms.CharField(max_length=20, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'Last Name'}))
 	email = forms.CharField(max_length = 40, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'E-Mail'}), validators = [validate_email])
 	class Meta:
 		model = TravelPadUser
