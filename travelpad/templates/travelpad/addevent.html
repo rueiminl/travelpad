@@ -621,10 +621,10 @@ function showeventmodal(title, sdate, stime, edate, etime) {
 <body>  
     
     <div class="container">
-        {% if success %}
+        {% if eventmessage == "success" %}
         <div class="alert alert-success alert-dismissable">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            Your message has been sent successfully.
+            New Event Added
         </div>
         {% endif %}
         <!-- Button trigger modal -->

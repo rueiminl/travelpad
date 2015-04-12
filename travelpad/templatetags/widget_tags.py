@@ -22,10 +22,18 @@ def todolist(itinerary):
     form = TodoForm()
     return {'todoes' : todoes, 'form' : form}
 
-@register.inclusion_tag('travelpad/addevent.html')
-def addevent():
+@register.inclusion_tag('travelpad/addevent.html', takes_context=True)
+def addevent(context):
+    request = context['request']
     attractionform = AttractionForm(prefix = "a_")
     hotelform = HotelForm(prefix = "h_")
     transportationform = TransportationForm(prefix = "t_")
     restaurantform = RestaurantForm(prefix = "r_")
-    return {'attractionform' : attractionform, 'hotelform' : hotelform, 'transportationform' : transportationform, 'restaurantform' : restaurantform}
+    if 'addevent' in request.session:
+        print request.session["addevent"]
+    if 'addevent' in request.session and request.session["addevent"] == 1:
+        eventmessage = "success"
+        del request.session["addevent"]
+    else:
+        eventmessage = "nothing"
+    return {'attractionform' : attractionform, 'hotelform' : hotelform, 'transportationform' : transportationform, 'restaurantform' : restaurantform, "eventmessage" : eventmessage}

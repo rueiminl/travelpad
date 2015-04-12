@@ -70,7 +70,6 @@ def add_todo(request):
         entry = Todo(created_by=request.user, related_itinerary=itinerary)
         todo_form = TodoForm(request.POST, instance=entry)
         if not todo_form.is_valid():
-            print todo_form.errors
             errors.append('You must enter content to post.')
             return HttpResponse(json.dumps({'errors':errors}), content_type='application/json')
         else:
@@ -80,6 +79,33 @@ def add_todo(request):
         return HttpResponseNotFound('<h1>Todo not found</h1>')
     except Exception as inst:
         print inst
+
+@login_required
+@transaction.atomic
+def update_todo(request, todo_id):
+    errors = []   
+    try:
+        entry = Todo.objects.get(id=todo_id)
+        todo_form = TodoForm(request.POST, instance=entry)
+        if not todo_form.is_valid():
+            print todo_form.errors
+            errors.append('You must enter content to post.')
+            return HttpResponse(json.dumps({'errors':errors}), content_type='application/json')
+        else:
+            todo_form.save()
+        return get_todo_json(request)
+    except ObjectDoesNotExist:
+        return HttpResponseNotFound('<h1>Todo not found</h1>')
+    except Exception as inst:
+        print inst
+        
+@login_required
+@transaction.atomic
+def delete_todo(request, todo_id):
+    todo = get_object_or_404(Todo, id=todo_id)
+    todo.delete();
+    return get_todo_json(request)
+
 
 @login_required
 def get_todo_json(request):
@@ -98,17 +124,20 @@ def get_todo_json(request):
         
         todoes_json = [] 
         for todo in todoes:
-            todoes_json.append(
-                {'id' : todo.id,
+            todo_json = {'id' : todo.id,
                 'created_by_username':todo.created_by.username, 
                 'created_by_uid': todo.created_by.id, 
                 'task': todo.task,
                 'status': todo.status,
-                'onwer_username':todo.owner.username, 
-                'onwer_uid': todo.owner.id,
+                # 'onwer_username':todo.owner.username,
+#                 'onwer_uid': todo.owner.id,
                 'note': todo.note,
                 'creation_time': todo.creation_time.isoformat(),
-            })
+            }
+            if todo.owner:
+                todo_json['onwer_username'] = todo.owner.username
+                todo_json['onwer_uid'] = todo.owner.id
+            todoes_json.append(todo_json)
         context['todoes'] = todoes_json
         response_text = json.dumps(context)
         return HttpResponse(response_text, content_type='application/json')
