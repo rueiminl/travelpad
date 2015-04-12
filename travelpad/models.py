@@ -82,6 +82,17 @@ class Todo(models.Model):
     note = models.CharField(max_length=300, blank=True)
     creation_time = models.DateTimeField(auto_now_add=True)
     timestamp = models.DateTimeField(auto_now=True)
+    #TODO:
+    def as_dict(self):
+        return dict(
+            created_by=dict(id=self.created_by.id, username=self.created_by.username), 
+            task=self.task,
+            status=self.status, 
+            owner=dict(id=self.owner.id, username=self.owner.username) if self.owner else 'null', 
+            note=self.note,
+            creation_time=self.creation_time.isoformat(),
+            timestamp=self.timestamp.isoformat(),
+        )
     
 class Cost(models.Model):
     created_by = models.ForeignKey(User,related_name="creatcost")

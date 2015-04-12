@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
+from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404, HttpResponseNotFound
@@ -43,22 +44,39 @@ def schedule(request):
 def todo(request):
     if 'itinerary_id' not in request.session:
         return redirect(reverse(''))
-    try:
-        itinerary_id = request.session['itinerary_id']
-        itinerary = Itinerary.objects.get(id=itinerary_id)
-        context = {}
-        todoes = Todo.objects.filter(related_itinerary=itinerary)
-        if todoes:
-            request.session['todo_last_update'] = max(todo.creation_time for todo in todoes).isoformat()
-        context['todoes'] = todoes
-        context['participants'] = itinerary.participants.all()
-        # context['todo_form'] = TodoForm()
-        print 'get ' + str(len(todoes)) + ' todoes'
-        return render(request, 'travelpad/todo.html', context)
-    except ObjectDoesNotExist:
-        return HttpResponseNotFound('<h1>Todo not found</h1>')
-    except Exception as inst:
-        print inst
+    return render(request, 'travelpad/todo.html', {})
+# def todo(request):
+#     if 'itinerary_id' not in request.session:
+#         return redirect(reverse(''))
+#     try:
+#         itinerary_id = request.session['itinerary_id']
+#         itinerary = Itinerary.objects.get(id=itinerary_id)
+#         context = {}
+#         todoes = Todo.objects.filter(related_itinerary=itinerary)
+#         if todoes:
+#             request.session['todo_last_update'] = max(todo.creation_time for todo in todoes).isoformat()
+#         context['todoes'] = todoes
+#         context['participants'] = itinerary.participants.all()
+#         # context['todo_form'] = TodoForm()
+#         print 'get ' + str(len(todoes)) + ' todoes'
+#         return render(request, 'travelpad/todo.html', context)
+#     except ObjectDoesNotExist:
+#         return HttpResponseNotFound('<h1>Todo not found</h1>')
+#     except Exception as inst:
+#         print inst
+
+@login_required
+def todo_json(request):
+    context = {}
+    itinerary_id = request.session['itinerary_id']
+    itinerary = Itinerary.objects.get(id=itinerary_id)
+    
+    if request.method == 'GET':
+        todos = Todo.objects.filter(related_itinerary=itinerary)
+        results = [todo.as_dict() for todo in todos]
+        response_text = json.dumps(results)
+        return HttpResponse(response_text, content_type='application/json')
+
 
 @login_required
 @transaction.atomic
