@@ -11,10 +11,9 @@
 	
 	this.reload = function(){
 		$http.get("/todo-json").success(function(data){
-			// console.log('reload');
 			t.todos = data;
 		}).error(function(data) {
-	    	bootstrap_alert.error(data.errors);
+	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
 	    });
 	};
 	//initialize
@@ -29,18 +28,18 @@
 		$http.post("/todo-json", t.newTodo).success(function(data){
 			t.todos.push(data);
 			t.newTodo = {};
-			bootstrap_alert.success("Todo added");
+			$.toaster({ priority : 'success', title : 'Success', message : 'Todo added'});
 		}).error(function(data) {
-    		bootstrap_alert.error(data.errors);
+			$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
     	});
 	};
 	
 	this.deleteTodo = function(todo){
 		$http.delete("/todo-json/" + todo.id).success(function(data){
 			t.todos.splice(t.todos.indexOf(todo),1); //delete an item in array
-			bootstrap_alert.success("Todo deleted");
+			$.toaster({ priority : 'success', title : 'Success', message : 'Todo deleted'});
 		}).error(function(data) {
-    		bootstrap_alert.error(data.errors);
+    		$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
     	});
 	};
 	
@@ -57,9 +56,9 @@
 			    if (t.todos[i].id == t.selectedTodo.id)
 			        t.todos[i] = data; //replace an item in array
 			}
-			bootstrap_alert.success("Todo updated");
+			$.toaster({ priority : 'success', title : 'Success', message : 'Todo updated'});
 		}).error(function(data) {
-    		bootstrap_alert.error(data.errors);
+    		$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
     	});
 	};
 	
