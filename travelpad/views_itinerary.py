@@ -95,14 +95,16 @@ def todo_json(request):
     elif request.method == 'POST':
         entry = Todo(created_by=request.user, related_itinerary=itinerary)
         in_data = json.loads(request.body)
-        todo_form = TodoForm(data=
+        form = TodoForm(data=
             {'task': in_data.get('task'),
             'status': in_data.get('status'),
             'owner': in_data.get('owner').get('id'),
             'note': in_data.get('note')}, instance=entry)
-        if todo_form.is_valid():
-            todo_form.save()            
-            return HttpResponse({}, content_type='application/json')
+        if form.is_valid():
+            new_todo = form.save()  
+            results = new_todo.as_dict()
+            response_text = json.dumps(results)          
+            return HttpResponse(response_text, content_type='application/json')
         else:
             errors = []
             errors.append('Woops! Something wrong.')
@@ -113,20 +115,37 @@ def todo_json(request):
 def todo_json_id(request, todo_id):
     itinerary_id = request.session['itinerary_id']
     itinerary = Itinerary.objects.get(id=itinerary_id)  
-    if request.method == 'PUT':
-        todos = Todo.objects.filter(related_itinerary=itinerary)
-        results = [todo.as_dict() for todo in todos]
-        response_text = json.dumps(results)
-        return HttpResponse(response_text, content_type='application/json')
-    elif request.method == 'DELETE':
-        try:
-            Todo.objects.filter(id=todo_id).delete()
+    try:
+        todo = Todo.objects.get(id=todo_id)
+        if request.method == 'PUT':
+            in_data = json.loads(request.body)
+            print in_data
+            print todo
+            form = TodoForm(data=
+                {'task': in_data.get('task'),'id':todo.id,
+                'status': in_data.get('status'),
+                'owner': in_data.get('owner').get('id'),
+                'note': in_data.get('note')}, instance=todo)
+            print form
+            if form.is_valid():
+                new_todo = form.save()  
+                results = new_todo.as_dict()
+                response_text = json.dumps(results)          
+                return HttpResponse(response_text, content_type='application/json')
+            else:
+                print form
+                errors = []
+                errors.append('Woops! Something wrong.')
+                return HttpResponseBadRequest(json.dumps({'errors':errors}), content_type='application/json')
+        elif request.method == 'DELETE':
+            todo.delete()
             return HttpResponse({}, content_type='application/json')
-        except ObjectDoesNotExist:
-            errors = []
-            errors.append('Todo not found.')
-            return HttpResponseNotFound(json.dumps({'errors':errors}), content_type='application/json') 
-
+    except ObjectDoesNotExist:
+        errors = []
+        errors.append('Todo not found.')
+        return HttpResponseNotFound(json.dumps({'errors':errors}), content_type='application/json')
+    except Exception as inst:
+        print inst
 
 @login_required
 @transaction.atomic

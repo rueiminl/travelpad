@@ -31,7 +31,7 @@
 			    <!--  Products Container  -->
 			    <div class="list-group">
 			    	<!--  Product Container  -->
-			        <a href="#" class="list-group-item" ng-repeat="todo in todoCtrl.todos" ng-click="showUpdateTodo($index, todo)">
+			        <div class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'">
 						
 <!--						<h4 class="list-group-item-heading">{{todo.task}}</h4>
 						<p class="list-group-item-text">{{todo.status}}</p> -->
@@ -41,10 +41,10 @@
 						<h3>{{todo.owner.username}}</h3>
 						<h3>{{todo.note}}</h3>
 						
-						<!-- <form name="updateTodoForm" ng-submit="todoCtrl.updateTodo(todo)" style ='float: left; padding: 5px;'>
+						<form name="showTodoForm" ng-submit="todoCtrl.showUpdateTodo(todo)">
 							<input type="submit" value="Edit" class="btn btn-success">
-						</form> -->
-						<form name="deleteTodoForm" ng-submit="todoCtrl.deleteTodo($index, todo.id)">
+						</form>
+						<form name="deleteTodoForm" ng-submit="todoCtrl.deleteTodo(todo)">
 							<input type="submit" value="Delete" class="btn btn-danger">
 						</form>
 						
@@ -114,30 +114,26 @@
 				<div class="modal-body">	
 						<!-- Task -->
 						<fieldset class="form-group">
-							<textarea ng-model="todoCtrl.newTodo.task" class="form-control" placeholder="Write a task" title="Task" required>
-								{{todoCtrl.newTodo.task}}
-							</textarea>
+							<textarea ng-model="todoCtrl.selectedTodo.task" class="form-control" placeholder="Write a task" title="Task" required></textarea>
 						</fieldset>
 						
 						<!-- Select Status -->
 						<fieldset class="form-group">
-							<select ng-model="todoCtrl.newTodo.status" class="form-control" ng-options="status for status in ['pending','ongoing','done']" title="Onwer" required>
+							<select ng-model="todoCtrl.selectedTodo.status" class="form-control" ng-options="status for status in ['pending','ongoing','done']" title="Onwer" required>
 						    <option value="">Select current Status</option>
 							</select>
 						</fieldset>
 						
 						<!-- Select Owner -->
 						<fieldset class="form-group" ng-controller="ParticipantController as itCtrl">
-							<select ng-model="todoCtrl.newTodo.owner" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants" title="Onwer" required>
+							<select ng-model="todoCtrl.selectedTodo.owner" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants track by owner.id" title="Onwer" required>
 						    <option value="">Select Owner</option>
 							</select>
 						</fieldset>
 						
 						<!-- Note -->
 						<fieldset class="form-group">
-							<textarea ng-model="todoCtrl.newTodo.note" class="form-control" placeholder="Write a note" title="Note">
-								{{todoCtrl.newTodo.task}}
-							</textarea>
+							<textarea ng-model="todoCtrl.selectedTodo.note" class="form-control" placeholder="Write a note" title="Note"></textarea>
 						</fieldset>
 						
 					
@@ -151,5 +147,6 @@
 		</div> <!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 	
+</div> <!-- end div todo -->	
 {% endverbatim %}	
 {% endblock %}
