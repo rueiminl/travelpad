@@ -3,15 +3,13 @@
 
   app.controller('TodoController', ['$http', function($http){
 	var ctrl = this;
-	ctrl.todos = [{"task":"test"}];
+	ctrl.todos = [];
 	ctrl.newTodo = {};
-	ctrl.test = "test"
-	console.log(ctrl.todos);
-	// $http.get("/todo-json").success(function(data){
-// 		ctrl.todos = data;
-// 		console.log(ctrl.todos);
-// 		console.log(ctrl.todos[0].task);
-// 	});
+	$http.get("/todo-json").success(function(data){
+		ctrl.todos = data;
+		console.log(ctrl.todos);
+		console.log(ctrl.todos[0].task);
+	});
 
 	this.addTodo = function(product){
 		$http.post("/todo-json").success(function(data){

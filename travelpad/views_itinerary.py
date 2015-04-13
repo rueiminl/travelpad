@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, Http404, HttpResponseNotFound
+from django.http import HttpResponse, Http404, HttpResponseNotFound, HttpResponseBadRequest
 from django.db import transaction
 from travelpad.models import *
 from travelpad.forms import *
@@ -29,8 +29,11 @@ def participant_json(request):
         participants = itinerary.participants.all()
         results = [participant.as_dict() for participant in participants]
         response_text = json.dumps(results)
-        print response_text
         return HttpResponse(response_text, content_type='application/json')
+    # elif request.method == 'POST':
+#         #TODO:
+#     elif request.method == 'DETELE':
+#         #TODO:
     
 @login_required
 def itinerary(request, itinerary_id):
@@ -80,16 +83,49 @@ def todo(request):
 #         print inst
 
 @login_required
+@transaction.atomic
 def todo_json(request):
-    context = {}
     itinerary_id = request.session['itinerary_id']
-    itinerary = Itinerary.objects.get(id=itinerary_id)
-    
+    itinerary = Itinerary.objects.get(id=itinerary_id)  
     if request.method == 'GET':
         todos = Todo.objects.filter(related_itinerary=itinerary)
         results = [todo.as_dict() for todo in todos]
         response_text = json.dumps(results)
         return HttpResponse(response_text, content_type='application/json')
+    elif request.method == 'POST':
+        entry = Todo(created_by=request.user, related_itinerary=itinerary)
+        in_data = json.loads(request.body)
+        todo_form = TodoForm(data=
+            {'task': in_data.get('task'),
+            'status': in_data.get('status'),
+            'owner': in_data.get('owner').get('id'),
+            'note': in_data.get('note')}, instance=entry)
+        if todo_form.is_valid():
+            todo_form.save()            
+            return HttpResponse({}, content_type='application/json')
+        else:
+            errors = []
+            errors.append('Woops! Something wrong.')
+            return HttpResponseBadRequest(json.dumps({'errors':errors}), content_type='application/json')
+ 
+@login_required
+@transaction.atomic
+def todo_json_id(request, todo_id):
+    itinerary_id = request.session['itinerary_id']
+    itinerary = Itinerary.objects.get(id=itinerary_id)  
+    if request.method == 'PUT':
+        todos = Todo.objects.filter(related_itinerary=itinerary)
+        results = [todo.as_dict() for todo in todos]
+        response_text = json.dumps(results)
+        return HttpResponse(response_text, content_type='application/json')
+    elif request.method == 'DELETE':
+        try:
+            Todo.objects.filter(id=todo_id).delete()
+            return HttpResponse({}, content_type='application/json')
+        except ObjectDoesNotExist:
+            errors = []
+            errors.append('Todo not found.')
+            return HttpResponseNotFound(json.dumps({'errors':errors}), content_type='application/json') 
 
 
 @login_required

@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^update-todo/(?P<todo_id>\d+)$', 'travelpad.views_itinerary.update_todo', name = 'update-todo'),
     url(r'^delete-todo/(?P<todo_id>\d+)$', 'travelpad.views_itinerary.delete_todo', name = 'delete-todo'),
     url(r'^todo-json$', 'travelpad.views_itinerary.todo_json', name = 'todo-json'),
+    url(r'^todo-json/(?P<todo_id>\d+)$', 'travelpad.views_itinerary.todo_json_id', name = 'todo-json-id'),
     
     url(r'^participant-json$', 'travelpad.views_itinerary.participant_json', name = 'participant-json'),
     

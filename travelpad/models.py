@@ -6,9 +6,9 @@ from django.utils import timezone
 from django.contrib.auth.models import User 
 
 # add as_dict mthod to User
-def as_dict(self):
+def user_as_dict(self):
     return dict(id=self.id, username=self.username)
-User.add_to_class("as_dict",as_dict)
+User.add_to_class("as_dict",user_as_dict)
 
 class Itinerary(models.Model):
 	created_by = models.ForeignKey(User, related_name="itineraries")
@@ -92,6 +92,7 @@ class Todo(models.Model):
     #TODO:
     def as_dict(self):
         return dict(
+            id=self.id,
             created_by=self.created_by.as_dict(), 
             task=self.task,
             status=self.status, 
