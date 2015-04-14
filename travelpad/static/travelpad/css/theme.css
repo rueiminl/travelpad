@@ -1,0 +1,13 @@
+.ng-invalid.ng-dirty{
+    border-color:red;
+}
+
+.ng-valid.ng-dirty{
+    border-color:green;
+}
+
+/*.alert_placeholder{
+	position: absolute;
+	z-index: 100;
+	opacity: 0.8;
+}*/

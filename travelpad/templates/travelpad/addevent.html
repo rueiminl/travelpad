@@ -402,8 +402,7 @@ var ready; // Where to store the function
       );
       $("#mybutton2").click( function()
         {
-            //editevent(1);
-            editevent(13);
+            editevent(4);
         }
       );
       $("#mybutton3").click( function()
@@ -413,9 +412,23 @@ var ready; // Where to store the function
       );
       $("#mybutton4").click( function()
         {
-            editeventtime(4, "11:30", "12:30");
+            var a = function(){console.log("this is a");};
+            editeventtime(1, "11:30", "12:30", a, a);
         }
       );
+      $("#deletebtn").click( function()
+        {
+            deleteevent();
+        }
+      );
+        //$("#Event_Form").submit(function() { return false; });
+        /*$('#savebtn, #proposebtn').click(function(){
+            console.log("tttt");
+            $form = $("#Event_Form");
+            $.post('/eventedit', $form.serialize() + "&submit="+ $(this).attr("value"), function(data) {
+                // do something with response (data)
+            });
+        });*/
       $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         $('#tabName').val($('.nav-tabs .active').text());
       });
@@ -513,7 +526,7 @@ function editevent(id) {
     });
 };
 
-function editeventtime(id,start,end) {
+function editeventtime(id,start,end,success_callback,error_callback) {
     $.ajax({
         url: "./editeventtime",
         data: {
@@ -523,9 +536,8 @@ function editeventtime(id,start,end) {
         },
         type:'POST',
         dataType: 'json',
-        success: function(items){
-
-        }
+        success: success_callback,
+        error: error_callback,
     });
 };
 
@@ -622,10 +634,15 @@ function showeventmodal(title, sdate, stime, edate, etime) {
     
     <div class="container">
         {% if eventmessage == "success" %}
+        {% comment %}
         <div class="alert alert-success alert-dismissable">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             New Event Added
         </div>
+        {% endcomment %}
+        <script>
+            $.toaster({ priority : 'success', title : 'Success', message : 'New event added'});
+        </script>
         {% endif %}
         <!-- Button trigger modal -->
         <!--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" href="{% url 'eventedit' %}">
@@ -805,9 +822,9 @@ function showeventmodal(title, sdate, stime, edate, etime) {
                     <input id="tabName" name="tabName" type="hidden">
                     <input id="eventId" name="eventId" type="hidden">
                     <div class="modal-footer">
-                        <button type="button" id="deletebtn" class="btn btn-danger" onclick="deleteevent()" style="display: none;">Delete Event</button>
-                        <button type="submit" name="save" class="btn btn-primary">Save Event</button>
-                        <button type="submit" name="propose" class="btn btn-primary">Propose Event</button>
+                        <button type="button" id="deletebtn" class="btn btn-danger" style="display: none;">Delete Event</button>
+                        <button type="submit" id="savebtn" name="save" class="btn btn-primary" value = "save">Save Event</button>
+                        <button type="submit" id="proposebtn" name="propose" class="btn btn-primary" value = "propose">Propose Event</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>			<!-- /modal-footer -->
                     </form>

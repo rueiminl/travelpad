@@ -2,12 +2,16 @@
 
 {% block head %}
 {% load staticfiles %}	
-<script src="{% static 'travelpad/js/app.js' %}" type="text/javascript"></script>
-<script src="{% static 'travelpad/js/todo.js' %}" type="text/javascript"></script>	
+<!-- <script src="{% static 'travelpad/js/app.js' %}" type="text/javascript"></script> -->
+<script src="{% static 'travelpad/js/todo.js' %}" type="text/javascript"></script>
+<script src="{% static 'travelpad/js/participant.js' %}" type="text/javascript"></script>
 {% endblock %}
 
 {% block content %}
-<div class="todo">
+
+<!-- here you can write angularjs template tags. -->
+    
+<div class="todo" ng-controller="TodoController as todoCtrl">
 	<div class="row">
 		<aside class="col-md-2">
 			<ul class="nav nav-pills nav-stacked">
@@ -20,32 +24,31 @@
 			</ul>			        
 			
 		</aside>
+		{% verbatim %} 
 		<div class="col-md-10">
-			<div class="alert_placeholder">
-			</div>
 				<a data-toggle="modal" class="add-todo btn btn-info" href="#" data-target="#add_todo_madal">&plus;</a>
 				
 			    <!--  Products Container  -->
 			    <div class="list-group">
 			    	<!--  Product Container  -->
-					<h3>{{todoCtrl.test}}</h3>
-			        <div class="list-group-item" ng-repeat="todo in todoCtrl.todos">
+			        <div class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'">
 						
+<!--						<h4 class="list-group-item-heading">{{todo.task}}</h4>
+						<p class="list-group-item-text">{{todo.status}}</p> -->
 						
-						<h3>{{todo.task}}</h3>
+						<h4>{{todo.task}}</h4>
 						<h3>{{todo.status}}</h3>
 						<h3>{{todo.owner.username}}</h3>
 						<h3>{{todo.note}}</h3>
 						
-						<span style="display: inline;">
-						<!-- <form name="updateTodoForm" ng-submit="todoCtrl.updateTodo(todo)" style ='float: left; padding: 5px;'>
+						<form name="showTodoForm" ng-submit="todoCtrl.showUpdateTodo(todo)">
 							<input type="submit" value="Edit" class="btn btn-success">
-						</form> -->
-						<form name="deleteTodoForm" ng-submit="todoCtrl.deleteTodo(todo)" style ='float: left; padding: 5px;'>
+						</form>
+						<form name="deleteTodoForm" ng-submit="todoCtrl.deleteTodo(todo)">
 							<input type="submit" value="Delete" class="btn btn-danger">
 						</form>
 						
-					</div>
+					</a>
 				</div>
 				
 				
@@ -53,7 +56,7 @@
 	</div>
 	
 	
-	
+	<!-- Add Todo Modal -->
 	<div class="modal fade" id="add_todo_madal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -61,8 +64,8 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                      <h4 class="modal-title">Add Todo</h4>
                 </div>
+				<form name="addTodoForm" ng-submit="addTodoForm.$valid && todoCtrl.addTodo()" novalidate>
 				<div class="modal-body">	
-					<form name="addTodoForm" ng-submit="addTodoForm.$valid && todoCtrl.addTodo()" novalidate>
 						<!-- Task -->
 						<fieldset class="form-group">
 							<textarea ng-model="todoCtrl.newTodo.task" class="form-control" placeholder="Write a task" title="Task" required></textarea>
@@ -76,7 +79,7 @@
 						</fieldset>
 						
 						<!-- Select Owner -->
-						<fieldset class="form-group" ng-controller="ItineraryController as itCtrl">
+						<fieldset class="form-group" ng-controller="ParticipantController as itCtrl">
 							<select ng-model="todoCtrl.newTodo.owner" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants" title="Onwer" required>
 						    <option value="">Select Owner</option>
 							</select>
@@ -87,16 +90,63 @@
 							<textarea ng-model="todoCtrl.newTodo.note" class="form-control" placeholder="Write a note" title="Note"></textarea>
 						</fieldset>
 						
-					</form>
+					
 				</div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Add</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>			
-				
+				</form>
 			</div> <!-- /.modal-content -->
 		</div> <!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 	
 	
+	<!-- Update Todo Modal -->
+	<div class="modal fade" id="update_todo_madal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                     <h4 class="modal-title">Update Todo</h4>
+                </div>
+				<form name="updateTodoForm" ng-submit="updateTodoForm.$valid && todoCtrl.updateTodo()" novalidate>
+				<div class="modal-body">	
+						<!-- Task -->
+						<fieldset class="form-group">
+							<textarea ng-model="todoCtrl.selectedTodo.task" class="form-control" placeholder="Write a task" title="Task" required></textarea>
+						</fieldset>
+						
+						<!-- Select Status -->
+						<fieldset class="form-group">
+							<select ng-model="todoCtrl.selectedTodo.status" class="form-control" ng-options="status for status in ['pending','ongoing','done']" title="Onwer" required>
+						    <option value="">Select current Status</option>
+							</select>
+						</fieldset>
+						
+						<!-- Select Owner -->
+						<fieldset class="form-group" ng-controller="ParticipantController as itCtrl">
+							<select ng-model="todoCtrl.selectedTodo.owner" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants track by owner.id" title="Onwer" required>
+						    <option value="">Select Owner</option>
+							</select>
+						</fieldset>
+						
+						<!-- Note -->
+						<fieldset class="form-group">
+							<textarea ng-model="todoCtrl.selectedTodo.note" class="form-control" placeholder="Write a note" title="Note"></textarea>
+						</fieldset>
+						
+					
+				</div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>			
+				</form>
+			</div> <!-- /.modal-content -->
+		</div> <!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+</div> <!-- end div todo -->	
+{% endverbatim %}	
 {% endblock %}
