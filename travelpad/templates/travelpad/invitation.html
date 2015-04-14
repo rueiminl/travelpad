@@ -2,26 +2,36 @@
 {% load staticfiles %}
 {% block head %}
 <script src="{% static 'travelpad/js/participant.js' %}" type="text/javascript"></script>
+<style>
+	.thumbnail {
+		width: 128px;
+		float: left;
+	}
+	.text_line {
+		clear: both;
+		margin-bottom: 2px;
+	}
+</style>
 {% endblock %}
 
 {% block content %}
+
+<h3 class="text-line">Invite:</h3>
+<form id="invitationForm" action="invite" method="POST">
+	<input type="text" name="username">
+	<input type="submit">
+	{% csrf_token %}
+</form>
+
+<h3>Participants</h3>
 {% verbatim %} 
 <div ng-controller="ParticipantController as itCtrl">
-	<ul>
-		<li ng-repeat="participant in itCtrl.participants">
-			<img src="/get_user_photo/{{ participant.id }}"> {{ participant.username }}
-		</li>
-	</ul>
+	<div ng-repeat="participant in itCtrl.participants">
+		<img class="thumbnail" title="{{participant.username}}" src="/get_user_photo/{{ participant.id }}" alt="No picture yet"> 
+	</div>
 </div>
 {% endverbatim %}	
 
-<div>
-	<form id="invitationForm" action="invite" method="POST">
-		<input type="text" name="username">
-		<input type="submit">
-		{% csrf_token %}
-	</form>
-</div>
 {% endblock %}
 
 {% block tail %}
