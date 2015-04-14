@@ -64,9 +64,13 @@ class Event(models.Model):
             "starttime": timezone.localtime(self.start_datetime).strftime("%H:%M"),
             "enddate": timezone.localtime(self.end_datetime).strftime("%Y-%m-%d"),
             "endtime": timezone.localtime(self.end_datetime).strftime("%H:%M"),
-            "place": self.place_name,
+            'start': timezone.localtime(self.start_datetime).isoformat(), #ISO8601
+            'end': timezone.localtime(self.end_datetime).isoformat(),
+            #"place": self.place_name,
+            "place": {"id": self.place_id, "name": self.place_name, "latitude": self.place_latitude, "longitude": self.place_longitude},
             "note": self.note,
             "type": self.type,
+            "transportation": self.pre.as_dict() if hasattr(self,'pre') else 'null',
             #"time": timezone.localtime(self.time).strftime("%b. %d, %Y, %I:%M %p"),
         }
         
@@ -76,6 +80,7 @@ class Transportation(models.Model):
     note = models.CharField(max_length=60, blank=True)
     start_datetime = models.DateTimeField(null=True, blank=True)
     end_datetime = models.DateTimeField(null=True, blank=True)
+    related_itinerary = models.ForeignKey(Itinerary)
     route = models.CharField(max_length=100, blank=True)
     source = models.OneToOneField(Event, related_name="pre")
     destination = models.OneToOneField(Event, related_name="next")
@@ -87,6 +92,8 @@ class Transportation(models.Model):
             "starttime": timezone.localtime(self.start_datetime).strftime("%H:%M"),
             "enddate": timezone.localtime(self.end_datetime).strftime("%Y-%m-%d"),
             "endtime": timezone.localtime(self.end_datetime).strftime("%H:%M"),
+            'start': timezone.localtime(self.start_datetime).isoformat(), #ISO8601
+            'end': timezone.localtime(self.end_datetime).isoformat(),
             "source": self.source.place_name,
             "destination": self.destination.place_name,
             "note": self.note,
@@ -123,11 +130,28 @@ class Cost(models.Model):
     status = models.CharField(max_length=64)
     related_event = models.ForeignKey(Event, blank=True,null=True)
     related_itinerary = models.ForeignKey(Itinerary)
-    owner = models.CharField(max_length=64, blank=True)
+    owner = models.ForeignKey(User, blank=True, null=True, related_name='owncost')
     note = models.CharField(max_length=300, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     creation_time = models.DateTimeField(auto_now_add=True)
     timestamp = models.DateTimeField(auto_now=True)
+    def as_dict(self):
+        try:
+            ownername = self.owner.username
+        except AttributeError:
+            ownername = ""
+    
+        return {
+            "id": self.id,
+            "participant": [user.username for user in self.participant.all()],
+            "isall": self.isall,
+            "status": self.status,
+            "related_event": self.related_event.title,
+            "owner": ownername,
+            "note": self.note,
+            "amount": float(self.amount),
+            "creation_time": self.creation_time.isoformat(),
+        }
 
 class Message(models.Model):
     content = models.CharField(max_length=160)

@@ -1,3 +1,12 @@
+// Functions:
+//  1. initialize(): create a google map object and initiallize all kinds of states.
+//  2. focusCenter(latitude, longitude): Focus the google map view with latitude and longitude
+//  3. setAllMarkers(placeArrTmp): create marker and route of particular time slots. Data is passed by JSON Value
+//  4. getTime(src, dest, mode): get the time from src to dest via mode (transportation mode)
+//  5. getCityItinerary(): For the start of itinerary, get the city's latLng via google autocomplete.
+
+
+
 var directionsService = new google.maps.DirectionsService();
 var map;
 var placeArr = [];
@@ -12,8 +21,7 @@ var autocomplete;
 function initialize() {
     //deleteMarkers();
     directionsDisplay = new google.maps.DirectionsRenderer();
-    placeArrTmp = [[40.442492, -79.94255299999998], [40.444353, -79.96083499999997], [-33.856898, 151.215281], [-37.814107, 144.96327999999994]
-    ,[25.033493000000000000, 121.56410099999994]];
+    placeArrTmp = [[40.442492, -79.94255299999998], [40.444353, -79.96083499999997]];
     placeArr = [];
     markers = [];
    // for(var i=0; i<arr.length; i++){
@@ -34,19 +42,6 @@ function initialize() {
     map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);
     setAllMarkers(placeArrTmp);
     
-    //getCityItinerary();
-    var input = (document.getElementById('autocomplete'));
-    var options = {
-      types: ['(cities)']
-    };
-    autocomplete = new google.maps.places.Autocomplete(input, options);
-    google.maps.event.addListener(autocomplete, 'place_changed', function() {
-      var place = autocomplete.getPlace();
-      if (!place.geometry) {
-        return;
-      }
-      document.getElementById("abc").innerHTML = place.geometry.location;
-    });
 }
 
 function getCityItinerary(){
@@ -165,20 +160,42 @@ function clearMarkers(){
   document.getElementById("directions_panel").innerHTML = "";
 }   
 
-function focusCenter(focusLatLng){
+function focusCenter(latitude, longitude){
   //var myLatlng = new google.maps.LatLng(focusLatLng[0], focusLatLng[1]);
-  var myLatlng = new google.maps.LatLng(25.033493000000000000, 121.56410099999994);
+  var myLatlng = new google.maps.LatLng(latitude, longitude);
   map.setCenter(myLatlng);
 }   
 
+// Set new places
+// JSON format for placeArrTmp:
+// {"placeInfos": [
+//  {
+//    place_latitude:
+//    place_longitude:  
+//    place_name:
+//  },
+//  {
+//    place_latitude:
+//    place_longitude:  
+//    place_name:
+//  }
+// ]
+// }
+
 function setAllMarkers(placeArrTmp){
   clearMarkers();
-  if(placeArrTmp == null || placeArrTmp.length == 0){
-    return;
+  if(placeArrTmp == null || placeArrTmp.length == 0)
+      return;
+  var myPlace = JSON.parse(placeArrTmp);
+
+  for(var i=0; i<myPlace.placeInfos.length; i++){
+    var placeInfo = myPlace.placeInfos[i];
+    placeArr.push(new google.maps.LatLng(placeInfo.place_latitude, placeInfo.place_longitude));
   }
-  for(i=0; i<placeArrTmp.length; i++){
-    placeArr.push(new google.maps.LatLng(placeArrTmp[i][0], placeArrTmp[i][1]));
-  }
+
+  //for(i=0; i<placeArrTmp.length; i++){
+  //  placeArr.push(new google.maps.LatLng(placeArrTmp[i][0], placeArrTmp[i][1]));
+  //}
   // start point
   var start = placeArr[0];
   var marker = new google.maps.Marker({

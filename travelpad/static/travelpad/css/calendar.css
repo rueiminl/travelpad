@@ -1,0 +1,19 @@
+/*#calendar {
+	max-width: 900px;
+	margin: 0 auto;
+}*/
+.attraction{
+	background: red;
+}
+.hotel{
+	background: yellow;
+}
+.restaurant{
+	background: orange;
+}
+.transportation{
+	background: blue;
+}
+/*.fc-bgevent{
+
+}*/
