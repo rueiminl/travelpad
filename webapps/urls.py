@@ -8,4 +8,5 @@ urlpatterns = patterns('',
     url(r'', include('travelpad.urls_map')),
     url(r'', include('travelpad.urls_login')),
     url(r'', include('travelpad.urls_debug')),
+    url(r'', include('travelpad.urls_expense')),
 )

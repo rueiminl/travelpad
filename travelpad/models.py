@@ -124,11 +124,28 @@ class Cost(models.Model):
     status = models.CharField(max_length=64)
     related_event = models.ForeignKey(Event, blank=True,null=True)
     related_itinerary = models.ForeignKey(Itinerary)
-    owner = models.CharField(max_length=64, blank=True)
+    owner = models.ForeignKey(User, blank=True, null=True, related_name='owncost')
     note = models.CharField(max_length=300, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     creation_time = models.DateTimeField(auto_now_add=True)
     timestamp = models.DateTimeField(auto_now=True)
+    def as_dict(self):
+        try:
+            ownername = self.owner.username
+        except AttributeError:
+            ownername = ""
+    
+        return {
+            "id": self.id,
+            "participant": [user.username for user in self.participant.all()],
+            "isall": self.isall,
+            "status": self.status,
+            "related_event": self.related_event.title,
+            "owner": ownername,
+            "note": self.note,
+            "amount": float(self.amount),
+            "creation_time": self.creation_time.isoformat(),
+        }
 
 class Message(models.Model):
     content = models.CharField(max_length=160)
