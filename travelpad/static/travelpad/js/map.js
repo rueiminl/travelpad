@@ -170,14 +170,14 @@ function focusCenter(latitude, longitude){
 // JSON format for placeArrTmp:
 // {"placeInfos": [
 //  {
-//    latitude:
-//    longitude:  
-//    placeName:
+//    place_latitude:
+//    place_longitude:  
+//    place_name:
 //  },
 //  {
-//    latitude:
-//    longitude:  
-//    placeName:
+//    place_latitude:
+//    place_longitude:  
+//    place_name:
 //  }
 // ]
 // }
@@ -190,7 +190,7 @@ function setAllMarkers(placeArrTmp){
 
   for(var i=0; i<myPlace.placeInfos.length; i++){
     var placeInfo = myPlace.placeInfos[i];
-    placeArr.push(new google.maps.LatLng(placeInfo.latitude, placeInfo.longitude));
+    placeArr.push(new google.maps.LatLng(placeInfo.place_latitude, placeInfo.place_longitude));
   }
 
   //for(i=0; i<placeArrTmp.length; i++){
