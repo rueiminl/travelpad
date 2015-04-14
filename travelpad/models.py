@@ -11,15 +11,29 @@ def user_as_dict(self):
 User.add_to_class("as_dict",user_as_dict)
 
 class Itinerary(models.Model):
-	created_by = models.ForeignKey(User, related_name="itineraries")
-	title = models.CharField(max_length=100)
-	description = models.CharField(max_length=3000, blank=True)
-	location = models.CharField(max_length=100, blank=True)
-	start_date = models.DateField()
-	end_date = models.DateField()
-	participants = models.ManyToManyField(User, blank=True)
-	photo = models.FileField(upload_to="pictures", blank=True)
-	timestamp = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, related_name="itineraries")
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=3000, blank=True)
+    location = models.CharField(max_length=100, blank=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    participants = models.ManyToManyField(User, blank=True)
+    photo = models.FileField(upload_to="pictures", blank=True)
+    timestamp = models.DateTimeField(auto_now=True)
+    def as_dict(self):
+        return dict(
+            id=self.id,
+            created_by=self.created_by.as_dict(), 
+            title=self.title,
+            description=self.description, 
+            location=self.location, 
+            #timezone.localtime(self.start_date).strftime("%Y-%m-%d"), Error: 'datetime.date' object has no attribute 'astimezone'
+            start_date=self.start_date.isoformat(),
+            end_date=self.end_date.isoformat(),#timezone.localtime(self.end_date).strftime("%Y-%m-%d"),
+            participants=[user.as_dict() for user in self.participants.all()],
+            # photo=self.photo, #TODO: get url
+            timestamp=self.timestamp.isoformat(),
+            )
 
 class Event(models.Model):
     user = models.ForeignKey(User)
