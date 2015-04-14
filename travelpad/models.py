@@ -76,6 +76,7 @@ class Transportation(models.Model):
     note = models.CharField(max_length=60, blank=True)
     start_datetime = models.DateTimeField(null=True, blank=True)
     end_datetime = models.DateTimeField(null=True, blank=True)
+    related_itinerary = models.ForeignKey(Itinerary)
     route = models.CharField(max_length=100, blank=True)
     source = models.OneToOneField(Event, related_name="pre")
     destination = models.OneToOneField(Event, related_name="next")
