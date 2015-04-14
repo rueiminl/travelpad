@@ -7,21 +7,19 @@
 		width: 128px;
 		float: left;
 	}
-	.text_line {
-		clear: both;
-		margin-bottom: 2px;
-	}
 </style>
 {% endblock %}
 
 {% block content %}
 
-<h3 class="text-line">Invite:</h3>
+<div style="display: inline;">
 <form id="invitationForm" action="invite" method="POST">
-	<input type="text" name="username">
-	<input type="submit">
+	<h3>Invite</h3>
+	<input class='form-control' type="text" name="username" placeholder='username' style="width:300px">
+	<input class="btn btn-primary" type="submit">
 	{% csrf_token %}
 </form>
+</div>
 
 <h3>Participants</h3>
 {% verbatim %} 
