@@ -9,20 +9,14 @@
 <script src="{% static 'travelpad/fullcalendar/fullcalendar.min.js' %}"></script>
 <link href="{% static 'travelpad/fullcalendar/fullcalendar.css' %}" rel='stylesheet' />
 <link href="{% static 'travelpad/fullcalendar/fullcalendar.print.css' %}" rel='stylesheet' media='print' />
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.3.1/fullcalendar.min.js"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.3.1/fullcalendar.min.css" rel='stylesheet' />
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.3.1/fullcalendar.print.css" rel='stylesheet' /> -->
+
+<link rel="stylesheet" type="text/css" href="{% static 'travelpad/css/calendar.css' %}" />
 
 <script src="{% static 'travelpad/js/schedule.js' %}" type="text/javascript"></script>
-<style>
-	/*body {
-		margin: 40px 10px;
-		padding: 0;
-		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		font-size: 14px;
-	}*/
-	#calendar {
-		max-width: 900px;
-		margin: 0 auto;
-	}
-</style>
+
 <!-- end of calendar -->
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3"></script>
 <script src="{% static 'travelpad/js/map.js' %}"></script>

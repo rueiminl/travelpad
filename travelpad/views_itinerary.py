@@ -8,6 +8,7 @@ from django.db import transaction
 from travelpad.models import *
 from travelpad.forms import *
 import dateutil.parser
+from datetime import timedelta
 from json import dumps
 import json
 
@@ -82,18 +83,34 @@ def get_calendar_events_json(request, itinerary_id):
     end = dateutil.parser.parse(request.GET.get('end')) #ISO8601
     
     events = Event.objects.filter(related_itinerary=itinerary).exclude(start_datetime__gt=end.isoformat()).exclude(end_datetime__lt=start.isoformat())
-        
+    trans = Transportation.objects.filter(related_itinerary=itinerary).exclude(start_datetime__gt=end.isoformat()).exclude(end_datetime__lt=start.isoformat())
     print 'start: ' + start.isoformat() + ', end: ' + end.isoformat() + ', get ' + str(len(events)) + ' events'
+    print 'start: ' + start.isoformat() + ', end: ' + end.isoformat() + ', get ' + str(len(trans)) + ' trans'
     calendar_events = [] 
+
+    # calendar background
+    for n in range(int ((itinerary.end_date - itinerary.start_date).days) + 1): # +1 to include end_date
+        d = itinerary.start_date + timedelta(n)
+        calendar_events.append({
+            'start': datetime.combine(d, datetime.min.time()).isoformat(),#date.replace(hour=00, minute=00).isoformat(),
+            'end': datetime.combine(d, datetime.max.time()).isoformat(),#date.replace(hour=23, minute=59).isoformat(),
+            'rendering': 'background'
+        })
     for event in events:
-        calendar_events.append(
-            {'id' : event.id,
-            'title':event.title, 
-            'start': event.start_datetime.isoformat(), #ISO8601
-            'end': event.end_datetime.isoformat(), #ISO8601
-            #TODO: assign colors by event types
-            'color' : 'blue'})
-                
+        event_json = event.as_dict()
+        event_json.update({
+            'start': timezone.localtime(event.start_datetime).isoformat(),#event.start_datetime.isoformat(), #ISO8601
+            'end': timezone.localtime(event.end_datetime).isoformat(),#event.end_datetime.isoformat(), #ISO8601
+            'className' : event.type}) # attraction, hotel, restaurant
+        calendar_events.append(event_json)
+    for tran in trans:
+        tran_json = tran.as_dict()
+        tran_json.update({
+            'start': timezone.localtime(tran.start_datetime).isoformat(),#event.start_datetime.isoformat(), #ISO8601
+            'end': timezone.localtime(tran.end_datetime).isoformat(),#event.end_datetime.isoformat(), #ISO8601
+            'editable' : False, # disable time ediable for transportation
+            'className' : 'transportation'})
+        calendar_events.append(tran_json)           
     response_text = json.dumps(calendar_events)
     return HttpResponse(response_text, content_type='application/json')
 
