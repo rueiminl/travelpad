@@ -15,6 +15,8 @@ class AttractionForm(forms.Form):
     end_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
     note = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}))
     todo = forms.CharField(max_length=60, required=False, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'add things to do'}))
+    cost = forms.DecimalField(max_digits=10,decimal_places=2, required=False)
+    split = forms.BooleanField(required=False, label='Need split')
         
     def clean(self):
         cleaned_data = super(AttractionForm, self).clean()
@@ -30,6 +32,8 @@ class HotelForm(forms.Form):
     end_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
     note = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}))
     todo = forms.CharField(max_length=60, required=False, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'add things to do'}))
+    cost = forms.DecimalField(max_digits=10,decimal_places=2, required=False)
+    split = forms.BooleanField(required=False, label='Need split')
         
     def clean(self):
         cleaned_data = super(HotelForm, self).clean()
@@ -52,6 +56,8 @@ class TransportationForm(forms.Form):
     format = forms.ChoiceField(choices = FORMAT_CHOICES,required = True, label = 'Transportation type')
     note = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}))
     todo = forms.CharField(max_length=60, required=False, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'add things to do'}))
+    cost = forms.DecimalField(max_digits=10,decimal_places=2, required=False)
+    split = forms.BooleanField(required=False, label='Need split')
         
     def clean(self):
         cleaned_data = super(TransportationForm, self).clean()
@@ -67,6 +73,8 @@ class RestaurantForm(forms.Form):
     end_time = forms.TimeField(widget = DateTimePicker(options={"format": "HH:mm", "pickSeconds": False, "pickDate": False}))
     note = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}))
     todo = forms.CharField(max_length=60, required=False, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'add things to do'}))
+    cost = forms.DecimalField(max_digits=10,decimal_places=2, required=False)
+    split = forms.BooleanField(required=False, label='Need split')
         
     def clean(self):
         cleaned_data = super(RestaurantForm, self).clean()
