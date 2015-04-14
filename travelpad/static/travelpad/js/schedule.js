@@ -81,7 +81,8 @@
 				},
 				eventOverlap: function(stillEvent, movingEvent) {
 					// event other than transportation cannot overlap
-					return stillEvent.className=='transportation' || movingEvent.className=='transportation';
+					return stillEvent.className=='transportation' || movingEvent.className=='transportation'||
+							stillEvent.className=='background' || movingEvent.className=='background';
 				},
 			});
 			
