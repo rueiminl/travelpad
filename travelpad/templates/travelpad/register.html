@@ -3,16 +3,23 @@
 {% block head %}
 		<title>TravelPad - Register</title>
 		<link rel="stylesheet" type="text/css" href="{% static 'travelpad/css/general.css' %}" />		
+		<style>
+		#registerForm {
+			position: relative;
+			top: 100px;
+			width: 270px;
+			margin-left: auto;
+			margin-right: auto;
+    	}
+		</style>
 {% endblock %}
-
-{% block content_id %} id="index_container"{% endblock %}
 
 {% block nav %}
 {% include "travelpad/nav_unlogin.html" with register_active='class="active"' %}
 {% endblock %}
 
 {% block content %}
-			<form method="post" enctype="multipart/form-data" action="{% url 'register' %}" class="form-signin">
+			<form id="registerForm" method="post" enctype="multipart/form-data" action="{% url 'register' %}" class="form-signin">
 				{% for _,error in form.errors.items %}
 					<strong>{{ error }}</strong>
 				{% endfor %}

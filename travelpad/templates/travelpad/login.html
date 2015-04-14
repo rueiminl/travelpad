@@ -3,16 +3,23 @@
 {% block head %}
 		<title>TravelPad - Login</title>
 		<link rel="stylesheet" type="text/css" href="{% static 'travelpad/css/general.css' %}" />
+		<style>
+		#loginForm {
+			position: relative;
+			top: 100px;
+			width: 300px;
+			margin-left: auto;
+			margin-right: auto;
+    	}
+		</style>
 {% endblock %}
-
-{% block content_id %} id="index_container"{% endblock %}
 
 {% block nav %}
 {% include "travelpad/nav_unlogin.html" with login_active='class="active"' %}
 {% endblock %}
 
 {% block content %}
-			<form class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+			<form id="loginForm" class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login' %}">
 				{% if form.errors %}
 				<p style="color:red">
 					Incorrect user name and password.
