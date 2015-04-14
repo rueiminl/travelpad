@@ -29,6 +29,7 @@ def participant_json(request):
         participants = itinerary.participants.all()
         results = [participant.as_dict() for participant in participants]
         response_text = json.dumps(results)
+        print "response_text = ", response_text
         return HttpResponse(response_text, content_type='application/json')
     # elif request.method == 'POST':
 #         #TODO:
