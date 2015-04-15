@@ -64,30 +64,37 @@
 				eventDrop: function(event, delta, revertFunc) {
 					// editeventtime(event.id,start,end,success_callback,error_callback);
 				        alert(event.title + " was dropped on " + event.start.format());
-
 				        if (!confirm("Are you sure about this change?")) {
 				            revertFunc();
 				        }
-
 				},
 				eventResize: function(event, delta, revertFunc) {
-
 				        alert(event.title + " end is now " + event.end.format());
 
 				        if (!confirm("is this okay?")) {
 				            revertFunc();
 				        }
-
 				},
 				eventOverlap: function(stillEvent, movingEvent) {
 					// event other than transportation cannot overlap
-					return stillEvent.className=='transportation' || movingEvent.className=='transportation';
+					return stillEvent.className=='transportation' || movingEvent.className=='transportation'||
+							stillEvent.className=='background' || movingEvent.className=='background';
 				},
-			});
+				viewRender: (function(){
+					return function( view, element ){
+						//refresh map view whenever calendar is rendering
+						// Retrieves events that FullCalendar has in memory.
+						var mapEvents = $('#calendar').fullCalendar('clientEvents', function(evt) {
+						return evt.className!='background' && evt.className!='transportation'
+							&& !(evt.startdate >= view.intervalEnd || evt.endate < view.intervalStart);
+						});
+						setAllMarkers(mapEvents);
+					}
+				}()),
+			}); // end init calendar
 			
-			//init map
-			//Retrieves events that FullCalendar has in memory.
-			// $('#calendar').fullCalendar('clientEvents' [,  ] ) -> Array 
+			// //TODO:init map
+// 			focusCenter();
 			
 		}).error(function(data) {
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});

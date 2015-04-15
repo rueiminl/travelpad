@@ -64,9 +64,13 @@ class Event(models.Model):
             "starttime": timezone.localtime(self.start_datetime).strftime("%H:%M"),
             "enddate": timezone.localtime(self.end_datetime).strftime("%Y-%m-%d"),
             "endtime": timezone.localtime(self.end_datetime).strftime("%H:%M"),
-            "place": self.place_name,
+            'start': timezone.localtime(self.start_datetime).isoformat(), #ISO8601
+            'end': timezone.localtime(self.end_datetime).isoformat(),
+            #"place": self.place_name,
+            "place": {"id": self.place_id, "name": self.place_name, "latitude": self.place_latitude, "longitude": self.place_longitude},
             "note": self.note,
             "type": self.type,
+            "transportation": self.pre.as_dict() if hasattr(self,'pre') else 'null',
             #"time": timezone.localtime(self.time).strftime("%b. %d, %Y, %I:%M %p"),
         }
         
@@ -88,6 +92,8 @@ class Transportation(models.Model):
             "starttime": timezone.localtime(self.start_datetime).strftime("%H:%M"),
             "enddate": timezone.localtime(self.end_datetime).strftime("%Y-%m-%d"),
             "endtime": timezone.localtime(self.end_datetime).strftime("%H:%M"),
+            'start': timezone.localtime(self.start_datetime).isoformat(), #ISO8601
+            'end': timezone.localtime(self.end_datetime).isoformat(),
             "source": self.source.place_name,
             "destination": self.destination.place_name,
             "note": self.note,

@@ -30,6 +30,7 @@ def participant_json(request):
         participants = itinerary.participants.all()
         results = [participant.as_dict() for participant in participants]
         response_text = json.dumps(results)
+        print "response_text = ", response_text
         return HttpResponse(response_text, content_type='application/json')
     # elif request.method == 'POST':
 #         #TODO:
@@ -52,7 +53,6 @@ def itinerary_json(request):
             return HttpResponse(response_text, content_type='application/json')
     except Exception as inst:
         print inst
-
 
 
 @login_required
@@ -82,7 +82,7 @@ def get_calendar_events_json(request, itinerary_id):
     start = dateutil.parser.parse(request.GET.get('start')) #ISO8601   
     end = dateutil.parser.parse(request.GET.get('end')) #ISO8601
     
-    events = Event.objects.filter(related_itinerary=itinerary).exclude(start_datetime__gt=end.isoformat()).exclude(end_datetime__lt=start.isoformat())
+    events = Event.objects.filter(related_itinerary=itinerary).exclude(start_datetime__gt=end.isoformat()).exclude(end_datetime__lt=start.isoformat()).order_by('-start_datetime') # order by start_datetime so that map view can construct routes
     trans = Transportation.objects.filter(related_itinerary=itinerary).exclude(start_datetime__gt=end.isoformat()).exclude(end_datetime__lt=start.isoformat())
     print 'start: ' + start.isoformat() + ', end: ' + end.isoformat() + ', get ' + str(len(events)) + ' events'
     print 'start: ' + start.isoformat() + ', end: ' + end.isoformat() + ', get ' + str(len(trans)) + ' trans'
@@ -94,20 +94,25 @@ def get_calendar_events_json(request, itinerary_id):
         calendar_events.append({
             'start': datetime.combine(d, datetime.min.time()).isoformat(),#date.replace(hour=00, minute=00).isoformat(),
             'end': datetime.combine(d, datetime.max.time()).isoformat(),#date.replace(hour=23, minute=59).isoformat(),
-            'rendering': 'background'
+            'rendering': 'background',
+            'className': 'background',
         })
     for event in events:
-        event_json = event.as_dict()
-        event_json.update({
-            'start': timezone.localtime(event.start_datetime).isoformat(),#event.start_datetime.isoformat(), #ISO8601
-            'end': timezone.localtime(event.end_datetime).isoformat(),#event.end_datetime.isoformat(), #ISO8601
-            'className' : event.type}) # attraction, hotel, restaurant
+        try:
+            event_json = event.as_dict()      
+            event_json.update({
+            # 'start': timezone.localtime(event.start_datetime).isoformat(),#event.start_datetime.isoformat(), #ISO8601
+            # 'end': timezone.localtime(event.end_datetime).isoformat(),#event.end_datetime.isoformat(), #ISO8601
+                'className' : event.type, # attraction, hotel, restaurant
+            })
+        except Exception as inst:
+            print inst
         calendar_events.append(event_json)
     for tran in trans:
         tran_json = tran.as_dict()
         tran_json.update({
-            'start': timezone.localtime(tran.start_datetime).isoformat(),#event.start_datetime.isoformat(), #ISO8601
-            'end': timezone.localtime(tran.end_datetime).isoformat(),#event.end_datetime.isoformat(), #ISO8601
+            # 'start': timezone.localtime(tran.start_datetime).isoformat(),#event.start_datetime.isoformat(), #ISO8601
+            # 'end': timezone.localtime(tran.end_datetime).isoformat(),#event.end_datetime.isoformat(), #ISO8601
             'editable' : False, # disable time ediable for transportation
             'className' : 'transportation'})
         calendar_events.append(tran_json)           
