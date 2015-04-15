@@ -82,7 +82,7 @@ def get_calendar_events_json(request, itinerary_id):
     start = dateutil.parser.parse(request.GET.get('start')) #ISO8601   
     end = dateutil.parser.parse(request.GET.get('end')) #ISO8601
     
-    events = Event.objects.filter(related_itinerary=itinerary).exclude(start_datetime__gt=end.isoformat()).exclude(end_datetime__lt=start.isoformat())
+    events = Event.objects.filter(related_itinerary=itinerary).exclude(start_datetime__gt=end.isoformat()).exclude(end_datetime__lt=start.isoformat()).order_by('-start_datetime') # order by start_datetime so that map view can construct routes
     trans = Transportation.objects.filter(related_itinerary=itinerary).exclude(start_datetime__gt=end.isoformat()).exclude(end_datetime__lt=start.isoformat())
     print 'start: ' + start.isoformat() + ', end: ' + end.isoformat() + ', get ' + str(len(events)) + ' events'
     print 'start: ' + start.isoformat() + ', end: ' + end.isoformat() + ', get ' + str(len(trans)) + ' trans'
