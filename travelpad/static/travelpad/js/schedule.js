@@ -13,7 +13,7 @@
 		};
 		
 		$http.get("/itinerary-json").success(function(data){
-			console.log(data);
+			// console.log(data);
 			t.itinerary = data;
 			
 			//init calendar
@@ -80,15 +80,25 @@
 					return stillEvent.className=='transportation' || movingEvent.className=='transportation'||
 							stillEvent.className=='background' || movingEvent.className=='background';
 				},
-				viewRender: (function(){
-					return function( view, element ){
+				eventAfterAllRender: (function(){
+					return function( view){
 						//refresh map view whenever calendar is rendering
 						// Retrieves events that FullCalendar has in memory.
-						var mapEvents = $('#calendar').fullCalendar('clientEvents', function(evt) {
-						return evt.className!='background' && evt.className!='transportation'
-							&& !(evt.startdate >= view.intervalEnd || evt.endate < view.intervalStart);
+						var mapEvents = $('#calendar').fullCalendar('clientEvents', function(evt) {					
+							// console.log(evt.endate);
+							if(evt.className!='background' && evt.className!='transportation'){
+								// console.log(evt);
+								var startDate = moment(new Date(evt.startdate));
+								var endDate = moment(new Date(evt.enddate));
+								// console.log(startDate.format("YYYY-MM-DD"));
+// 								console.log(endDate.format("YYYY-MM-DD"));
+								return !(startDate >= view.intervalEnd || endDate < view.intervalStart);
+							}
+							return false;
+							
 						});
 						setAllMarkers(mapEvents);
+						console.log(mapEvents.length + ' map events');
 					}
 				}()),
 			}); // end init calendar
