@@ -1,11 +1,4 @@
-
-<!DOCTYPE HTML>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Event Edit Page</title>
-    
+   
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
@@ -402,7 +395,7 @@ var ready; // Where to store the function
       );
       $("#mybutton2").click( function()
         {
-            editevent(4);
+            editevent(2);
         }
       );
       $("#mybutton3").click( function()
@@ -413,7 +406,8 @@ var ready; // Where to store the function
       $("#mybutton4").click( function()
         {
             var a = function(){console.log("this is a");};
-            editeventtime(1, "11:30", "12:30", a, a);
+            var b = function(){console.log("this is b");};
+            editeventtime(1, "2015-03-25","13:15","2015-03-25","14:15", a, b);
         }
       );
       $("#deletebtn").click( function()
@@ -526,13 +520,15 @@ function editevent(id) {
     });
 };
 
-function editeventtime(id,start,end,success_callback,error_callback) {
+function editeventtime(id, sdate, stime, edate, etime, success_callback,error_callback) {
     $.ajax({
         url: "./editeventtime",
         data: {
             eid: id,
-            stime: start,
-            etime: end,
+            sdate: sdate,
+            edate: edate,
+            stime: stime,
+            etime: etime,
         },
         type:'POST',
         dataType: 'json',
@@ -586,7 +582,7 @@ function deleteevent() {
             },
             type:'POST',
             success: function(items){
-               $(location).attr('href',"./demo");
+               $(location).attr('href',"./schedule");
             }
         });
     }
@@ -627,215 +623,210 @@ function showeventmodal(title, sdate, stime, edate, etime) {
 }
     
 
-    </script>
-</head>
-
-<body>  
+</script>
     
-    <div class="container">
-        {% if eventmessage == "success" %}
-        {% comment %}
-        <div class="alert alert-success alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            New Event Added
-        </div>
-        {% endcomment %}
-        <script>
-            $.toaster({ priority : 'success', title : 'Success', message : 'New event added'});
-        </script>
-        {% endif %}
-        <!-- Button trigger modal -->
-        <!--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" href="{% url 'eventedit' %}">
-          Launch demo modal
-        </button>-->
-        
-        <a data-toggle="modal" class="btn btn-info" href="#" data-target="#myModal">Add Event</a>
-        <button type="button" id= "mybutton" class="btn btn-default">test</button>
-        <button type="button" id= "mybutton2" class="btn btn-default">test2</button>
-        <button type="button" id= "mybutton3" class="btn btn-default">test3</button>
-        <button type="button" id= "mybutton4" class="btn btn-default">test4</button>
-        <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form id="Event_Form" method='post' class="form" role="form" action='{% url 'eventedit' %}'>
-                    {% csrf_token %}
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                         <h4 class="modal-title">Add/Edit Event</h4>
-                    </div>			<!-- /modal-header -->
-                    <div class="modal-body">
-                    
-                        <ul id = "tabBar" class="nav nav-tabs">
-                            <li class="active"><a data-toggle="tab" href="#Attraction">Attraction</a></li>
-                            <li><a data-toggle="tab" href="#Hotel">Hotel</a></li>
-                            <li><a data-toggle="tab" href="#Transportation">Transportation</a></li>
-                            <li><a data-toggle="tab" href="#Restaurant">Restaurant</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div id="Attraction" class="tab-pane fade in active">
-                                <table>
-                                {% for field in attractionform.visible_fields %}
-                                    {% if field.label == "Note" %}
-                                        <tr>
-                                            <td>
-                                                <label id="placelabel_a" class="inputlabel"></label>
-                                            </td>
-                                            <td>
-                                                <p id="placetext_a"></p>
-                                            </td>
-                                        </tr>
-                                        </table>
-                                            <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
-                                            <div id="map-eventcanvas"></div>
-                                        <table>
-                                    {% endif %}
-                                    <tr>                                                        
-                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
-                                        {% if field.field.required %}
-                                            *
-                                        {% endif %}
-                                        </label></td>
-                                        <td>{{field}}</td>
-                                        <td>{% for error in field.errors %}
-                                        <p class="errorlabel" for="{{ error }}">{{ error }}
-                                        </p>
-                                        {% endfor %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </table>
-                            </div>
-                            <div id="Hotel" class="tab-pane fade">
-                                <table>
-                                {% for field in hotelform.visible_fields %}
-                                    {% if field.label == "Note" %}
-                                        <tr>
-                                            <td>
-                                                <label id="placelabel_h" class="inputlabel"></label>
-                                            </td>
-                                            <td>
-                                                <p id="placetext_h"></p>
-                                            </td>
-                                        </tr>
-                                        </table>
-                                            <input id="pac-input2" class="controls" type="text" placeholder="Enter a location">
-                                            <div id="map-eventcanvas2"></div>
-                                        <table>
-                                    {% endif %}
-                                    <tr>                                                        
-                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
-                                        {% if field.field.required %}
-                                            *
-                                        {% endif %}
-                                        </label></td>
-                                        <td>{{field}}</td>
-                                        <td>{% for error in field.errors %}
-                                        <p class="errorlabel" for="{{ error }}">{{ error }}
-                                        </p>
-                                        {% endfor %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </table>
-                            </div>
-                            <div id="Transportation" class="tab-pane fade">
-                                <table>
-                                {% for field in transportationform.visible_fields %}
-                                    {% if field.label == "Note" %}
-                                        <tr>
-                                            <td>
-                                                <label id="placelabel_t" class="inputlabel"></label>
-                                            </td>
-                                            <td>
-                                                <p id="placetext_t"></p>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label id="placelabel2_t" class="inputlabel"></label>
-                                            </td>
-                                            <td>
-                                                <p id="placetext2_t"></p>
-                                            </td>
-                                        </tr>
-                                        </table>
-                                            <input id="pac-input3" class="controls" type="text" placeholder="Enter a location">
-                                            <div id="map-eventcanvas3"></div>
-                                        <table>
-                                    {% endif %}
-                                    <tr>                                                        
-                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
-                                        {% if field.field.required %}
-                                            *
-                                        {% endif %}
-                                        </label></td>
-                                        <td>{{field}}</td>
-                                        <td>{% for error in field.errors %}
-                                        <p class="errorlabel" for="{{ error }}">{{ error }}
-                                        </p>
-                                        {% endfor %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </table>
-                            </div>
-                            <div id="Restaurant" class="tab-pane fade">
-                                <table>
-                                {% for field in restaurantform.visible_fields %}
-                                    {% if field.label == "Note" %}
-                                        <tr>
-                                            <td>
-                                                <label id="placelabel_r" class="inputlabel"></label>
-                                            </td>
-                                            <td>
-                                                <p id="placetext_r"></p>
-                                            </td>
-                                        </tr>
-                                        </table>
-                                            <input id="pac-input4" class="controls" type="text" placeholder="Enter a location">
-                                            <div id="map-eventcanvas4"></div>
-                                        <table>
-                                    {% endif %}
-                                    <tr>                                                        
-                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
-                                        {% if field.field.required %}
-                                            *
-                                        {% endif %}
-                                        </label></td>
-                                        <td>{{field}}</td>
-                                        <td>{% for error in field.errors %}
-                                        <p class="errorlabel" for="{{ error }}">{{ error }}
-                                        </p>
-                                        {% endfor %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </table>
-                            </div>
-                        </div>
-
-                    </div>			<!-- /modal-body -->
-                    <input id="coordinate" name="coordinate" type="hidden">
-                    <input id="placeId" name="placeId" type="hidden">
-                    <input id="placeName" name="placeName" type="hidden">
-                    <input id="tabName" name="tabName" type="hidden">
-                    <input id="eventId" name="eventId" type="hidden">
-                    <div class="modal-footer">
-                        <button type="button" id="deletebtn" class="btn btn-danger" style="display: none;">Delete Event</button>
-                        <button type="submit" id="savebtn" name="save" class="btn btn-primary" value = "save">Save Event</button>
-                        <button type="submit" id="proposebtn" name="propose" class="btn btn-primary" value = "propose">Propose Event</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>			<!-- /modal-footer -->
-                    </form>
-                    <script>
-                          ready();
-                    </script>
-                </div> <!-- /.modal-content -->
-            </div> <!-- /.modal-dialog -->
-        </div>
-
+<div>
+    {% if eventmessage == "success" %}
+    {% comment %}
+    <div class="alert alert-success alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        New Event Added
     </div>
-</body>
-</html>
+    {% endcomment %}
+    <script>
+        $.toaster({ priority : 'success', title : 'Success', message : 'New event added'});
+    </script>
+    {% endif %}
+    <!-- Button trigger modal -->
+    <!--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" href="{% url 'eventedit' %}">
+      Launch demo modal
+    </button>-->
+    
+    <a data-toggle="modal" class="btn btn-info" href="#" data-target="#myModal">Add Event</a>
+    <button type="button" id= "mybutton" class="btn btn-default">test</button>
+    <button type="button" id= "mybutton2" class="btn btn-default">test2</button>
+    <button type="button" id= "mybutton3" class="btn btn-default">test3</button>
+    <button type="button" id= "mybutton4" class="btn btn-default">test4</button>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="Event_Form" method='post' class="form" role="form" action='{% url 'eventedit' %}'>
+                {% csrf_token %}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                     <h4 class="modal-title">Add/Edit Event</h4>
+                </div>			<!-- /modal-header -->
+                <div class="modal-body">
+                
+                    <ul id = "tabBar" class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#Attraction">Attraction</a></li>
+                        <li><a data-toggle="tab" href="#Hotel">Hotel</a></li>
+                        <li><a data-toggle="tab" href="#Transportation">Transportation</a></li>
+                        <li><a data-toggle="tab" href="#Restaurant">Restaurant</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="Attraction" class="tab-pane fade in active">
+                            <table>
+                            {% for field in attractionform.visible_fields %}
+                                {% if field.label == "Note" %}
+                                    <tr>
+                                        <td>
+                                            <label id="placelabel_a" class="inputlabel"></label>
+                                        </td>
+                                        <td>
+                                            <p id="placetext_a"></p>
+                                        </td>
+                                    </tr>
+                                    </table>
+                                        <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
+                                        <div id="map-eventcanvas"></div>
+                                    <table>
+                                {% endif %}
+                                <tr>                                                        
+                                    <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
+                                    {% if field.field.required %}
+                                        *
+                                    {% endif %}
+                                    </label></td>
+                                    <td>{{field}}</td>
+                                    <td>{% for error in field.errors %}
+                                    <p class="errorlabel" for="{{ error }}">{{ error }}
+                                    </p>
+                                    {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                        <div id="Hotel" class="tab-pane fade">
+                            <table>
+                            {% for field in hotelform.visible_fields %}
+                                {% if field.label == "Note" %}
+                                    <tr>
+                                        <td>
+                                            <label id="placelabel_h" class="inputlabel"></label>
+                                        </td>
+                                        <td>
+                                            <p id="placetext_h"></p>
+                                        </td>
+                                    </tr>
+                                    </table>
+                                        <input id="pac-input2" class="controls" type="text" placeholder="Enter a location">
+                                        <div id="map-eventcanvas2"></div>
+                                    <table>
+                                {% endif %}
+                                <tr>                                                        
+                                    <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
+                                    {% if field.field.required %}
+                                        *
+                                    {% endif %}
+                                    </label></td>
+                                    <td>{{field}}</td>
+                                    <td>{% for error in field.errors %}
+                                    <p class="errorlabel" for="{{ error }}">{{ error }}
+                                    </p>
+                                    {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                        <div id="Transportation" class="tab-pane fade">
+                            <table>
+                            {% for field in transportationform.visible_fields %}
+                                {% if field.label == "Note" %}
+                                    <tr>
+                                        <td>
+                                            <label id="placelabel_t" class="inputlabel"></label>
+                                        </td>
+                                        <td>
+                                            <p id="placetext_t"></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <label id="placelabel2_t" class="inputlabel"></label>
+                                        </td>
+                                        <td>
+                                            <p id="placetext2_t"></p>
+                                        </td>
+                                    </tr>
+                                    </table>
+                                        <input id="pac-input3" class="controls" type="text" placeholder="Enter a location">
+                                        <div id="map-eventcanvas3"></div>
+                                    <table>
+                                {% endif %}
+                                <tr>                                                        
+                                    <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
+                                    {% if field.field.required %}
+                                        *
+                                    {% endif %}
+                                    </label></td>
+                                    <td>{{field}}</td>
+                                    <td>{% for error in field.errors %}
+                                    <p class="errorlabel" for="{{ error }}">{{ error }}
+                                    </p>
+                                    {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                        <div id="Restaurant" class="tab-pane fade">
+                            <table>
+                            {% for field in restaurantform.visible_fields %}
+                                {% if field.label == "Note" %}
+                                    <tr>
+                                        <td>
+                                            <label id="placelabel_r" class="inputlabel"></label>
+                                        </td>
+                                        <td>
+                                            <p id="placetext_r"></p>
+                                        </td>
+                                    </tr>
+                                    </table>
+                                        <input id="pac-input4" class="controls" type="text" placeholder="Enter a location">
+                                        <div id="map-eventcanvas4"></div>
+                                    <table>
+                                {% endif %}
+                                <tr>                                                        
+                                    <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
+                                    {% if field.field.required %}
+                                        *
+                                    {% endif %}
+                                    </label></td>
+                                    <td>{{field}}</td>
+                                    <td>{% for error in field.errors %}
+                                    <p class="errorlabel" for="{{ error }}">{{ error }}
+                                    </p>
+                                    {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+
+                </div>			<!-- /modal-body -->
+                <input id="coordinate" name="coordinate" type="hidden">
+                <input id="placeId" name="placeId" type="hidden">
+                <input id="placeName" name="placeName" type="hidden">
+                <input id="tabName" name="tabName" type="hidden">
+                <input id="eventId" name="eventId" type="hidden">
+                <div class="modal-footer">
+                    <button type="button" id="deletebtn" class="btn btn-danger" style="display: none;">Delete Event</button>
+                    <button type="submit" id="savebtn" name="save" class="btn btn-primary" value = "save">Save Event</button>
+                    <button type="submit" id="proposebtn" name="propose" class="btn btn-primary" value = "propose">Propose Event</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>			<!-- /modal-footer -->
+                </form>
+                <script>
+                      ready();
+                </script>
+            </div> <!-- /.modal-content -->
+        </div> <!-- /.modal-dialog -->
+    </div>
+
+</div>
 
