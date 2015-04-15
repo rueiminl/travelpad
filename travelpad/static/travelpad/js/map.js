@@ -191,7 +191,7 @@ function setAllMarkers(placeArrTmp){
 
   for(var i=0; i<myPlace.length; i++){
     var placeInfo = myPlace[i].place;
-    placeArr.push(new google.maps.LatLng(placeInfo.place_latitude, placeInfo.place_longitude));
+    placeArr.push(new google.maps.LatLng(placeInfo.latitude, placeInfo.longitude));
   }
 
   //for(i=0; i<placeArrTmp.length; i++){
