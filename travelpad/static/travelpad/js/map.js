@@ -181,6 +181,7 @@ function focusCenter(latitude, longitude){
 //  }
 // ]
 // }
+// [{ transportation:{..}, place:{...} }, {transportation...}    ...]
 
 function setAllMarkers(placeArrTmp){
   clearMarkers();
@@ -188,8 +189,8 @@ function setAllMarkers(placeArrTmp){
       return;
   var myPlace = JSON.parse(placeArrTmp);
 
-  for(var i=0; i<myPlace.placeInfos.length; i++){
-    var placeInfo = myPlace.placeInfos[i];
+  for(var i=0; i<myPlace.length; i++){
+    var placeInfo = myPlace[i].place;
     placeArr.push(new google.maps.LatLng(placeInfo.place_latitude, placeInfo.place_longitude));
   }
 
