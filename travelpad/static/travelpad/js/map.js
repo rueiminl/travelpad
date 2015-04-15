@@ -9,7 +9,15 @@
 
 var directionsService = new google.maps.DirectionsService();
 var map;
+// Places's latitude and longitude
 var placeArr = [];
+// Places's location name
+var placeNameArr = [];
+// start time from source
+var startTimes = [];
+// transportation modes from source
+var transportTypes = [];
+// marker sets on google map
 var markers = [];
 var countNum = 0;
 var mapOptions;
@@ -21,7 +29,7 @@ var autocomplete;
 function initialize() {
     //deleteMarkers();
     directionsDisplay = new google.maps.DirectionsRenderer();
-    placeArrTmp = [[40.442492, -79.94255299999998], [40.444353, -79.96083499999997]];
+    placeArrTmp = [];
     placeArr = [];
     markers = [];
    // for(var i=0; i<arr.length; i++){
@@ -100,31 +108,35 @@ function getTime(src, dest, mode){
 
 }
 
-function calcRoute(src, dest, mode, index) {
+
+function calcRoute(src, dest, mode, index, startTime) {
   var directionsDisplay = new google.maps.DirectionsRenderer();
   directionsDisplays.push(directionsDisplay);
   directionsDisplay.setMap(map);
   directionsDisplay.setOptions({ suppressMarkers: true });
-  var request = {
+  var t = new Date(startTime);
+  var request;
+  if(mode == "TRANSIT"){
+    request = {
       origin: src,
       destination: dest,
-      // Note that Javascript allows us to access the constant
-      // using square brackets and a string value as its
-      // "property."
+      travelMode: google.maps.TravelMode[mode],
+      transitOptions: {
+        departureTime: new Date(t.getTime())
+      }
+    };
+  }
+  else{
+    request = {
+      origin: src,
+      destination: dest,
       travelMode: google.maps.TravelMode[mode]
-  };
+    };
+
+  }
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
-      //var route = response.routes[0];
-      //var summaryPanel = document.getElementById('directions_panel');
-      //summaryPanel.innerHTML = '';
-      //var routeSegment = index;
-      //summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment + '</b><br>';
-      //summaryPanel.innerHTML += route.legs[0].start_address + ' to ';
-      //summaryPanel.innerHTML += route.legs[0].end_address + '<br>';
-      //summaryPanel.innerHTML += route.legs[0].distance.text + '<br>';
-      //summaryPanel.innerHTML += route.legs[0].duration.text + '<br><br>';
     }
     else{
       flightPath = new google.maps.Polyline({
@@ -157,6 +169,9 @@ function clearMarkers(){
   }
   flightPaths = [];
   directionsDisplays = [];
+  placeNameArr = [];
+  transportTypes = [];
+  startTimes = [];
   //document.getElementById("directions_panel").innerHTML = "";
 }   
 
@@ -191,7 +206,11 @@ function setAllMarkers(placeArrTmp){
 
   for(var i=0; i<myPlace.length; i++){
     var placeInfo = myPlace[i].place;
+    var transportationInfo = myPlace[i].transportation;
     placeArr.push(new google.maps.LatLng(placeInfo.latitude, placeInfo.longitude));
+    placeNameArr.push(placeInfo.name);
+    transportTypes.push(transportationInfo.type);
+    startTimes.push(transportationInfo.start);
   }
 
   //for(i=0; i<placeArrTmp.length; i++){
@@ -207,13 +226,13 @@ function setAllMarkers(placeArrTmp){
 
   markers.push(marker);
   var infowindow = new google.maps.InfoWindow({
-    content: "Start"
+    content: "<h1>Start</h1>" + "<div>" + placeNameArr[0] + "</div>"
   });
   infowindow.open(map,marker);
 
   // middle points
-  for(index=1; index<placeArr.length ; index++){
-      calcRoute(start, placeArr[index], "DRIVING", index);
+  for(var index=1; index<placeArr.length ; index++){
+      calcRoute(start, placeArr[index], transportTypes[index-1], index, startTimes[index-1]);
 
       marker = new google.maps.Marker({
         position: placeArr[index],
@@ -221,7 +240,7 @@ function setAllMarkers(placeArrTmp){
         title: 'Location'
       });
       infowindow = new google.maps.InfoWindow({
-        content: (index+1).toString()
+        content: "<h1>" + (index+1).toString() + "</h1><div>" + placeNameArr[index] + "</div>"
       });
       infowindow.open(map,marker);
       start = placeArr[index];

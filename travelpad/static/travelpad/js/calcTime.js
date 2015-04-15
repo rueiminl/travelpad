@@ -1,3 +1,5 @@
+
+
 function getTime(src, dest, mode){
   var srcPlace = new google.maps.LatLng(src[0], src[1]);
   var destPlace = new google.maps.LatLng(dest[0], dest[1]);
@@ -24,5 +26,20 @@ function getTime(src, dest, mode){
       summaryPanel.innerHTML += 'No such route' + '<br><br>';
     }
   });
+
+}
+
+function getTime(places){
+  if(places == null || places.length == 0)
+      return;
+  var myPlace = JSON.parse(places);
+
+  for(var i=0; i<myPlace.placeInfos.length; i++){
+    var placeInfo = myPlace.placeInfos[i];
+    placeArr.push(new google.maps.LatLng(placeInfo.latitude, placeInfo.longitude));
+  }
+}
+
+function clear(){
 
 }
