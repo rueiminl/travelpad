@@ -116,15 +116,15 @@ function calcRoute(src, dest, mode, index) {
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
-      var route = response.routes[0];
-      var summaryPanel = document.getElementById('directions_panel');
+      //var route = response.routes[0];
+      //var summaryPanel = document.getElementById('directions_panel');
       //summaryPanel.innerHTML = '';
-      var routeSegment = index;
-      summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment + '</b><br>';
-      summaryPanel.innerHTML += route.legs[0].start_address + ' to ';
-      summaryPanel.innerHTML += route.legs[0].end_address + '<br>';
-      summaryPanel.innerHTML += route.legs[0].distance.text + '<br>';
-      summaryPanel.innerHTML += route.legs[0].duration.text + '<br><br>';
+      //var routeSegment = index;
+      //summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment + '</b><br>';
+      //summaryPanel.innerHTML += route.legs[0].start_address + ' to ';
+      //summaryPanel.innerHTML += route.legs[0].end_address + '<br>';
+      //summaryPanel.innerHTML += route.legs[0].distance.text + '<br>';
+      //summaryPanel.innerHTML += route.legs[0].duration.text + '<br><br>';
     }
     else{
       flightPath = new google.maps.Polyline({
@@ -157,7 +157,7 @@ function clearMarkers(){
   }
   flightPaths = [];
   directionsDisplays = [];
-  document.getElementById("directions_panel").innerHTML = "";
+  //document.getElementById("directions_panel").innerHTML = "";
 }   
 
 function focusCenter(latitude, longitude){
