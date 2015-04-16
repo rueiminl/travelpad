@@ -4,10 +4,11 @@ from datetime import datetime
 from django.utils import timezone
 
 from django.contrib.auth.models import User 
+from django.core.urlresolvers import reverse
 
 # add as_dict mthod to User
 def user_as_dict(self):
-    return dict(id=self.id, username=self.username)
+    return dict(id=self.id, username=self.username, photo=reverse('get_user_photo', kwargs={'id':self.id}))
 User.add_to_class("as_dict",user_as_dict)
 
 class Itinerary(models.Model):
@@ -159,15 +160,31 @@ class Message(models.Model):
     related_itinerary = models.ForeignKey(Itinerary)
     creation_time = models.DateTimeField(auto_now_add=True)    
     timestamp = models.DateTimeField(auto_now=True)
-
-        
+    def as_dict(self):
+        return dict(
+            id=self.id,
+            created_by=self.created_by.as_dict(), 
+            content=self.content,
+            replies=[reply.as_dict() for reply in self.replies.all()] if hasattr(self,'replies') else [],
+            creation_time=timezone.localtime(self.creation_time).isoformat(),
+            timestamp=timezone.localtime(self.timestamp).isoformat(),
+        )
         
 class Reply(models.Model):
     content = models.CharField(max_length=160)
     created_by = models.ForeignKey(User)
-    related_message = models.ForeignKey(Message)
+    related_message = models.ForeignKey(Message, related_name='replies')
     creation_time = models.DateTimeField(auto_now_add=True)    
     timestamp = models.DateTimeField(auto_now=True)
+    def as_dict(self):
+        return dict(
+            id=self.id,
+            created_by=self.created_by.as_dict(), 
+            related_message=self.related_message.id, 
+            content=self.content,
+            creation_time=timezone.localtime(self.creation_time).isoformat(),
+            timestamp=timezone.localtime(self.timestamp).isoformat(),
+        )
 
 
 class TravelPadUser(models.Model):

@@ -30,7 +30,9 @@ urlpatterns = patterns('',
     
     # Feed
     url(r'^feed$', 'travelpad.views_itinerary.feed', name = 'feed'),
-    url(r'^add-message$', 'travelpad.views_itinerary.add_message', name = 'add-message'),
-    url(r'^add-reply$', 'travelpad.views_itinerary.add_reply', name = 'add-reply'),
-    url(r'^get-message-json$', 'travelpad.views_itinerary.get_message_json', name = 'get-message-json'),
+    url(r'^message-json$', 'travelpad.views_itinerary.message_json', name = 'message-json'),
+    url(r'^reply-json$', 'travelpad.views_itinerary.reply_json', name = 'reply-json'),
+    # url(r'^add-message$', 'travelpad.views_itinerary.add_message', name = 'add-message'),
+#     url(r'^add-reply$', 'travelpad.views_itinerary.add_reply', name = 'add-reply'),
+#     url(r'^get-message-json$', 'travelpad.views_itinerary.get_message_json', name = 'get-message-json'),
 )
