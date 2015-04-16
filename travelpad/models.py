@@ -144,11 +144,11 @@ class Cost(models.Model):
     
         return {
             "id": self.id,
-            "participant": [user.username for user in self.participant.all()],
+            "participant": [user.as_dict() for user in self.participant.all()],
             "isall": self.isall,
             "status": self.status,
             "related_event": self.related_event.title,
-            "owner": ownername,
+            "owner": self.owner.as_dict() if self.owner else '',
             "note": self.note,
             "amount": float(self.amount),
             "creation_time": self.creation_time.isoformat(),
