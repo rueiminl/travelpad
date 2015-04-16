@@ -3,133 +3,6 @@
 {% block head %}
 {% load staticfiles %}
 <script src="{% static 'travelpad/js/message.js' %}" type="text/javascript"></script>
-
-<!--<script>
-	// window.setInterval(function () {
-// 			var last_update = $("#last_update").val();
-//     		$.ajax({
-//         		url: "/get-message-json/" + '{{itinerary.id}}',
-// 				type: 'POST',
-//         		data: { last_update: last_update} ,
-//         		dataType : "json",
-//         		success: function( data ) {
-// 					loadMessage(data.messages, data.last_update);
-//         		}
-//     		});
-// 		}, 5000);
-
-function onSubmitMessage(form){
-	try {
-		form = $(form);
-		var params = form.serialize() + '&last_update=' + $("#last_update").val();
-		console.log(params);
-		$.ajax({
-	    	url: "/add-message",
-			type: 'POST',
-	    	data: params ,
-	    	dataType : "json",
-			success: function(data){
-				form[0].reset();
-				console.log(data);
-				if(typeof data.errors !== 'undefined'){
-					alert(data.errors);
-				}else{
-					loadMessage(data.messages, data.last_update);
-				}
-			},
-		});
-	}catch(err) {
-	    console.log(err);
-	}
-}
-
-function onSubmitReply(form){
-	form = $(form);
-	console.log(form.serialize());
-	$.ajax({
-    	url: "/add-reply",
-		type: 'POST',
-    	data: form.serialize() ,
-    	dataType : "json",
-		success: function(data){
-			form[0].reset();
-			console.log(data);
-			if(typeof data.errors !== 'undefined'){
-				alert(data.errors);
-			}else{
-				//console.log('last_update_comment:' + form.find("#last_update_comment").val());
-				form.find("#last_update_reply").val(data.last_update_reply);
-				//console.log('update to:' + form.find("#last_update_comment").val());
-				//TODO:
-				$(data.replies).each(function() {
-					var element = createReply(this);
-					$(element).hide().appendTo(form.prev("#reply-list")).fadeIn('slow');
-				});
-			}
-		},
-	});
-}
-
-function loadMessage(messages, last_update){
-	$("#last_update").val(last_update);
-    $(messages.reverse()).each(function() {
-		//TODO: update messages that are already displayed
-		var element = createMessage(this);
-		$(element).hide().prependTo("#message-list").fadeIn('slow');
-    });
-}
-
-function createMessage(message) {
-	// generate comments
-	var replies = '<div id="reply-list">';
-	$(message.replies).each(function() {
-		replies += createReply(this);
-	});
-	replies += '</div>'
-    var element = (	'<h4>' +
-			'<img src=\"\" alt=\"' + message.created_by_username + '\" width="40px" height="40px">\n' +
-			'<a href=\"#\">' + message.created_by_username + '</a>\n' +
-			'<span class="label label-default">' + message.creation_time + '</span>' +
-		'</h4>' +
-		'<div class="well well-sm">' +
-			'<p>' + message.content + '</p>' +
-			// comments
-			replies +
-			//comment form
-			'<form class="form-group reply_form" action="#" onsubmit="onSubmitReply(this);return false;">' +
-				'<div class="input-group">' +
-		    		'<input type="text" placeholder="Write a reply..." class="form-control" name="content" autocomplete="off"> \
-		       		<span class="input-group-btn"> \
-					<input type="submit" id="add_reply" value="Reply" class="btn btn-success"> \
-					</span> \
-				</div>' +
-				'<input type="hidden" id="last_update_reply" name="last_update_reply" value=\"' + message.last_update_reply + '\">' +
-				'<input type="hidden" id="message_id" name="message_id" value=\"' + message.id + '\">' +
-			'</form>' +
-		'</div>'
-    );
-	console.log(element);
-	return element;
-}
-
-function createReply(reply){
-	var element = ('<div class="media"> \
-  	  		<div class="media-left">' +
-      			'<img class="media-object" src=\"\" alt=\"' + reply.created_by_username + '\" width="30px" height="30px">' +
-  	  		'</div> \
-  	  		<div class="media-body"> \
-    			<h6 class="media-heading">' +
-				reply.created_by_username +
-				'<span class="label label-default">' + reply.creation_time + '</span>' +
-				'</h6>' +
-				'<h6>' + reply.content + '</h6>' +
-  		 	'</div> \
-		</div>'
-    );
-	return element;
-}
-
-</script> -->
 {% endblock %}
 
 
@@ -152,12 +25,14 @@ function createReply(reply){
 		<div class="col-md-10">
 			<!-- Message form -->
 			<form name="messageForm" ng-submit="messageForm.$valid && msgCtrl.addMessage()" novalidate>
-				<fieldset class="form-group input-group">
+				<fieldset class="form-group">
 					<!-- <textarea ng-model="msgCtrl.newMessage.content" class="form-control" placeholder="What's on your mind?" title="content" required></textarea> -->
+					<div class="input-group">
 					<input ng-model="msgCtrl.newMessage.content" type="text" placeholder="What's on your mind?" class="form-control" name="content" autocomplete="off" required>
 						<span class="input-group-btn">
-							<input type="submit" value="Post" class="btn btn-success">
+							<input type="submit" value="Post" class="btn btn-success" ng-disabled="messageForm.$invalid">
 						</span>
+					</div>
 				</fieldset>
 			</form>
 			<!-- Message list -->
@@ -165,21 +40,22 @@ function createReply(reply){
 				<div class="message-list-item" ng-repeat="message in msgCtrl.messages| orderBy:'-creation_time'">
 				<h4>
 					<img ng-src="{{message.created_by.photo}}" width="40px" height="40px">
-					<a href="#">{{message.created_by}}</a>
-					<span class="label label-default">{{message.creation_time}}</span>
+					<a href="#">{{message.created_by.username}}</a>
+					<span class="label label-default">{{message.creation_time | date:'medium'}}</span>
 				</h4>
 				<div class="well well-sm">
-					<p>{{message.content}}</p>		
+					<p>{{message.content}}</p>	
+					<!-- Reply list -->	
 					<div class="reply-list">
-						<div class="reply-list-item" ng-repeat="reply in messages.replies| orderBy:'creation_time'">
+						<div class="reply-list-item" ng-repeat="reply in message.replies| orderBy:'creation_time'">
 							<div class="media">
 								<div class="media-left">
 						      	  <img class="media-object" ng-src="{{reply.created_by.photo}}" width="30px" height="30px">
 						  		</div>
 						  		<div class="media-body">
 						    		<h6 class="media-heading">
-										{{reply.created_by}}
-									<span class="label label-default">{{reply.creation_time}}</span>
+										{{reply.created_by.username}}
+									<span class="label label-default">{{reply.creation_time | date:'medium'}}</span>
 									</h6>
 									<h6>{{reply.content}}</h6>
 						  		</div>
@@ -187,13 +63,13 @@ function createReply(reply){
 						</div>
 						<form class="form-group" name="replyForm" ng-submit="replyForm.$valid && msgCtrl.addReply(message)" novalidate>
 							<fieldset class="input-group">
-						    	<input ng-model="message.replies.content" type="text" placeholder="Write a reply..." class="form-control" name="content" autocomplete="off" required>
+						    	<input ng-model="msgCtrl.newReply.content" type="text" placeholder="Write a reply..." class="form-control" name="content" autocomplete="off" required>
 						       	<span class="input-group-btn">
-								<input type="submit" value="Reply" class="btn btn-success">
+								<input type="submit" value="Reply" class="btn btn-success" ng-disabled="replyForm.$invalid">
 								</span>
 							</fieldset>
 						</form>
-					</div>
+					</div> <!-- end of reply-list -->
 				</div>
 			</div> <!-- end of message-list-item -->
 		</div> <!-- end of message-list -->

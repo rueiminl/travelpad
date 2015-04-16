@@ -3,7 +3,7 @@
 	margin: 0 auto;
 }*/
 .attraction{
-	background: red;
+	background: green;
 }
 .hotel{
 	background: yellow;
@@ -13,6 +13,9 @@
 }
 .transportation{
 	background: blue;
+}
+.proposed{
+	border-color:red;
 }
 /*.fc-bgevent{
 

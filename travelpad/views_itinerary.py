@@ -103,7 +103,7 @@ def get_calendar_events_json(request, itinerary_id):
             event_json.update({
             # 'start': timezone.localtime(event.start_datetime).isoformat(),#event.start_datetime.isoformat(), #ISO8601
             # 'end': timezone.localtime(event.end_datetime).isoformat(),#event.end_datetime.isoformat(), #ISO8601
-                'className' : event.type, # attraction, hotel, restaurant
+                'className' : [event.type, 'proposed' if event.proposed else ''], # attraction, hotel, restaurant
             })
         except Exception as inst:
             print inst
@@ -262,7 +262,6 @@ def message_json(request):
             response_text = json.dumps(results)          
             return HttpResponse(response_text, content_type='application/json')
         else:
-            print form
             errors = []
             errors.append('Woops! Something wrong.')
             return HttpResponseBadRequest(json.dumps({'errors':errors}), content_type='application/json')

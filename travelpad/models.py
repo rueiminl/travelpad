@@ -71,6 +71,7 @@ class Event(models.Model):
             "place": {"id": self.place_id, "name": self.place_name, "latitude": self.place_latitude, "longitude": self.place_longitude},
             "note": self.note,
             "type": self.type,
+            "proposed": self.proposed,
             "transportation": self.pre.as_dict() if hasattr(self,'pre') else 'null',
             #"time": timezone.localtime(self.time).strftime("%b. %d, %Y, %I:%M %p"),
         }
@@ -144,11 +145,11 @@ class Cost(models.Model):
     
         return {
             "id": self.id,
-            "participant": [user.as_dict() for user in self.participant.all()],
+            "participant": [user.username for user in self.participant.all()],
             "isall": self.isall,
             "status": self.status,
             "related_event": self.related_event.title,
-            "owner": self.owner.as_dict() if self.owner else '',
+            "owner": ownername,
             "note": self.note,
             "amount": float(self.amount),
             "creation_time": self.creation_time.isoformat(),
