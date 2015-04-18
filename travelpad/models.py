@@ -144,7 +144,7 @@ class Cost(models.Model):
             "participant": [user.as_dict() for user in self.participant.all()],
             "isall": self.isall,
             "status": self.status,
-            "related_event": self.related_event.title,
+            "related_event": self.related_event.title if self.related_event else '',
             "owner": self.owner.as_dict() if self.owner else '',
             "note": self.note,
             "amount": float(self.amount),
