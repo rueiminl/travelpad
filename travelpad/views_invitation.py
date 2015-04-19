@@ -26,7 +26,8 @@ def get_itinerary_by_session(request):
 @login_required
 def invitation(request):
 	itinerary_id = get_itinerary_id_by_session(request)
-	context = {'itinerary_id' : itinerary_id}
+	users = User.objects.all()
+	context = {'itinerary_id' : itinerary_id, 'users' : users}
 	return render(request, 'travelpad/invitation.html', context)
 	
 @login_required
