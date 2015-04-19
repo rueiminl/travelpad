@@ -28,24 +28,31 @@ $(function() {
 
 {% block content %}
 
-<div style="display: inline;">
-<form id="invitationForm" action="invite" method="POST">
-	<h3>Invite</h3>
-	<input id="username" class='form-control' type="text" name="username" placeholder='username' style="width:300px">
-	<input class="btn btn-primary" type="submit">
-	{% csrf_token %}
-</form>
-</div>
+<div class="invitation">
+	<div class="row">
+		<aside class="col-md-2">
+			{% include "travelpad/itinerary_nav.html" with invitation_active='class="active"' %}	
+		</aside>
 
-<h3>Participants</h3>
-{% verbatim %} 
-<div ng-controller="ParticipantController as itCtrl">
-	<div ng-repeat="participant in itCtrl.participants">
-		<img class="thumbnail" title="{{participant.username}}" src="/get_user_photo/{{ participant.id }}" alt="No picture yet"> 
+		<div style="display: inline;">
+		<form id="invitationForm" action="invite" method="POST">
+			<h3>Invite</h3>
+			<input id="username" class='form-control' type="text" name="username" placeholder='username' style="width:300px">
+			<input class="btn btn-primary" type="submit">
+			{% csrf_token %}
+		</form>
+		</div>
+
+		<h3>Participants</h3>
+		{% verbatim %} 
+		<div ng-controller="ParticipantController as itCtrl">
+			<div ng-repeat="participant in itCtrl.participants">
+				<img class="thumbnail" title="{{participant.username}}" src="/get_user_photo/{{ participant.id }}" alt="No picture yet"> 
+			</div>
+		</div>
+		{% endverbatim %}	
 	</div>
 </div>
-{% endverbatim %}	
-
 {% endblock %}
 
 {% block tail %}
