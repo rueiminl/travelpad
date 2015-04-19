@@ -94,7 +94,7 @@
 							
 						});
 						console.log(mapEvents.length + ' map events');
-						setAllMarkers(mapEvents);
+						//setAllMarkers(mapEvents);
 						
 					}
 				}()),

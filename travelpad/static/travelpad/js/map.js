@@ -54,10 +54,13 @@ function initialize() {
                 '{ "firstName":"John" , "lastName":"Doe" },' +
                 '{ "firstName":"Anna" , "lastName":"Smith" },' +
                 '{ "firstName":"Peter" , "lastName":"Jones" } ]}';
-    var placsjson = '{"transportation" : [' +
-                    '"type": "driving", "start":""'
+    var placsjson = '[{"transportation" : {' +
+                    '"type": "driving", "start":"2015-04-19T12:59:23Z"} }]';
+
     var obj = JSON.parse(text);
-    //alert(obj.employees[0].firstName);
+    var placeobj = JSON.parse(placsjson);
+    alert(placeobj.transportation.type);
+    alert(obj.employees[0].firstName);
     
 }
 
@@ -211,12 +214,13 @@ function setAllMarkers(placeArrTmp){
   clearMarkers();
   if(placeArrTmp == null || placeArrTmp.length == 0)
       return;
-  var myPlace = JSON.parse(placeArrTmp);
-  alert(myPlace);
 
-  for(var i=0; i<myPlace.length; i++){
-    var placeInfo = myPlace[i].place;
-    var transportationInfo = myPlace[i].transportation;
+  //var myPlace = JSON.parse(placeArrTmp[0]);
+  for(var i=0; i<placeArrTmp.length; i++){
+    var myPlace = JSON.parse(placeArrTmp[i]);
+    var placeInfo = myPlace.place;
+    var transportationInfo = myPlace.transportation;
+    alert("latitude: " + placeInfo.latitude + " ,longitude: " + placeInfo.longitude);
     placeArr.push(new google.maps.LatLng(placeInfo.latitude, placeInfo.longitude));
     placeNameArr.push(placeInfo.name);
     transportTypes.push(transportationInfo.type);

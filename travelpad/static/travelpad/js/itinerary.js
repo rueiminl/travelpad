@@ -12,6 +12,11 @@ function getCityItinerary(){
     if (!place.geometry) {
       return;
     }
-    document.getElementById("abc").innerHTML = place.lat();
+    // place.geometry.location.lat() : latitude
+    // place.geometry.location.lng() : longitude
+    // place.name: place name
+    // place.place_id: place id
+    document.getElementById("abc").innerHTML = place.geometry.location.lat() + place.geometry.location.lng() + place.name + place.place_id;
+
   });
 }
