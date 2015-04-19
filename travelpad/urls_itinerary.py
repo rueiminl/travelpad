@@ -24,8 +24,8 @@ urlpatterns = patterns('',
     url(r'^todo-json$', 'travelpad.views_itinerary.todo_json', name = 'todo-json'),
     url(r'^todo-json/(?P<todo_id>\d+)$', 'travelpad.views_itinerary.todo_id_json', name = 'todo-id-json'),
     
-    # Participant API
-    url(r'^participant-json$', 'travelpad.views_itinerary.participant_json', name = 'participant-json'),
+    # # Participant API
+#     url(r'^participant-json$', 'travelpad.views_itinerary.participant_json', name = 'participant-json'),
     
     
     # Feed
