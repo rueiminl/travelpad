@@ -124,7 +124,7 @@ def eventedit(request):
                 newtodo = Todo(task = form.cleaned_data['todo'], status = "pending", created_by = new_user, related_event = newevent, related_itinerary = thistinery)
                 newtodo.save()
             if (form.cleaned_data['cost']):
-                newcost = Cost(amount = form.cleaned_data['cost'], isall = form.cleaned_data['split'], status = "New", created_by = new_user, related_event = newevent, related_itinerary = thistinery)
+                newcost = Cost(amount = form.cleaned_data['cost'], isall = form.cleaned_data['split'], status = "Unpaid", created_by = new_user, related_event = newevent, related_itinerary = thistinery)
                 newcost.save()
             strange = datetime.combine(form.cleaned_data['start_date'], time(0, 0, 0))
             srange = timezone.make_aware(strange, timezone.get_current_timezone())
@@ -218,7 +218,7 @@ def eventeditwithID(request):
                 newtodo = Todo(task = form.cleaned_data['todo'], status = "pending", created_by = new_user, related_event = newevent, related_itinerary = thistinery)
                 newtodo.save()
             if (form.cleaned_data['cost']):
-                newcost = Cost(amount = form.cleaned_data['cost'], isall = form.cleaned_data['split'], status = "New", created_by = new_user, related_event = newevent, related_itinerary = thistinery)
+                newcost = Cost(amount = form.cleaned_data['cost'], isall = form.cleaned_data['split'], status = "Unpaid", created_by = new_user, related_event = newevent, related_itinerary = thistinery)
                 newcost.save()
             # begin edit transportation
             strange = datetime.combine(form.cleaned_data['start_date'], time(0, 0, 0))

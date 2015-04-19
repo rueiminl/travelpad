@@ -1,0 +1,15 @@
+.expenseheader h3 { 
+  display: inline;
+}
+
+.expenseheader h4 { 
+  display: inline;
+}
+
+.paid { 
+  background-color: DimGray ;
+}
+
+.unpaid { 
+  background-color: LightGreen ;
+}

@@ -8,6 +8,7 @@ class CostForm(forms.ModelForm):
         fields = (
             'participant',
             'status',
+            'isall',
             'owner',
             'note',
             'amount',

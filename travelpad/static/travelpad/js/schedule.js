@@ -30,17 +30,6 @@
 				selectable: true,
 				selectHelper: true,
 				select: function(start, end) {
-					//TODO: add events
-					// var title = prompt('Event Title:');
-// 					var eventData;
-// 					if (title) {
-// 						eventData = {
-// 							title: title,
-// 							start: start,
-// 							end: end
-// 						};
-// 						$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-// 					}
 					showeventmodal("", start.format("YYYY-MM-DD"), start.format("HH:mm"), end.format("YYYY-MM-DD"), end.format("HH:mm"))
 					$('#calendar').fullCalendar('unselect');
 				},
@@ -52,28 +41,36 @@
 						edittransport(calEvent.id);
 					}else{
 						editevent(calEvent.id);
-					}		
-				    // alert('Event: ' + calEvent.title);
-// 				        alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
-// 				        alert('View: ' + view.name);
-//
-// 				        // change the border color just for fun
-// 				        $(this).css('border-color', 'red');
-
+					}
 				},
 				eventDrop: function(event, delta, revertFunc) {
-					// editeventtime(event.id,start,end,success_callback,error_callback);
-				        alert(event.title + " was dropped on " + event.start.format());
-				        if (!confirm("Are you sure about this change?")) {
-				            revertFunc();
-				        }
+					alert(
+					            event.title + " was moved " +
+					            dayDelta + " days and " +
+					            minuteDelta + " minutes."
+					        );
+					if (!confirm("Are you sure about this change?")) {
+					            revertFunc();
+					        }
+					console.log('eventDrop');
+					// editeventtime(id, event.start.format("YYYY-MM-DD"), event.start.format("HH:mm"),
+// 						event.end.format("YYYY-MM-DD"), event.end.format("HH:mm"),
+// 					function(){
+// 						$.toaster({ priority : 'success', title : 'Success', message : 'Event time updated.'});
+// 					},function(){
+// 						revertFunc();
+// 						$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
+// 					});
 				},
 				eventResize: function(event, delta, revertFunc) {
-				        alert(event.title + " end is now " + event.end.format());
-
-				        if (!confirm("is this okay?")) {
-				            revertFunc();
-				        }
+					editeventtime(id, event.start.format("YYYY-MM-DD"), event.start.format("HH:mm"), 
+						event.end.format("YYYY-MM-DD"), event.end.format("HH:mm"),
+					function(){
+						$.toaster({ priority : 'success', title : 'Success', message : 'Event time updated.'});
+					},function(){
+						revertFunc();
+						$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
+					});
 				},
 				eventOverlap: function(stillEvent, movingEvent) {
 					// event other than transportation cannot overlap
@@ -85,7 +82,6 @@
 						//refresh map view whenever calendar is rendering
 						// Retrieves events that FullCalendar has in memory.
 						var mapEvents = $('#calendar').fullCalendar('clientEvents', function(evt) {					
-							// console.log(evt.endate);
 							if(evt.className!='background' && evt.className!='transportation'){
 								// console.log(evt);
 								var startDate = moment(new Date(evt.startdate));
@@ -97,8 +93,9 @@
 							return false;
 							
 						});
-						setAllMarkers(mapEvents);
 						console.log(mapEvents.length + ' map events');
+						setAllMarkers(mapEvents);
+						
 					}
 				}()),
 			}); // end init calendar
