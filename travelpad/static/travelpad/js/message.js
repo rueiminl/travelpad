@@ -13,7 +13,7 @@
 			for (var i = 0; i < t.messages.length; i++){
 				t.messages[i].newReply = {related_message: t.messages[i].id};
 			}
-			console.log(data);
+			// console.log(data);
 		}).error(function(data) {
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
 	    });
