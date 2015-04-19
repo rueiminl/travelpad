@@ -8,6 +8,22 @@
 		float: left;
 	}
 </style>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  
+<script>
+$(function() {
+    var availableUsers = [
+		{% for user in users %}
+		"{{user.username}}",
+		{% endfor %}
+    ];
+    $("#username").autocomplete({
+      source: availableUsers
+    });
+});
+</script>  
 {% endblock %}
 
 {% block content %}
@@ -15,7 +31,7 @@
 <div style="display: inline;">
 <form id="invitationForm" action="invite" method="POST">
 	<h3>Invite</h3>
-	<input class='form-control' type="text" name="username" placeholder='username' style="width:300px">
+	<input id="username" class='form-control' type="text" name="username" placeholder='username' style="width:300px">
 	<input class="btn btn-primary" type="submit">
 	{% csrf_token %}
 </form>
@@ -33,6 +49,4 @@
 {% endblock %}
 
 {% block tail %}
-	<script>
-	</script>
 {% endblock %}
