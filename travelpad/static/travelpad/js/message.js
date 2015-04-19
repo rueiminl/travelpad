@@ -5,12 +5,15 @@
 	var t = this;
 	this.messages = [];
 	this.newMessage = {};
-	this.newReply = {};
+	// this.newReply = {};
 	
 	this.reload = function(){
 		$http.get("/message-json").success(function(data){
 			t.messages = data;
-			console.log(data);
+			for (var i = 0; i < t.messages.length; i++){
+				t.messages[i].newReply = {related_message: t.messages[i].id};
+			}
+			// console.log(data);
 		}).error(function(data) {
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
 	    });
@@ -25,6 +28,7 @@
 
 	this.addMessage = function(){
 		$http.post("/message-json", t.newMessage).success(function(data){
+			data.newReply = {related_message: data.id};
 			t.messages.push(data);
 			t.newMessage = {};
 			$.toaster({ priority : 'success', title : 'Success', message : 'Message posted.'});
@@ -43,10 +47,12 @@
 	};
 	
 	this.addReply = function(message){
-		t.newReply.related_message = message.id;
-		$http.post("/reply-json", t.newReply).success(function(data){
+		console.log(message);
+		// message.newReply.related_message = message.id;
+		$http.post("/reply-json", message.newReply).success(function(data){
 			message.replies.push(data);
-			t.newReply = {};
+			message.newReply = {related_message: message.id}; //reset
+			// t.newReply = {};
 			$.toaster({ priority : 'success', title : 'Success', message : 'Reply posted.'});
 		}).error(function(data) {
 			$.toaster({ priority : 'danger', title : 'Error', message : data.errors});

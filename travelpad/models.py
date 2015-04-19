@@ -40,7 +40,7 @@ class Itinerary(models.Model):
             )
 
 class Event(models.Model):
-    user = models.ForeignKey(User)
+    created_by = models.ForeignKey(User)
     type = models.CharField(max_length=30)
     title = models.CharField(max_length=30)
     note = models.CharField(max_length=60, blank=True)
@@ -80,7 +80,7 @@ class Event(models.Model):
         }
         
 class Transportation(models.Model):
-    user = models.ForeignKey(User)
+    created_by = models.ForeignKey(User)
     type = models.CharField(max_length=30)
     note = models.CharField(max_length=60, blank=True)
     start_datetime = models.DateTimeField(null=True, blank=True)
@@ -206,3 +206,27 @@ class Photos(models.Model):
     related_event = models.ForeignKey(Event)
     photo = models.FileField(upload_to="placeImage")
     comment = models.CharField(max_length=3000)
+
+def create_message(instance, created, raw, **kwargs):
+    # Ignore fixtures and saves for existing courses.
+    if not created or raw:
+        return
+    if isinstance(instance, Event):
+        entry = Message(
+            created_by=instance.created_by, 
+            related_itinerary=instance.related_itinerary,
+            content=instance.created_by.username + " created " + instance.title + " event",
+            )
+        entry.save()
+    elif isinstance(instance, Todo):
+        entry = Message(
+            created_by=instance.created_by, 
+            related_itinerary=instance.related_itinerary,
+            content=instance.created_by.username + " created " + instance.task + " task",
+            )
+        entry.save()
+
+models.signals.post_save.connect(create_message, sender=Event, dispatch_uid='create_message')
+models.signals.post_save.connect(create_message, sender=Todo, dispatch_uid='create_message')
+
+

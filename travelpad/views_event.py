@@ -139,16 +139,16 @@ def eventedit(request):
                     ptrans.end_datetime = newevent.start_datetime
                     ptrans.destination = newevent
                     ptrans.save()
-                    newtrans = Transportation(user = new_user, type = "car", start_datetime = newevent.end_datetime, end_datetime = temptime, source = newevent, destination = tempplace, related_itinerary = thistinery)
+                    newtrans = Transportation(user = new_user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = temptime, source = newevent, destination = tempplace, related_itinerary = thistinery)
                     newtrans.save()
                 except ObjectDoesNotExist:
-                    newtrans = Transportation(user = new_user, type = "car", start_datetime = pevent.end_datetime, end_datetime = newevent.start_datetime, source = pevent, destination = newevent, related_itinerary = thistinery)
+                    newtrans = Transportation(user = new_user, type = "driving", start_datetime = pevent.end_datetime, end_datetime = newevent.start_datetime, source = pevent, destination = newevent, related_itinerary = thistinery)
                     newtrans.save()
             # first event of the day
             except ObjectDoesNotExist:
                 try:
                     nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
-                    newtrans = Transportation(user = new_user, type = "car", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent, related_itinerary = thistinery)
+                    newtrans = Transportation(user = new_user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent, related_itinerary = thistinery)
                     newtrans.save()
                 except ObjectDoesNotExist:
                     print "first event"
@@ -286,16 +286,16 @@ def eventeditwithID(request):
                         ptrans.end_datetime = newevent.start_datetime
                         ptrans.destination = newevent
                         ptrans.save()
-                        newtrans = Transportation(user = request.user, type = "car", start_datetime = newevent.end_datetime, end_datetime = temptime, source = newevent, destination = tempplace, related_itinerary = thistinery)
+                        newtrans = Transportation(user = request.user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = temptime, source = newevent, destination = tempplace, related_itinerary = thistinery)
                         newtrans.save()
                     except ObjectDoesNotExist:
-                        newtrans = Transportation(user = request.user, type = "car", start_datetime = pevent.end_datetime, end_datetime = newevent.start_datetime, source = pevent, destination = newevent, related_itinerary = thistinery)
+                        newtrans = Transportation(user = request.user, type = "driving", start_datetime = pevent.end_datetime, end_datetime = newevent.start_datetime, source = pevent, destination = newevent, related_itinerary = thistinery)
                         newtrans.save()
                 # first event of the day
                 except ObjectDoesNotExist:
                     try:
                         nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
-                        newtrans = Transportation(user = request.user, type = "car", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent, related_itinerary = thistinery)
+                        newtrans = Transportation(user = request.user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent, related_itinerary = thistinery)
                         newtrans.save()
                     except ObjectDoesNotExist:
                         print "first event"
@@ -419,16 +419,16 @@ def editeventtime(request):
                 ptrans.end_datetime = newevent.start_datetime
                 ptrans.destination = newevent
                 ptrans.save()
-                newtrans = Transportation(user = request.user, type = "car", start_datetime = newevent.end_datetime, end_datetime = temptime, source = newevent, destination = tempplace, related_itinerary = thistinery)
+                newtrans = Transportation(user = request.user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = temptime, source = newevent, destination = tempplace, related_itinerary = thistinery)
                 newtrans.save()
             except ObjectDoesNotExist:
-                newtrans = Transportation(user = request.user, type = "car", start_datetime = pevent.end_datetime, end_datetime = newevent.start_datetime, source = pevent, destination = newevent, related_itinerary = thistinery)
+                newtrans = Transportation(user = request.user, type = "driving", start_datetime = pevent.end_datetime, end_datetime = newevent.start_datetime, source = pevent, destination = newevent, related_itinerary = thistinery)
                 newtrans.save()
         # first event of the day
         except ObjectDoesNotExist:
             try:
                 nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
-                newtrans = Transportation(user = request.user, type = "car", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent, related_itinerary = thistinery)
+                newtrans = Transportation(user = request.user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent, related_itinerary = thistinery)
                 newtrans.save()
             except ObjectDoesNotExist:
                 print "first event"
