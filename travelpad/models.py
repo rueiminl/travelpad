@@ -187,3 +187,19 @@ class Reply(models.Model):
 class TravelPadUser(models.Model):
 	user = models.ForeignKey(User)
 	photo = models.FileField(upload_to = "pictures", blank=True)
+
+
+
+class Feedback_place(models.Model):
+    created_by = models.ForeignKey(User)
+    related_itinerary = models.ForeignKey(Itinerary)
+    place_name = models.CharField(max_length=100,blank=True)
+    place_id = models.CharField(max_length=30,blank=True)
+    comment = models.CharField(max_length=3000, blank=True)
+    rating = models.IntegerField()
+
+class Photos(models.Model):
+    created_by = models.ForeignKey(User)
+    related_event = models.ForeignKey(Event)
+    photo = models.FileField(upload_to="placeImage")
+    comment = models.CharField(max_length=3000)
