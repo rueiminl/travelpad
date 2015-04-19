@@ -48,7 +48,16 @@ function initialize() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);
-    setAllMarkers(placeArrTmp);
+    setAllMarkers();
+
+    var text = '{ "employees" : [' +
+                '{ "firstName":"John" , "lastName":"Doe" },' +
+                '{ "firstName":"Anna" , "lastName":"Smith" },' +
+                '{ "firstName":"Peter" , "lastName":"Jones" } ]}';
+    var placsjson = '{"transportation" : [' +
+                    '"type": "driving", "start":""'
+    var obj = JSON.parse(text);
+    //alert(obj.employees[0].firstName);
     
 }
 
@@ -203,6 +212,7 @@ function setAllMarkers(placeArrTmp){
   if(placeArrTmp == null || placeArrTmp.length == 0)
       return;
   var myPlace = JSON.parse(placeArrTmp);
+  alert(myPlace);
 
   for(var i=0; i<myPlace.length; i++){
     var placeInfo = myPlace[i].place;

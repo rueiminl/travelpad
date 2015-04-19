@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app>
+<html lang="en" ng-app="feedback">
 <head>
 <meta charset="UTF-8">
 <title>Feedback</title>
@@ -10,12 +10,12 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
-	$(':radio').change(
-	  function(){
-	  	alert(this.value);
-	    $('#choice').text( this.value);
-	  } 
-	)
+  var myapp = angular.module('feedback', []);
+
+  myapp.controller('starController', ['$scope', function($scope){
+    $scope.number = '1';
+  }]);
+
 </script>
 
 <style type="text/css">
@@ -148,13 +148,19 @@ body::before {
             <h2 id="section-1">Your Feedback</h2>
             	<div> How do you like your trip? </div>
             	<div id="choice">Choose a rating</div>
-            	<span class="star-rating">
-				  <input type="radio" ng-model="color.name" name="rating" value="1"><i></i>
-				  <input type="radio" ng-model="color.name" name="rating" value="2"><i></i>
-				  <input type="radio" ng-model="color.name" name="rating" value="3"><i></i>
-				  <input type="radio" ng-model="color.name" name="rating" value="4"><i></i>
-				  <input type="radio" ng-model="color.name" name="rating" value="5"><i></i>
-				</span>
+              <div ng-controller="starController">
+              	<span class="star-rating">
+        				  <input type="radio" ng-model="number" name="rating" value="1"><i></i>
+        				  <input type="radio" ng-model="number" name="rating" value="2"><i></i>
+        				  <input type="radio" ng-model="number" name="rating" value="3"><i></i>
+        				  <input type="radio" ng-model="number" name="rating" value="4"><i></i>
+        				  <input type="radio" ng-model="number" name="rating" value="5"><i></i>
+        				</span>
+                {{number}}
+              </div>
+              <div>
+                Comment: <input type="text" ng-model="comment" name="comment">
+              </div>
             <hr>
 
             <h2 id="section-2">Everyone Says</h2>
