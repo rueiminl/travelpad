@@ -446,7 +446,9 @@ def editeventtime(request):
             ntrans.save()
         except ObjectDoesNotExist:
             pass
-    return HttpResponse("success")
+    response_data = {}
+    response_data['status'] = 'success'
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
     #return HttpResponseBadRequest('', mimetype = 'application/json', status = 409)
         
 def transporteditwithid(request):
