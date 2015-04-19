@@ -3,6 +3,7 @@
 
 prerequisite:
 	1. install apache2, mysql, python, django, mod-wsgi, ...
+	1.1 pip install pillow 		(used when uploading photos)
 	2. cp github to /var/www/travelpad (or ln -s)
 	3. new file travelpad.conf
 		> a2ensite travelpad.conf
