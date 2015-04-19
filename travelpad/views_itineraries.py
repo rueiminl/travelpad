@@ -43,8 +43,8 @@ def add_itinerary(request):
 	itinerary_form = ItineraryForm(request.POST, request.FILES, instance = itinerary)
 	if not itinerary_form.is_valid():
 		print "debug_add_itinerary form.is_valid fail"
-		print itinerary_form.errors
-		return redirect("itineraries")
+		response_text = serializers.serialize('json', itinerary_form.errors)
+		return HttpResponse(response_text, content_type='application/json')
 	itinerary_form.save()
 	return redirect("itineraries")
 
@@ -58,6 +58,7 @@ def update_itinerary(request, id):
 		itinerary = Itinerary(created_by=request.user)
 	else:
 		itinerary = get_itinerary(id)
+	print "request.POST = ", request.POST
 	if request.POST.get("clear"):
 		itinerary.photo = None
 	if not request.FILES:
@@ -66,8 +67,8 @@ def update_itinerary(request, id):
 		itinerary_form = ItineraryForm(request.POST, request.FILES, instance = itinerary)
 	if not itinerary_form.is_valid():
 		print "update_itinerary form.is_valid fail"
-		print itinerary_form.errors
-		return redirect("itineraries")
+		response_text = serializers.serialize('json', itinerary_form.errors)
+		return HttpResponse(response_text, content_type='application/json')
 	itinerary_form.save()
 	if id == "0":
 		itinerary.participants.add(User.objects.get(id=request.user.id))
