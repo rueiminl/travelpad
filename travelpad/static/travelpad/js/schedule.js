@@ -101,7 +101,7 @@
 			}); // end init calendar
 			
 			// //TODO:init map
-			focusCenter();
+			// focusCenter();
 			
 		}).error(function(data) {
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
