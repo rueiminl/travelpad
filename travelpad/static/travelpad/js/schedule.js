@@ -44,34 +44,33 @@
 					}
 				},
 				eventDrop: function(event, delta, revertFunc) {
-					if (confirm("Are you sure about this change?")){
-						editeventtime(event.id, event.start.format("YYYY-MM-DD"), event.start.format("HH:mm"),
-							event.end.format("YYYY-MM-DD"), event.end.format("HH:mm"),
-						function(){
-							$('#calendar').fullCalendar('refetchEvents'); //refresh related transportation
-							$.toaster({ priority : 'success', title : 'Success', message : 'Event time updated.'});
-						},function(){
-							revertFunc();
-							$.toaster({ priority : 'danger', title : 'Error', message : 'Update Event time error.'});
-						});
-					}else{
-						revertFunc();
-					}
+					alert(
+					            event.title + " was moved " +
+					            dayDelta + " days and " +
+					            minuteDelta + " minutes."
+					        );
+					if (!confirm("Are you sure about this change?")) {
+					            revertFunc();
+					        }
+					console.log('eventDrop');
+					// editeventtime(id, event.start.format("YYYY-MM-DD"), event.start.format("HH:mm"),
+// 						event.end.format("YYYY-MM-DD"), event.end.format("HH:mm"),
+// 					function(){
+// 						$.toaster({ priority : 'success', title : 'Success', message : 'Event time updated.'});
+// 					},function(){
+// 						revertFunc();
+// 						$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
+// 					});
 				},
 				eventResize: function(event, delta, revertFunc) {
-					if (confirm("Are you sure about this change?")){
-						editeventtime(event.id, event.start.format("YYYY-MM-DD"), event.start.format("HH:mm"),
-							event.end.format("YYYY-MM-DD"), event.end.format("HH:mm"),
-						function(){
-							$('#calendar').fullCalendar('refetchEvents'); //refresh related transportation
-							$.toaster({ priority : 'success', title : 'Success', message : 'Event time updated.'});
-						},function(){
-							revertFunc();
-							$.toaster({ priority : 'danger', title : 'Error', message : 'Update Event time error.'});
-						});
-					}else{
+					editeventtime(id, event.start.format("YYYY-MM-DD"), event.start.format("HH:mm"), 
+						event.end.format("YYYY-MM-DD"), event.end.format("HH:mm"),
+					function(){
+						$.toaster({ priority : 'success', title : 'Success', message : 'Event time updated.'});
+					},function(){
 						revertFunc();
-					}
+						$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
+					});
 				},
 				eventOverlap: function(stillEvent, movingEvent) {
 					// event other than transportation cannot overlap
@@ -80,9 +79,9 @@
 				},
 				eventAfterAllRender: (function(){
 					return function( view){
-						// //refresh map view whenever calendar is rendering
+						//refresh map view whenever calendar is rendering
 						// Retrieves events that FullCalendar has in memory.
-						var mapEvents = $('#calendar').fullCalendar('clientEvents', function(evt) {
+						var mapEvents = $('#calendar').fullCalendar('clientEvents', function(evt) {					
 							if(evt.className!='background' && evt.className!='transportation'){
 								// console.log(evt);
 								var startDate = moment(new Date(evt.startdate));
@@ -92,10 +91,12 @@
 								return !(startDate >= view.intervalEnd || endDate < view.intervalStart);
 							}
 							return false;
-
+							
 						});
 						console.log(mapEvents.length + ' map events');
+						initialize();
 						setAllMarkers(mapEvents);
+						
 					}
 				}()),
 			}); // end init calendar
@@ -111,4 +112,4 @@
   	}]);
  
 
-})();		
+})();
