@@ -6,17 +6,52 @@
 		var t = this;
 		this.itinerary = {};
 		this.events = [];
+		this.dateTitle;
 		
-		this.refetchEvent = function(){
-			$('#calendar').fullCalendar( 'refetchEvents' );
-			
+		this.calendar = {
+			prev: function(){
+				$('#calendar').fullCalendar('prev');
+			},
+			next: function(){
+				$('#calendar').fullCalendar('next');
+			},
+			changeWeekView: function(){
+				$('#calendar').fullCalendar('changeView', 'agendaWeek');
+			},
+			changeDayView: function(){
+				$('#calendar').fullCalendar('changeView', 'agendaDay');
+			},
+			isWeekView: function(){
+				var view = $('#calendar').fullCalendar('getView');
+				return view.name == 'agendaWeek'
+			},
 		};
 		
+	
 		$http.get("/itinerary-json").success(function(data){
 			console.log(data);
-			t.itinerary = data;
+			t.itinerary = data;			
 			
-			//init calendar
+			/* initialize the external events
+			-----------------------------------------------------------------*/
+			$('#external-events .fc-event').each(function() {
+				// store data so the calendar knows to render an event upon drop
+				$(this).data('event', {
+					title: $.trim($(this).text()), // use the element's text as the event title
+					stick: true // maintain when user navigates (see docs on the renderEvent method)
+				});
+
+				// make the event draggable using jQuery UI
+				$(this).draggable({
+					zIndex: 999,
+					revert: true,      // will cause the event to go back to its
+					revertDuration: 0  //  original position after the drag
+				});
+
+			});
+			
+			/* initialize the calendar
+			-----------------------------------------------------------------*/
 			$('#calendar').fullCalendar({
 				header: {
 					left: 'prev,next',
@@ -36,6 +71,9 @@
 				editable: true,
 				eventLimit: true, // allow "more" link when too many events
 				events: '/get-calendar-events-json/' + data.id,
+				viewRender:function(view, element){
+					t.dateTitle = view.title;
+				},
 				eventClick: function(calEvent, jsEvent, view) {
 					if(calEvent.className=='transportation'){
 						edittransport(calEvent.id);
@@ -98,17 +136,38 @@
 						setAllMarkers(mapEvents);
 					}
 				}()),
+				droppable: true, // this allows things to be dropped onto the calendar
+				drop: function(date, jsEvent, ui) {
+					console.log('drop');
+					// ui.remove();
+				},
+				
 			}); // end init calendar
 			
-			// //TODO:init map
-			// focusCenter();
+			// init map
+			// focusCenter(data.place.latitude, data.place.longitude);
 			
 		}).error(function(data) {
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
 	    });
 		
 		
+		
+		
+		
   	}]);
+	
+	app.controller('TabController', function(){
+		this.tab = 1;
+
+		this.setTab = function(newValue){
+			this.tab = newValue;
+		};
+
+		this.isSet = function(tabName){
+			return this.tab === tabName;
+		};
+	});
  
 
 })();		

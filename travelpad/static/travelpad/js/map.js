@@ -20,7 +20,7 @@ var transportTypes = [];
 // marker sets on google map
 var markers = [];
 var countNum = 0;
-var mapOptions;
+var mapOptions ;
 var flightPaths = [];
 var directionsDisplays = [];
 var zoomVar = 12;
@@ -32,14 +32,6 @@ function initialize() {
     placeArrTmp = [];
     placeArr = [];
     markers = [];
-   // for(var i=0; i<arr.length; i++){
-   //   placeArr.push(new google.maps.LatLng(arr[i][0], arr[i][1]));
-    //}
-    //{% for place in places %}
-    //    placeArr.push(new google.maps.LatLng("{{place.latitude}}", "{{place.longitude}}"));
-    //{% endfor %}
-    
-    //var myLatlng = new google.maps.LatLng(document.getElementById("lat").getAttribute("value"), document.getElementById("lng").getAttribute("value"));
     var myLatlng = new google.maps.LatLng(40.442492, -79.94255299999998);
     centerVar = myLatlng;
     mapOptions = {
@@ -48,19 +40,12 @@ function initialize() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);
-    setAllMarkers();
-
-    var text = '{ "employees" : [' +
-                '{ "firstName":"John" , "lastName":"Doe" },' +
-                '{ "firstName":"Anna" , "lastName":"Smith" },' +
-                '{ "firstName":"Peter" , "lastName":"Jones" } ]}';
-    var placsjson = '[{"transportation" : {' +
-                    '"type": "driving", "start":"2015-04-19T12:59:23Z"} }]';
-
-    var obj = JSON.parse(text);
-    var placeobj = JSON.parse(placsjson);
-    alert(placeobj.transportation.type);
-    alert(obj.employees[0].firstName);
+    google.maps.event.addListenerOnce(map, 'idle', function() {
+       google.maps.event.trigger(map, 'resize');
+    });
+    //var obj = [{transporation:{start: ""}, place:{id: 1, latitude:40.442492, longitude:-79.94255299999998, name: "CMU"}}];
+    //setAllMarkers(obj);
+    //focusCenter(-25.363882, 131.044922);
     
 }
 
@@ -93,41 +78,21 @@ function detectBrowser() {
   }
 }
 
-function getTime(src, dest, mode){
-  var request = {
-      origin: src,
-      destination: dest,
-      travelMode: google.maps.TravelMode[mode]
-  };
-  directionsService.route(request, function(response, status) {
-    var summaryPanel = document.getElementById('directions_panel');
-    if (status == google.maps.DirectionsStatus.OK) {
-      directionsDisplay.setDirections(response);
-      var route = response.routes[0];
-      //summaryPanel.innerHTML = '';
-      var routeSegment = index;
-      summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment + '</b><br>';
-      summaryPanel.innerHTML += route.legs[0].start_address + ' to ';
-      summaryPanel.innerHTML += route.legs[0].end_address + '<br>';
-      summaryPanel.innerHTML += route.legs[0].distance.text + '<br>';
-      summaryPanel.innerHTML += route.legs[0].duration.text + '<br><br>';
-      summaryPanel.innerHTML += route.legs[0].duration.value + '<br>';
-    }
-    else{
-      summaryPanel.innerHTML += 'No such route' + '<br><br>';
-    }
-  });
-
-}
-
-
 function calcRoute(src, dest, mode, index, startTime) {
+  if(mode == "car")
+    mode = "driving";
   var directionsDisplay = new google.maps.DirectionsRenderer();
   directionsDisplays.push(directionsDisplay);
   directionsDisplay.setMap(map);
   directionsDisplay.setOptions({ suppressMarkers: true });
   var t = new Date(startTime);
-  var request;
+  console.log("src:" + src + ", dest: " + dest + ", mode: " + mode);
+  var request = {
+      origin: src,
+      destination: dest,
+      travelMode: google.maps.TravelMode.DRIVING
+    };
+  /* 
   if(mode == "TRANSIT"){
     request = {
       origin: src,
@@ -142,10 +107,11 @@ function calcRoute(src, dest, mode, index, startTime) {
     request = {
       origin: src,
       destination: dest,
-      travelMode: google.maps.TravelMode[mode]
+      travelMode: google.maps.TravelMode["DRIVING"]
     };
-
   }
+  */
+  var directionsService = new google.maps.DirectionsService();
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
@@ -211,21 +177,34 @@ function focusCenter(latitude, longitude){
 // [{ transportation:{..}, place:{...} }, {transportation...}    ...]
 
 function setAllMarkers(placeArrTmp){
+  initialize();
   clearMarkers();
+  console.log(placeArrTmp);
+  //alert("clearMarkers");  
+
   if(placeArrTmp == null || placeArrTmp.length == 0)
       return;
 
   //var myPlace = JSON.parse(placeArrTmp[0]);
   for(var i=0; i<placeArrTmp.length; i++){
-    var myPlace = JSON.parse(placeArrTmp[i]);
+    var myPlace = placeArrTmp[i];
     var placeInfo = myPlace.place;
     var transportationInfo = myPlace.transportation;
-    alert("latitude: " + placeInfo.latitude + " ,longitude: " + placeInfo.longitude);
     placeArr.push(new google.maps.LatLng(placeInfo.latitude, placeInfo.longitude));
     placeNameArr.push(placeInfo.name);
-    transportTypes.push(transportationInfo.type);
-    startTimes.push(transportationInfo.start);
+    //alert(placeInfo.name);
+    if(transportationInfo == null){
+      transportTypes.push(null);
+      startTimes.push(null);
+    }
+    else{
+      transportTypes.push(transportationInfo.type);
+      startTimes.push(transportationInfo.start);
+    }
   }
+
+  for(var i=0; i<transportTypes.length; i++)
+    console.log(transportTypes[i]);
 
   //for(i=0; i<placeArrTmp.length; i++){
   //  placeArr.push(new google.maps.LatLng(placeArrTmp[i][0], placeArrTmp[i][1]));
@@ -246,22 +225,22 @@ function setAllMarkers(placeArrTmp){
 
   // middle points
   for(var index=1; index<placeArr.length ; index++){
-      calcRoute(start, placeArr[index], transportTypes[index-1], index, startTimes[index-1]);
-
+      console.log(index + ": " + placeNameArr[index-1] + " -> " + placeNameArr[index]);
+      if(transportTypes[index-1] != undefined){
+        calcRoute(placeNameArr[index-1], placeNameArr[index], transportTypes[index-1], index, startTimes[index-1]);
+      }
       marker = new google.maps.Marker({
         position: placeArr[index],
         map: map,
         title: 'Location'
       });
       infowindow = new google.maps.InfoWindow({
-        content: "<h1>" + (index+1).toString() + "</h1><div>" + placeNameArr[index] + "</div>"
+        content: "<h2>" + (index+1).toString() + "</h2><div>" + placeNameArr[index] + "</div>"
       });
       infowindow.open(map,marker);
       start = placeArr[index];
       markers.push(marker);
   }
-  
 } 
 
-
-google.maps.event.addDomListener(window, 'load', initialize);
+//google.maps.event.addDomListener(window, 'load', initialize);

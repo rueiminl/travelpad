@@ -32,14 +32,43 @@
 			<div class="col-md-2">
 				{% include "travelpad/itinerary_nav.html" with schedule_active='class="active"' %}	
 			</div>
-			<div class="col-md-5">
+			<div class="col-md-10">
 				{% addevent %} 
-				<!-- {% calendar itinerary %} -->
-				<div id='calendar'></div>
+				<div class="btn-toolbar" role="toolbar">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default glyphicon glyphicon-chevron-left" ng-click="scheduleCtrl.calendar.prev()"></button>
+				  		<button type="button" class="btn btn-default glyphicon glyphicon-chevron-right" ng-click="scheduleCtrl.calendar.next()"></button>
+					</div>
+					{% verbatim %} 
+					<h2> {{scheduleCtrl.dateTitle}} </h2>
+					{% endverbatim %}
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default" ng-class="{active:scheduleCtrl.calendar.isWeekView()}" ng-click="scheduleCtrl.calendar.changeWeekView()">week</button>
+				  		<button type="button" class="btn btn-default" ng-class="{active:!scheduleCtrl.calendar.isWeekView()}" ng-click="scheduleCtrl.calendar.changeDayView()">day</button>
+					</div>
+				</div>
+				<section class="tab" ng-controller="TabController as tab">
+					<ul class="nav nav-pills">
+						<li ng-class="{active:tab.isSet(1)}">
+							<a href ng-click="tab.setTab(1)">Calendar</a></li>
+						<li ng-class="{active:tab.isSet(2)}">
+				            <a href ng-click="tab.setTab(2)">Map</a></li>
+				    </ul>
+					<div class="row" ng-show="tab.isSet(1)">
+						<div class="col-md-3" id='external-events'>
+							<h4>Proposed Events</h4>
+							<div class='fc-event'>My Event 1</div>
+							<div class='fc-event'>My Event 2</div>
+						</div>				
+						<div class="col-md-7" id='calendar'></div>
+					</div>
+					<div id="map_canvas" style="width:550px; height:400px" ng-show="tab.isSet(2)"></div>
+				</section>
+				
 			</div>
-			<div class="col-md-5">
+			<!-- <div class="col-md-5">
 				<div id="map_canvas" style="width:550px; height:400px"></div>
-			</div>
+			</div> -->
 		</div>
 </div>
 {% endblock %}

@@ -181,7 +181,24 @@ class Reply(models.Model):
             creation_time=timezone.localtime(self.creation_time).isoformat(),
             timestamp=timezone.localtime(self.timestamp).isoformat(),
         )
-
+        
+# class Vote(models.Model):
+#     created_by = models.ForeignKey(User)
+#     related_event = models.ForeignKey(Event)
+#     related_itinerary = models.ForeignKey(Itinerary)
+#     voted_by = models.ManyToManyField(User, blank=True, related_name='voted_by')
+#     agreed_by = models.ManyToManyField(User, blank=True, related_name='agreed_by')
+#     creation_time = models.DateTimeField(auto_now_add=True)
+#     timestamp = models.DateTimeField(auto_now=True)
+#     def as_dict(self):
+#         return dict(
+#             id=self.id,
+#             created_by=self.created_by.as_dict(),
+#             voted_by=[user.as_dict() for user in self.voted_by.all()] if hasattr(self,'voted_by') else [],
+#             agreed_by=[user.as_dict() for user in self.agreed_by.all()] if hasattr(self,'agreed_by') else [],
+#             creation_time=timezone.localtime(self.creation_time).isoformat(),
+#             timestamp=timezone.localtime(self.timestamp).isoformat(),
+#         )
 
 class TravelPadUser(models.Model):
 	user = models.ForeignKey(User)
