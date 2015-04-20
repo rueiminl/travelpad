@@ -6,16 +6,23 @@
 		var t = this;
 		this.itinerary = {};
 		this.events = [];
+		this.currentDate;
 		
-		this.refetchEvent = function(){
-			$('#calendar').fullCalendar( 'refetchEvents' );
-			
+		this.prev = function(){
+			$('#calendar').fullCalendar('prev');
+			var view = $('#calendar').fullCalendar('getView');
+			t.currentDate = view.intervalStart.format('ll') + " — " + view.intervalEnd.format('ll');
+		};
+		
+		this.next = function(){
+			$('#calendar').fullCalendar('next');
+			var view = $('#calendar').fullCalendar('getView');
+			t.currentDate = view.intervalStart.format('ll') + " — " + view.intervalEnd.format('ll');
 		};
 		
 		$http.get("/itinerary-json").success(function(data){
 			console.log(data);
-			t.itinerary = data;
-			
+			t.itinerary = data;			
 			//init calendar
 			$('#calendar').fullCalendar({
 				header: {
@@ -36,6 +43,9 @@
 				editable: true,
 				eventLimit: true, // allow "more" link when too many events
 				events: '/get-calendar-events-json/' + data.id,
+				viewRender:function(view, element){
+					t.currentDate = view.intervalStart.format('ll') + " — " + view.intervalEnd.format('ll');
+				},
 				eventClick: function(calEvent, jsEvent, view) {
 					if(calEvent.className=='transportation'){
 						edittransport(calEvent.id);
@@ -44,33 +54,34 @@
 					}
 				},
 				eventDrop: function(event, delta, revertFunc) {
-					alert(
-					            event.title + " was moved " +
-					            dayDelta + " days and " +
-					            minuteDelta + " minutes."
-					        );
-					if (!confirm("Are you sure about this change?")) {
-					            revertFunc();
-					        }
-					console.log('eventDrop');
-					// editeventtime(id, event.start.format("YYYY-MM-DD"), event.start.format("HH:mm"),
-// 						event.end.format("YYYY-MM-DD"), event.end.format("HH:mm"),
-// 					function(){
-// 						$.toaster({ priority : 'success', title : 'Success', message : 'Event time updated.'});
-// 					},function(){
-// 						revertFunc();
-// 						$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
-// 					});
+					if (confirm("Are you sure about this change?")){
+						editeventtime(event.id, event.start.format("YYYY-MM-DD"), event.start.format("HH:mm"),
+							event.end.format("YYYY-MM-DD"), event.end.format("HH:mm"),
+						function(){
+							$('#calendar').fullCalendar('refetchEvents'); //refresh related transportation
+							$.toaster({ priority : 'success', title : 'Success', message : 'Event time updated.'});
+						},function(){
+							revertFunc();
+							$.toaster({ priority : 'danger', title : 'Error', message : 'Update Event time error.'});
+						});
+					}else{
+						revertFunc();
+					}
 				},
 				eventResize: function(event, delta, revertFunc) {
-					editeventtime(id, event.start.format("YYYY-MM-DD"), event.start.format("HH:mm"), 
-						event.end.format("YYYY-MM-DD"), event.end.format("HH:mm"),
-					function(){
-						$.toaster({ priority : 'success', title : 'Success', message : 'Event time updated.'});
-					},function(){
+					if (confirm("Are you sure about this change?")){
+						editeventtime(event.id, event.start.format("YYYY-MM-DD"), event.start.format("HH:mm"),
+							event.end.format("YYYY-MM-DD"), event.end.format("HH:mm"),
+						function(){
+							$('#calendar').fullCalendar('refetchEvents'); //refresh related transportation
+							$.toaster({ priority : 'success', title : 'Success', message : 'Event time updated.'});
+						},function(){
+							revertFunc();
+							$.toaster({ priority : 'danger', title : 'Error', message : 'Update Event time error.'});
+						});
+					}else{
 						revertFunc();
-						$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
-					});
+					}
 				},
 				eventOverlap: function(stillEvent, movingEvent) {
 					// event other than transportation cannot overlap
@@ -79,9 +90,9 @@
 				},
 				eventAfterAllRender: (function(){
 					return function( view){
-						//refresh map view whenever calendar is rendering
+						// //refresh map view whenever calendar is rendering
 						// Retrieves events that FullCalendar has in memory.
-						var mapEvents = $('#calendar').fullCalendar('clientEvents', function(evt) {					
+						var mapEvents = $('#calendar').fullCalendar('clientEvents', function(evt) {
 							if(evt.className!='background' && evt.className!='transportation'){
 								// console.log(evt);
 								var startDate = moment(new Date(evt.startdate));
@@ -91,18 +102,16 @@
 								return !(startDate >= view.intervalEnd || endDate < view.intervalStart);
 							}
 							return false;
-							
+
 						});
 						console.log(mapEvents.length + ' map events');
-						initialize();
 						setAllMarkers(mapEvents);
-						
 					}
 				}()),
 			}); // end init calendar
 			
-			// //TODO:init map
-			// focusCenter();
+			// init map
+			// focusCenter(data.place.latitude, data.place.longitude);
 			
 		}).error(function(data) {
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
@@ -110,6 +119,18 @@
 		
 		
   	}]);
+	
+	app.controller('TabController', function(){
+		this.tab = 1;
+
+		this.setTab = function(newValue){
+			this.tab = newValue;
+		};
+
+		this.isSet = function(tabName){
+			return this.tab === tabName;
+		};
+	});
  
 
-})();
+})();		

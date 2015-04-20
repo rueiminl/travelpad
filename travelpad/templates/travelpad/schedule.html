@@ -32,14 +32,36 @@
 			<div class="col-md-2">
 				{% include "travelpad/itinerary_nav.html" with schedule_active='class="active"' %}	
 			</div>
-			<div class="col-md-5">
+			<div class="col-md-10">
 				{% addevent %} 
-				<!-- {% calendar itinerary %} -->
-				<div id='calendar'></div>
+				<div class="btn-toolbar" role="toolbar">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default glyphicon glyphicon-chevron-left"></button>
+				  		<button type="button" class="btn btn-default glyphicon glyphicon-chevron-right"></button>
+					</div>
+					{% verbatim %} 
+					<h4>{{scheduleCtrl.currentDate}}</h4>
+					{% endverbatim %}
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default">week</button>
+				  		<button type="button" class="btn btn-default">day</button>
+					</div>
+				</div>
+				<section class="tab" ng-controller="TabController as tab">
+					<ul class="nav nav-pills">
+						<li ng-class="{active:tab.isSet(1)}">
+							<a href ng-click="tab.setTab(1)">Calendar</a></li>
+						<li ng-class="{active:tab.isSet(2)}">
+				            <a href ng-click="tab.setTab(2)">Map</a></li>
+				    </ul>
+					<div id='calendar' ng-show="tab.isSet(1)"></div>
+					<div id="map_canvas" style="width:550px; height:400px" ng-show="tab.isSet(2)"></div>
+				</section>
+				
 			</div>
-			<div class="col-md-5">
+			<!-- <div class="col-md-5">
 				<div id="map_canvas" style="width:550px; height:400px"></div>
-			</div>
+			</div> -->
 		</div>
 </div>
 {% endblock %}
