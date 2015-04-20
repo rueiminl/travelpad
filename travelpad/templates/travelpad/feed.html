@@ -32,20 +32,21 @@
 			</form>
 			<!-- Message list -->
 			<div class="message-list">
-				<div class="message-list-item" ng-repeat="message in msgCtrl.messages| orderBy:'-creation_time'">
-				<h4>
-					<img ng-src="{{message.created_by.photo}}" width="40px" height="40px">
-					<a href="#">{{message.created_by.username}}</a>
-					<span class="label label-default">{{message.creation_time | date:'medium'}}</span>
-				</h4>
-				<div class="well well-sm">
-					<p>{{message.content}}</p>	
+				<div class="message-list-item panel panel-default" ng-repeat="message in msgCtrl.messages| orderBy:'-creation_time'">
+					<div class="panel-heading">
+						<h4>
+						<img class="avatar" ng-src="{{message.created_by.photo}}" width="50px" height="50px">
+						<a href="#">{{message.created_by.username}}</a>
+						<span class="label label-default">{{message.creation_time | date:'medium'}}</span>
+						</h4>
+						<p>{{message.content}}</p>	
+					</div>
 					<!-- Reply list -->	
-					<div class="reply-list">
+					<div class="reply-list panel-body">
 						<div class="reply-list-item" ng-repeat="reply in message.replies| orderBy:'creation_time'">
 							<div class="media">
 								<div class="media-left">
-						      	  <img class="media-object" ng-src="{{reply.created_by.photo}}" width="30px" height="30px">
+						      	  <img class="media-object avatar" ng-src="{{reply.created_by.photo}}" width="40px" height="40px">
 						  		</div>
 						  		<div class="media-body">
 						    		<h6 class="media-heading">
@@ -59,13 +60,11 @@
 						<form class="form-group" name="replyForm" ng-submit="replyForm.$valid && msgCtrl.addReply(message)" novalidate>
 							<fieldset class="input-group">
 						    	<input ng-model="message.newReply.content" type="text" placeholder="Write a reply..." class="form-control" name="content" autocomplete="off" required>
-						       	<span class="input-group-btn">
-								<input type="submit" value="Reply" class="btn btn-success" ng-disabled="replyForm.$invalid">
-								</span>
+								<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;">
 							</fieldset>
 						</form>
 					</div> <!-- end of reply-list -->
-				</div>
+				</div> <!-- end of message-list-item -->
 			</div> <!-- end of message-list-item -->
 		</div> <!-- end of message-list -->
 </div>

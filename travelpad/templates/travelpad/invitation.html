@@ -39,33 +39,30 @@ $(function() {
 			{% include "travelpad/itinerary_nav.html" with invitation_active='class="active"' %}	
 		</aside>
 
-		<div style="display: inline;">
-		<form id="invitationForm" action="invite" method="POST">
+		<div ng-controller="ParticipantController as pCtrl">
 			<h3>Invite</h3>
-			<input id="username" class='form-control' type="text" name="username" placeholder='username' style="width:300px">
-			<input class="btn btn-primary" type="submit">
-			{% csrf_token %}
-		</form>
-		</div>
+			<form id="submitForm">
+				<input id="username" class='form-control' type="text" name="username" placeholder='username' style="width:300px" ng-model="username">
+				{% csrf_token %}
+				<button class="btn btn-primary" ng-click="pCtrl.invite(username)">Invite</button>
+				<button class="btn btn-danger" ng-click="pCtrl.delete(username)">Delete</button>
+			</form>
 
-		<h3>Participants</h3>
-		{% verbatim %} 
-		<div ng-controller="ParticipantController as itCtrl">
-			<div ng-repeat="participant in itCtrl.participants">
-				<img class="thumbnail" title="{{ participant.username }}" src="/get_user_photo/{{ participant.id }}" alt="No picture yet"> 
+			<h3>Participants</h3>
+			{% verbatim %}
+			<div>
+				<div ng-repeat="participant in pCtrl.participants">
+					<img class="thumbnail" title="{{ participant.username }}" src="/get_user_photo/{{ participant.id }}" alt="No picture yet"> 
+				</div>
 			</div>
+			{% endverbatim %}
 		</div>
-		{% endverbatim %}	
 	</div>
 </div>
 {% endblock %}
 
 {% block tail %}
-	<script>
-		$(document).ready(function(){
-			{% if errors %}
-			$.toaster({ priority : 'danger', title : 'Error', message : '{{errors}}' });
-			{% endif %}
-		});
-	</script>
+<script>
+
+</script>
 {% endblock %}

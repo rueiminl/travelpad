@@ -54,14 +54,15 @@
 						<li ng-class="{active:tab.isSet(2)}">
 				            <a href ng-click="tab.setTab(2)">Map</a></li>
 				    </ul>
-					<div class="row" ng-show="tab.isSet(1)">
+					<!-- <div class="row" ng-show="tab.isSet(1)">
 						<div class="col-md-3" id='external-events'>
 							<h4>Proposed Events</h4>
 							<div class='fc-event'>My Event 1</div>
 							<div class='fc-event'>My Event 2</div>
-						</div>				
+						</div>
 						<div class="col-md-7" id='calendar'></div>
-					</div>
+					</div> -->
+					<div id='calendar' ng-show="tab.isSet(1)"></div>
 					<div id="map_canvas" style="width:550px; height:400px" ng-show="tab.isSet(2)"></div>
 				</section>
 				
