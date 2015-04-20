@@ -30,7 +30,8 @@ class Itinerary(models.Model):
             created_by=self.created_by.as_dict(), 
             title=self.title,
             description=self.description, 
-            location=self.location, 
+            place=dict(id=self.place_id, name=self.place_name, latitude=self.place_lat, longitude=self.place_lng),
+            # location=self.location,
             #timezone.localtime(self.start_date).strftime("%Y-%m-%d"), Error: 'datetime.date' object has no attribute 'astimezone'
             start_date=self.start_date.isoformat(),
             end_date=self.end_date.isoformat(),#timezone.localtime(self.end_date).strftime("%Y-%m-%d"),
@@ -45,10 +46,6 @@ class Event(models.Model):
     title = models.CharField(max_length=30)
     note = models.CharField(max_length=60, blank=True)
     related_itinerary = models.ForeignKey(Itinerary)
-    #start_date = models.DateField()
-    #start_time = models.TimeField()
-    #end_date = models.DateField()
-    #end_time = models.TimeField()
     start_datetime = models.DateTimeField(null=True, blank=True)
     end_datetime = models.DateTimeField(null=True, blank=True)
     place_id = models.CharField(max_length=30,blank=True)
@@ -115,7 +112,6 @@ class Todo(models.Model):
     note = models.CharField(max_length=300, blank=True)
     creation_time = models.DateTimeField(auto_now_add=True)
     timestamp = models.DateTimeField(auto_now=True)
-    #TODO:
     def as_dict(self):
         return dict(
             id=self.id,
