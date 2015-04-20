@@ -159,7 +159,6 @@
 				}
 			});
 		}
-
 		function readURL(input) {
 			if (input.files && input.files[0]) {
 				var reader = new FileReader();
@@ -171,12 +170,16 @@
 				reader.readAsDataURL(input.files[0]);
 			}
 		}
-
+		
 		$("#id_photo").change(function(){
 			readURL(this);
 		});
 
 		$(document).ready(function(){
+			{% for error in errors %}
+			$.toaster({ priority : 'danger', title : 'Error', message : "{{error}}" });
+			{% endfor %}
+			
 			var input = (document.getElementById('id_location'));
 			var options = { types: ['(cities)'] };
 			var autocomplete = new google.maps.places.Autocomplete(input, options);
@@ -186,10 +189,6 @@
 				if (!place.geometry) {
 					return;
 				}
-				// place.geometry.location.lat() : latitude
-				// place.geometry.location.lng() : longitude
-				// place.name: place name
-				// place.place_id: place id
 				$("#id_place_id").val(place.place_id)
 				$("#id_place_lat").val(place.geometry.location.lat())
 				$("#id_place_lng").val(place.geometry.location.lng())

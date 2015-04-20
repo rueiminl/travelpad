@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.db import transaction
 from travelpad.models import *
 from travelpad.forms import *
@@ -19,6 +19,9 @@ def get_itinerary(id):
 @login_required
 def itineraries(request):
 	context = {}
+	if 'errors' in request.session:
+		context["errors"] = request.session["errors"]
+		del request.session["errors"]
 	# todo created_by
 	context["itineraries"] = Itinerary.objects.filter(participants=request.user)
 	context["itinerary_form"] = ItineraryForm()
@@ -30,24 +33,6 @@ def get_itineraryform_json(request, id):
 	response_text = serializers.serialize('json', itinerary)
 	return HttpResponse(response_text, content_type='application/json')
 	
-@login_required
-@transaction.atomic
-def add_itinerary(request):
-	if request.method == "GET":
-		print "add_itinerary POST only"
-		return redirect("itineraries")
-	itinerary = Itinerary()
-	itinerary.created_by = request.user
-	if not request.FILES:
-		itinerary.photo = None
-	itinerary_form = ItineraryForm(request.POST, request.FILES, instance = itinerary)
-	if not itinerary_form.is_valid():
-		print "debug_add_itinerary form.is_valid fail"
-		response_text = serializers.serialize('json', itinerary_form.errors)
-		return HttpResponse(response_text, content_type='application/json')
-	itinerary_form.save()
-	return redirect("itineraries")
-
 @login_required
 @transaction.atomic
 def update_itinerary(request, id):
@@ -67,8 +52,8 @@ def update_itinerary(request, id):
 		itinerary_form = ItineraryForm(request.POST, request.FILES, instance = itinerary)
 	if not itinerary_form.is_valid():
 		print "update_itinerary form.is_valid fail"
-		response_text = serializers.serialize('json', itinerary_form.errors)
-		return HttpResponse(response_text, content_type='application/json')
+		request.session["errors"] = [(k, v[0]) for k, v in itinerary_form.errors.items()]
+		return redirect("itineraries")
 	itinerary_form.save()
 	if id == "0":
 		itinerary.participants.add(User.objects.get(id=request.user.id))
