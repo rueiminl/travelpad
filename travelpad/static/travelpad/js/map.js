@@ -75,34 +75,6 @@ function detectBrowser() {
   }
 }
 
-function getTime(src, dest, mode){
-  var request = {
-      origin: src,
-      destination: dest,
-      travelMode: google.maps.TravelMode[mode]
-  };
-  directionsService.route(request, function(response, status) {
-    var summaryPanel = document.getElementById('directions_panel');
-    if (status == google.maps.DirectionsStatus.OK) {
-      directionsDisplay.setDirections(response);
-      var route = response.routes[0];
-      //summaryPanel.innerHTML = '';
-      var routeSegment = index;
-      summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment + '</b><br>';
-      summaryPanel.innerHTML += route.legs[0].start_address + ' to ';
-      summaryPanel.innerHTML += route.legs[0].end_address + '<br>';
-      summaryPanel.innerHTML += route.legs[0].distance.text + '<br>';
-      summaryPanel.innerHTML += route.legs[0].duration.text + '<br><br>';
-      summaryPanel.innerHTML += route.legs[0].duration.value + '<br>';
-    }
-    else{
-      summaryPanel.innerHTML += 'No such route' + '<br><br>';
-    }
-  });
-
-}
-
-
 function calcRoute(src, dest, mode, index, startTime) {
   if(mode == "car")
     mode = "driving";
@@ -252,9 +224,7 @@ function setAllMarkers(placeArrTmp){
   for(var index=1; index<placeArr.length ; index++){
       console.log(index + ": " + placeNameArr[index-1] + " -> " + placeNameArr[index]);
       if(transportTypes[index-1] != undefined){
-        console.log("NO");
         calcRoute(placeNameArr[index-1], placeNameArr[index], transportTypes[index-1], index, startTimes[index-1]);
-        console.log("NOno");
       }
       marker = new google.maps.Marker({
         position: placeArr[index],
