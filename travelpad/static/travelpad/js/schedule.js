@@ -6,24 +6,52 @@
 		var t = this;
 		this.itinerary = {};
 		this.events = [];
-		this.currentDate;
+		this.dateTitle;
 		
-		this.prev = function(){
-			$('#calendar').fullCalendar('prev');
-			var view = $('#calendar').fullCalendar('getView');
-			t.currentDate = view.intervalStart.format('ll') + " — " + view.intervalEnd.format('ll');
+		this.calendar = {
+			prev: function(){
+				$('#calendar').fullCalendar('prev');
+			},
+			next: function(){
+				$('#calendar').fullCalendar('next');
+			},
+			changeWeekView: function(){
+				$('#calendar').fullCalendar('changeView', 'agendaWeek');
+			},
+			changeDayView: function(){
+				$('#calendar').fullCalendar('changeView', 'agendaDay');
+			},
+			isWeekView: function(){
+				var view = $('#calendar').fullCalendar('getView');
+				return view.name == 'agendaWeek'
+			},
 		};
 		
-		this.next = function(){
-			$('#calendar').fullCalendar('next');
-			var view = $('#calendar').fullCalendar('getView');
-			t.currentDate = view.intervalStart.format('ll') + " — " + view.intervalEnd.format('ll');
-		};
-		
+	
 		$http.get("/itinerary-json").success(function(data){
 			console.log(data);
 			t.itinerary = data;			
-			//init calendar
+			
+			/* initialize the external events
+			-----------------------------------------------------------------*/
+			$('#external-events .fc-event').each(function() {
+				// store data so the calendar knows to render an event upon drop
+				$(this).data('event', {
+					title: $.trim($(this).text()), // use the element's text as the event title
+					stick: true // maintain when user navigates (see docs on the renderEvent method)
+				});
+
+				// make the event draggable using jQuery UI
+				$(this).draggable({
+					zIndex: 999,
+					revert: true,      // will cause the event to go back to its
+					revertDuration: 0  //  original position after the drag
+				});
+
+			});
+			
+			/* initialize the calendar
+			-----------------------------------------------------------------*/
 			$('#calendar').fullCalendar({
 				header: {
 					left: 'prev,next',
@@ -44,7 +72,7 @@
 				eventLimit: true, // allow "more" link when too many events
 				events: '/get-calendar-events-json/' + data.id,
 				viewRender:function(view, element){
-					t.currentDate = view.intervalStart.format('ll') + " — " + view.intervalEnd.format('ll');
+					t.dateTitle = view.title;
 				},
 				eventClick: function(calEvent, jsEvent, view) {
 					if(calEvent.className=='transportation'){
@@ -108,6 +136,12 @@
 						setAllMarkers(mapEvents);
 					}
 				}()),
+				droppable: true, // this allows things to be dropped onto the calendar
+				drop: function(date, jsEvent, ui) {
+					console.log('drop');
+					// ui.remove();
+				},
+				
 			}); // end init calendar
 			
 			// init map
@@ -116,6 +150,9 @@
 		}).error(function(data) {
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
 	    });
+		
+		
+		
 		
 		
   	}]);
