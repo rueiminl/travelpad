@@ -1,13 +1,17 @@
 
-
+/*
 function getTime(src, dest, mode){
   var srcPlace = new google.maps.LatLng(src[0], src[1]);
   var destPlace = new google.maps.LatLng(dest[0], dest[1]);
   var request = {
       origin: srcPlace,
       destination: destPlace,
-      travelMode: google.maps.TravelMode[mode]
+      travelMode: google.maps.TravelMode[mode],
+      transitOptions: {
+        departureTime: new Date(t.getTime())
+      }
   };
+  var directionsService = new google.maps.DirectionsService();
   directionsService.route(request, function(response, status) {
     var summaryPanel = document.getElementById('directions_panel');
     if (status == google.maps.DirectionsStatus.OK) {
@@ -28,18 +32,31 @@ function getTime(src, dest, mode){
   });
 
 }
+*/
 
-function getTime(places){
-  if(places == null || places.length == 0)
-      return;
-  var myPlace = JSON.parse(places);
-
-  for(var i=0; i<myPlace.placeInfos.length; i++){
-    var placeInfo = myPlace.placeInfos[i];
-    placeArr.push(new google.maps.LatLng(placeInfo.latitude, placeInfo.longitude));
+function getTime(src, dest, mode, time){
+  var arr = [];
+  var directionsService = new google.maps.DirectionsService();
+  for(var i=0; i<src.length; i++){
+    var srcPlace = new google.maps.LatLng(src[i][0], src[i][1]);
+    var destPlace = new google.maps.LatLng(dest[i][0], dest[i][1]);
+    var request = {
+      origin: srcPlace,
+      destination: destPlace,
+      travelMode: google.maps.TravelMode[mode[i]],
+      transitOptions: {
+        departureTime: new Date(time[i].getTime())
+      }
+    };
+    directionsService.route(request, function(response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        var route = response.routes[0];
+        arr.push(route.legs[0].duration.value);
+      }
+      else{
+        arr.push(-1);
+      }
+    });
   }
-}
-
-function clear(){
-
+  return arr;
 }
