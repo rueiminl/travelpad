@@ -3,6 +3,9 @@
 {% block head %}
 		<title>TravelPad - Itinerary List</title>
 		<style>
+			.pac-container {
+				z-index:1050 !important;
+			}
 			.itinerary {
 				padding-top:70px;
 			}
@@ -16,6 +19,7 @@
 				vertical-align: top;
 			}
 		</style>
+		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false&language=en"></script>
 		{{ itinerary_form.media }}
 {% endblock %}
 
@@ -70,7 +74,17 @@
 									</td>
 								</tr>
 								{% endfor %}
+								<tr>
+									<td><label class="inputlabel" for="id_location">Location:</label></td>
+									<td>
+										<input id="id_location" type="text" class='form-control' placeholder: 'the main location in this itinerary' />
+									</td>
+								</tr>
 							</table>
+							<input type="hidden" id="id_place_id" name="place_id" />
+							<input type="hidden" id="id_place_name" name="place_name" />
+							<input type="hidden" id="id_place_lat" name="place_lat" />
+							<input type="hidden" id="id_place_lng" name="place_lng" />
 							{% csrf_token %}
 						</form>
 					</div>
@@ -98,6 +112,10 @@
 			$('#id_title').val("");
 			$('#id_description').val("");
 			$('#id_location').val("");
+			$('#id_place_id').val("");
+			$('#id_place_name').val("");
+			$('#id_place_lat').val("");
+			$('#id_place_lng').val("");
 			$('#id_start_date').val("");
 			$('#id_end_date').val("");
 			$('#id_participants').val("");
@@ -118,6 +136,11 @@
 					$('#id_title').val(itinerary.title);
 					$('#id_description').val(itinerary.description);
 					$('#id_location').val(itinerary.location);
+					$('#id_place_id').val(itinerary.place_id);
+					$('#id_location').val(itinerary.place_name);
+					$('#id_place_name').val(itinerary.place_name);
+					$('#id_place_lat').val(itinerary.place_lat);
+					$('#id_place_lng').val(itinerary.place_lng);
 					$('#id_start_date').val(itinerary.start_date);
 					$('#id_end_date').val(itinerary.end_date);
 					$('#id_participants').val(itinerary.participants);
@@ -136,7 +159,6 @@
 				}
 			});
 		}
-
 		function readURL(input) {
 			if (input.files && input.files[0]) {
 				var reader = new FileReader();
@@ -148,9 +170,32 @@
 				reader.readAsDataURL(input.files[0]);
 			}
 		}
-
+		
 		$("#id_photo").change(function(){
 			readURL(this);
 		});
+
+		$(document).ready(function(){
+			{% for error in errors %}
+			$.toaster({ priority : 'danger', title : 'Error', message : "{{error}}" });
+			{% endfor %}
+			
+			var input = (document.getElementById('id_location'));
+			var options = { types: ['(cities)'] };
+			var autocomplete = new google.maps.places.Autocomplete(input, options);
+			var place = autocomplete.getPlace();
+			google.maps.event.addListener(autocomplete, 'place_changed', function() {
+				var place = autocomplete.getPlace();
+				if (!place.geometry) {
+					return;
+				}
+				$("#id_place_id").val(place.place_id)
+				$("#id_place_lat").val(place.geometry.location.lat())
+				$("#id_place_lng").val(place.geometry.location.lng())
+				$("#id_place_name").val(place.name)
+			});
+		});
+		
 	</script>
 {% endblock %}
+

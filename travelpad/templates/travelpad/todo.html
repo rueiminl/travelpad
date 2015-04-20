@@ -7,19 +7,15 @@
 <script src="{% static 'travelpad/js/participant.js' %}" type="text/javascript"></script>
 {% endblock %}
 
+{% block nav %}
+{% include "travelpad/nav.html" %}
+{% endblock %}
+
 {% block content %}
 <div class="todo" ng-controller="TodoController as todoCtrl">
 	<div class="row">
 		<aside class="col-md-2">
-			<ul class="nav nav-pills nav-stacked">
-			  <li role="presentation"><a href="{% url 'schedule' %}"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> Schedule</a></li>
-			  <li role="presentation"><a href="{% url 'feed' %}"><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> Feed</a></li>
-			  <li role="presentation" class="active"><a href="#"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Todo</a></li>
-			  <li role="presentation"><a href="{% url 'expense' %}"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> Expense</a></li>	  
-			  <li role="presentation"><a href="#"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Invitations</a></li>
-			  <li role="presentation"><a href="#"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Export</a></li>
-			</ul>			        
-			
+			{% include "travelpad/itinerary_nav.html" with todo_active='class="active"' %}	
 		</aside>
 		{% verbatim %} 
 		<div class="col-md-10">

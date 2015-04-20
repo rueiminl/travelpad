@@ -19,23 +19,6 @@ def demo(request):
     context['itinerary'] = {'id':1, 'start_date':'2015-03-23'}
     context['places'] = places
     return render(request, 'travelpad/demo.html', context)
-
-@login_required
-def participant_json(request):
-    context = {}
-    itinerary_id = request.session['itinerary_id']
-    itinerary = Itinerary.objects.get(id=itinerary_id)
-    
-    if request.method == 'GET':
-        participants = itinerary.participants.all()
-        results = [participant.as_dict() for participant in participants]
-        response_text = json.dumps(results)
-        print "response_text = ", response_text
-        return HttpResponse(response_text, content_type='application/json')
-    # elif request.method == 'POST':
-#         #TODO:
-#     elif request.method == 'DETELE':
-#         #TODO:
     
 @login_required
 def itinerary(request, itinerary_id):

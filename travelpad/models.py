@@ -15,7 +15,10 @@ class Itinerary(models.Model):
     created_by = models.ForeignKey(User, related_name="itineraries")
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=3000, blank=True)
-    location = models.CharField(max_length=100, blank=True)
+    place_id = models.CharField(max_length=100, blank=True)
+    place_lat = models.CharField(max_length=100, blank=True)
+    place_lng = models.CharField(max_length=100, blank=True)
+    place_name = models.CharField(max_length=100, blank=True)
     start_date = models.DateField()
     end_date = models.DateField()
     participants = models.ManyToManyField(User, blank=True)
@@ -27,7 +30,8 @@ class Itinerary(models.Model):
             created_by=self.created_by.as_dict(), 
             title=self.title,
             description=self.description, 
-            location=self.location, 
+            place=dict(id=self.place_id, name=self.place_name, latitude=self.place_lat, longitude=self.place_lng),
+            # location=self.location,
             #timezone.localtime(self.start_date).strftime("%Y-%m-%d"), Error: 'datetime.date' object has no attribute 'astimezone'
             start_date=self.start_date.isoformat(),
             end_date=self.end_date.isoformat(),#timezone.localtime(self.end_date).strftime("%Y-%m-%d"),
@@ -37,15 +41,11 @@ class Itinerary(models.Model):
             )
 
 class Event(models.Model):
-    user = models.ForeignKey(User)
+    created_by = models.ForeignKey(User)
     type = models.CharField(max_length=30)
     title = models.CharField(max_length=30)
     note = models.CharField(max_length=60, blank=True)
     related_itinerary = models.ForeignKey(Itinerary)
-    #start_date = models.DateField()
-    #start_time = models.TimeField()
-    #end_date = models.DateField()
-    #end_time = models.TimeField()
     start_datetime = models.DateTimeField(null=True, blank=True)
     end_datetime = models.DateTimeField(null=True, blank=True)
     place_id = models.CharField(max_length=30,blank=True)
@@ -77,7 +77,7 @@ class Event(models.Model):
         }
         
 class Transportation(models.Model):
-    user = models.ForeignKey(User)
+    created_by = models.ForeignKey(User)
     type = models.CharField(max_length=30)
     note = models.CharField(max_length=60, blank=True)
     start_datetime = models.DateTimeField(null=True, blank=True)
@@ -112,7 +112,6 @@ class Todo(models.Model):
     note = models.CharField(max_length=300, blank=True)
     creation_time = models.DateTimeField(auto_now_add=True)
     timestamp = models.DateTimeField(auto_now=True)
-    #TODO:
     def as_dict(self):
         return dict(
             id=self.id,
@@ -203,3 +202,27 @@ class Photos(models.Model):
     related_event = models.ForeignKey(Event)
     photo = models.FileField(upload_to="placeImage")
     comment = models.CharField(max_length=3000)
+
+def create_message(instance, created, raw, **kwargs):
+    # Ignore fixtures and saves for existing courses.
+    if not created or raw:
+        return
+    if isinstance(instance, Event):
+        entry = Message(
+            created_by=instance.created_by, 
+            related_itinerary=instance.related_itinerary,
+            content=instance.created_by.username + " created " + instance.title + " event",
+            )
+        entry.save()
+    elif isinstance(instance, Todo):
+        entry = Message(
+            created_by=instance.created_by, 
+            related_itinerary=instance.related_itinerary,
+            content=instance.created_by.username + " created " + instance.task + " task",
+            )
+        entry.save()
+
+models.signals.post_save.connect(create_message, sender=Event, dispatch_uid='create_message')
+models.signals.post_save.connect(create_message, sender=Todo, dispatch_uid='create_message')
+
+

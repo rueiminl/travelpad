@@ -13,7 +13,7 @@
 		};
 		
 		$http.get("/itinerary-json").success(function(data){
-			// console.log(data);
+			console.log(data);
 			t.itinerary = data;
 			
 			//init calendar
@@ -102,7 +102,7 @@
 			}); // end init calendar
 			
 			// //TODO:init map
-// 			focusCenter();
+			// focusCenter();
 			
 		}).error(function(data) {
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});

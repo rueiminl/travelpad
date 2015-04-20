@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.db import transaction
 from travelpad.models import *
 from travelpad.forms import *
@@ -19,6 +19,9 @@ def get_itinerary(id):
 @login_required
 def itineraries(request):
 	context = {}
+	if 'errors' in request.session:
+		context["errors"] = request.session["errors"]
+		del request.session["errors"]
 	# todo created_by
 	context["itineraries"] = Itinerary.objects.filter(participants=request.user)
 	context["itinerary_form"] = ItineraryForm()
@@ -32,24 +35,6 @@ def get_itineraryform_json(request, id):
 	
 @login_required
 @transaction.atomic
-def add_itinerary(request):
-	if request.method == "GET":
-		print "add_itinerary POST only"
-		return redirect("itineraries")
-	itinerary = Itinerary()
-	itinerary.created_by = request.user
-	if not request.FILES:
-		itinerary.photo = None
-	itinerary_form = ItineraryForm(request.POST, request.FILES, instance = itinerary)
-	if not itinerary_form.is_valid():
-		print "debug_add_itinerary form.is_valid fail"
-		print itinerary_form.errors
-		return redirect("itineraries")
-	itinerary_form.save()
-	return redirect("itineraries")
-
-@login_required
-@transaction.atomic
 def update_itinerary(request, id):
 	if request.method == "GET":
 		print "update_itinerary POST only"
@@ -58,6 +43,7 @@ def update_itinerary(request, id):
 		itinerary = Itinerary(created_by=request.user)
 	else:
 		itinerary = get_itinerary(id)
+	print "request.POST = ", request.POST
 	if request.POST.get("clear"):
 		itinerary.photo = None
 	if not request.FILES:
@@ -66,7 +52,7 @@ def update_itinerary(request, id):
 		itinerary_form = ItineraryForm(request.POST, request.FILES, instance = itinerary)
 	if not itinerary_form.is_valid():
 		print "update_itinerary form.is_valid fail"
-		print itinerary_form.errors
+		request.session["errors"] = [(k, v[0]) for k, v in itinerary_form.errors.items()]
 		return redirect("itineraries")
 	itinerary_form.save()
 	if id == "0":
