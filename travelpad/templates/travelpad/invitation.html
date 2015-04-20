@@ -10,10 +10,10 @@
 	}
 </style>
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> 
   
 <script>
+
 $(function() {
     var availableUsers = [
 		{% for user in users %}
@@ -52,7 +52,7 @@ $(function() {
 		{% verbatim %} 
 		<div ng-controller="ParticipantController as itCtrl">
 			<div ng-repeat="participant in itCtrl.participants">
-				<img class="thumbnail" title="{{participant.username}}" src="/get_user_photo/{{ participant.id }}" alt="No picture yet"> 
+				<img class="thumbnail" title="{{ participant.username }}" src="/get_user_photo/{{ participant.id }}" alt="No picture yet"> 
 			</div>
 		</div>
 		{% endverbatim %}	
@@ -61,4 +61,11 @@ $(function() {
 {% endblock %}
 
 {% block tail %}
+	<script>
+		$(document).ready(function(){
+			{% if errors %}
+			$.toaster({ priority : 'danger', title : 'Error', message : '{{errors}}' });
+			{% endif %}
+		});
+	</script>
 {% endblock %}

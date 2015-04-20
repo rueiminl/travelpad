@@ -25,9 +25,14 @@ def get_itinerary_by_session(request):
 
 @login_required
 def invitation(request):
+	context = {}
+	if 'errors' in request.session:
+		context["errors"] = request.session["errors"]
+		del request.session["errors"]
 	itinerary_id = get_itinerary_id_by_session(request)
 	users = User.objects.all()
-	context = {'itinerary_id' : itinerary_id, 'users' : users}
+	context['itinerary_id'] = itinerary_id
+	context['users'] = users
 	return render(request, 'travelpad/invitation.html', context)
 	
 @login_required
@@ -39,9 +44,11 @@ def invite(request):
 	if not "username" in request.POST:
 		print "invite without username"
 		return redirect("invitation")
-	user = User.objects.get(username=request.POST["username"])
-	if not user:
+	try:
+		user = User.objects.get(username=request.POST["username"])
+	except:
 		print "invite username not found"
+		request.session['errors'] = "Username not existed"
 		return redirect("invitation")
 	itinerary = get_itinerary_by_session(request)
 	itinerary.participants.add(user)
