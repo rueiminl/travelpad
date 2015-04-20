@@ -40,6 +40,9 @@ function initialize() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);
+    google.maps.event.addListenerOnce(map, 'idle', function() {
+       google.maps.event.trigger(map, 'resize');
+    });
     //var obj = [{transporation:{start: ""}, place:{id: 1, latitude:40.442492, longitude:-79.94255299999998, name: "CMU"}}];
     //setAllMarkers(obj);
     //focusCenter(-25.363882, 131.044922);
@@ -232,7 +235,7 @@ function setAllMarkers(placeArrTmp){
         title: 'Location'
       });
       infowindow = new google.maps.InfoWindow({
-        content: "<h1>" + (index+1).toString() + "</h1><div>" + placeNameArr[index] + "</div>"
+        content: "<h2>" + (index+1).toString() + "</h2><div>" + placeNameArr[index] + "</div>"
       });
       infowindow.open(map,marker);
       start = placeArr[index];

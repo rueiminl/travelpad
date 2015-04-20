@@ -45,7 +45,7 @@ function getTime(src, dest, mode, time){
       destination: destPlace,
       travelMode: google.maps.TravelMode[mode[i]],
       transitOptions: {
-        departureTime: new Date(time[i].getTime())
+        departureTime: new Date(time[i]).getTime()/1000;
       }
     };
     directionsService.route(request, function(response, status) {
