@@ -7,6 +7,10 @@
 <script src="{% static 'travelpad/js/participant.js' %}" type="text/javascript"></script>
 {% endblock %}
 
+{% block nav %}
+{% include "travelpad/nav.html" %}
+{% endblock %}
+
 {% block content %}
 <div class="todo" ng-controller="TodoController as todoCtrl">
 	<div class="row">
