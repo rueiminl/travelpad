@@ -202,6 +202,7 @@ function focusCenter(latitude, longitude){
 // [{ transportation:{..}, place:{...} }, {transportation...}    ...]
 
 function setAllMarkers(placeArrTmp){
+  initialize();
   clearMarkers();
   console.log(placeArrTmp);
   //alert("clearMarkers");  
