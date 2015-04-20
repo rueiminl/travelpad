@@ -41,6 +41,7 @@ def invite(request):
 	if request.method == "GET":
 		print "invite POST only"
 		return redirect("invitation")
+	print request.POST
 	if not "username" in request.POST:
 		print "invite without username"
 		return redirect("invitation")
@@ -56,17 +57,44 @@ def invite(request):
 
 @login_required
 def participant_json(request):
-    context = {}
-    itinerary_id = request.session['itinerary_id']
-    itinerary = Itinerary.objects.get(id=itinerary_id)
-    
-    if request.method == 'GET':
-        participants = itinerary.participants.all()
-        results = [participant.as_dict() for participant in participants]
-        response_text = json.dumps(results)
-        print "response_text = ", response_text
-        return HttpResponse(response_text, content_type='application/json')
-    # elif request.method == 'POST':
-#         #TODO:
-#     elif request.method == 'DETELE':
-#         #TODO:
+	context = {}
+	itinerary_id = request.session['itinerary_id']
+	itinerary = Itinerary.objects.get(id=itinerary_id)    
+	if request.method == 'GET':
+		results = []
+		results = [participant.as_dict() for participant in itinerary.participants.all()]
+		for result in results:
+			del result["photo"]
+		response_text = json.dumps(results)
+		print response_text
+		return HttpResponse(response_text, content_type='application/json')
+	elif request.method == 'POST':
+		if not 'username' in request.POST:
+			print "no username field in request.POST"
+			return redirect("invitation")
+		if not 'type' in request.POST:
+			print "no type field in request.POST"
+			return redirect("invitation")
+		try:
+			user = User.objects.get(username = request.POST["username"])
+		except:
+			print "Warn: username not exist"
+			results = {"success":"false","errors":"Username not exist"}
+			return HttpResponse(json.dumps(results), content_type='application/json')
+		if request.POST['type'] == 'add':
+			if Itinerary.objects.filter(id=itinerary_id).filter(participants=user).exists():
+				print "Warn: username has participated already"
+				results = {"success":"false","errors":"The user has participated already"}
+				return HttpResponse(json.dumps(results), content_type='application/json')
+			itinerary.participants.add(user)
+		else:
+			if not Itinerary.objects.filter(id=itinerary_id).filter(participants=user).exists():
+				print "Warn: username does not participate yet"
+				results = {"success":"false","errors":"The user is not participated yet"}
+				return HttpResponse(json.dumps(results), content_type='application/json')
+			itinerary.participants.remove(user)
+		results = {"success":"true",
+		           "participant": {"id" : user.id, "username" : user.username}
+		          }
+		return HttpResponse(json.dumps(results), content_type='application/json')
+	
