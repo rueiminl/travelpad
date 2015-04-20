@@ -22,27 +22,46 @@
 				<a data-toggle="modal" class="add-todo btn btn-info" href="#" data-target="#add_todo_madal">&plus;</a>
 				
 			    <!--  Products Container  -->
-			    <div class="list-group">
-			    	<!--  Product Container  -->
-			        <div class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'">
+			    <ul class="list-group">
+			        <li class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'"  ng-class="todo.status=='done'?'list-group-item-success': 'list-group-item-danger'">
+						<div class="row">
+							<div class="col-md-3">
+								<p>{{todo.task}}</p>
+							</div>
+						    <div class="col-md-2">
+								<p>{{todo.status}}</p>							
+							</div>
+						    <div class="col-md-3">
+								<p>{{todo.owner.username}}</p>
+							</div>
+						    <div class="col-md-3">
+								<p>{{todo.note}}</p>
+							</div>
+						    <div class="col-md-1">
+								<div class="dropdown">
+								  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+								    <span class="caret"></span>
+								  </button>
+								  <ul class="dropdown-menu" role="menu" aria-labelledby="">
+								    <li role="presentation"><a role="menuitem" tabindex="-1" href="" ng-click="todoCtrl.showUpdateTodo(todo)">Edit todo</a></li>
+								    <li role="presentation"><a role="menuitem" tabindex="-1" href="" ng-click="todoCtrl.deleteTodo(todo)">Delete todo</a></li>
+								  </ul>
+								</div>
+							</div>
+						</div>
 						
-<!--						<h4 class="list-group-item-heading">{{todo.task}}</h4>
-						<p class="list-group-item-text">{{todo.status}}</p> -->
-						
-						<h4>{{todo.task}}</h4>
-						<h3>{{todo.status}}</h3>
-						<h3>{{todo.owner.username}}</h3>
-						<h3>{{todo.note}}</h3>
-						
-						<form name="showTodoForm" ng-submit="todoCtrl.showUpdateTodo(todo)">
+
+						<!-- <form name="showTodoForm" ng-submit="todoCtrl.showUpdateTodo(todo)">
 							<input type="submit" value="Edit" class="btn btn-success">
 						</form>
 						<form name="deleteTodoForm" ng-submit="todoCtrl.deleteTodo(todo)">
-							<input type="submit" value="Delete" class="btn btn-danger">
-						</form>
+							<input type="submit" value="" class="btn glyphicon glyphicon-remove">
+						</form> -->
+							
 						
-					</a>
-				</div>
+						
+					</li>
+				</ul>
 				
 				
 		</div>

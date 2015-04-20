@@ -20,7 +20,7 @@
 	this.reload();
 	
 	//periodically update elements
-    $interval(t.reload, 3000);
+    // $interval(t.reload, 3000);
 	
 
 	this.addTodo = function(){

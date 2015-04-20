@@ -67,14 +67,40 @@ class Event(models.Model):
             "endtime": timezone.localtime(self.end_datetime).strftime("%H:%M"),
             'start': timezone.localtime(self.start_datetime).isoformat(), #ISO8601
             'end': timezone.localtime(self.end_datetime).isoformat(),
-            #"place": self.place_name,
             "place": {"id": self.place_id, "name": self.place_name, "latitude": self.place_latitude, "longitude": self.place_longitude},
             "note": self.note,
             "type": self.type,
             "proposed": self.proposed,
             "transportation": self.pre.as_dict() if hasattr(self,'pre') else 'null',
-            #"time": timezone.localtime(self.time).strftime("%b. %d, %Y, %I:%M %p"),
         }
+        
+# class Vote(models.Model):
+#     created_by = models.ForeignKey(User)
+#     type = models.CharField(max_length=30)
+#     title = models.CharField(max_length=30)
+#     note = models.CharField(max_length=60, blank=True)
+#     related_itinerary = models.ForeignKey(Itinerary)
+#     place_id = models.CharField(max_length=30,blank=True)
+#     place_name = models.CharField(max_length=100,blank=True)
+#     place_latitude = models.CharField(max_length=30,blank=True)
+#     place_longitude = models.CharField(max_length=30,blank=True)
+#     voted_by = models.ManyToManyField(User, blank=True, related_name='voted_by')
+#     agreed_by = models.ManyToManyField(User, blank=True, related_name='agreed_by')
+#     creation_time = models.DateTimeField(auto_now_add=True)
+#     timestamp = models.DateTimeField(auto_now=True)
+#     def as_dict(self):
+#         return dict(
+#             id=self.id,
+#             created_by=self.created_by.as_dict(),
+#             title=self.title,
+#             note=self.note,
+#             type=self.type,
+#             place=dict(id=self.place_id, name=self.place_name, latitude=self.place_latitude, longitude=self.place_longitude),
+#             voted_by=[user.as_dict() for user in self.voted_by.all()] if hasattr(self,'voted_by') else [],
+#             agreed_by=[user.as_dict() for user in self.agreed_by.all()] if hasattr(self,'agreed_by') else [],
+#             creation_time=timezone.localtime(self.creation_time).isoformat(),
+#             timestamp=timezone.localtime(self.timestamp).isoformat(),
+#         )
         
 class Transportation(models.Model):
     created_by = models.ForeignKey(User)
@@ -181,24 +207,6 @@ class Reply(models.Model):
             creation_time=timezone.localtime(self.creation_time).isoformat(),
             timestamp=timezone.localtime(self.timestamp).isoformat(),
         )
-        
-# class Vote(models.Model):
-#     created_by = models.ForeignKey(User)
-#     related_event = models.ForeignKey(Event)
-#     related_itinerary = models.ForeignKey(Itinerary)
-#     voted_by = models.ManyToManyField(User, blank=True, related_name='voted_by')
-#     agreed_by = models.ManyToManyField(User, blank=True, related_name='agreed_by')
-#     creation_time = models.DateTimeField(auto_now_add=True)
-#     timestamp = models.DateTimeField(auto_now=True)
-#     def as_dict(self):
-#         return dict(
-#             id=self.id,
-#             created_by=self.created_by.as_dict(),
-#             voted_by=[user.as_dict() for user in self.voted_by.all()] if hasattr(self,'voted_by') else [],
-#             agreed_by=[user.as_dict() for user in self.agreed_by.all()] if hasattr(self,'agreed_by') else [],
-#             creation_time=timezone.localtime(self.creation_time).isoformat(),
-#             timestamp=timezone.localtime(self.timestamp).isoformat(),
-#         )
 
 class TravelPadUser(models.Model):
 	user = models.ForeignKey(User)
