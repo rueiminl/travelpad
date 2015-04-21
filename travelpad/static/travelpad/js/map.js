@@ -47,7 +47,6 @@ function initialize() {
     //var obj = [{transporation:{start: ""}, place:{id: 1, latitude:40.442492, longitude:-79.94255299999998, name: "CMU"}}];
     //setAllMarkers(obj);
     //focusCenter(-25.363882, 131.044922);
-    resizeMap();
 }
 
 function getCityItinerary(){
@@ -207,9 +206,6 @@ function setAllMarkers(placeArrTmp){
   for(var i=0; i<transportTypes.length; i++)
     console.log(transportTypes[i]);
 
-  //for(i=0; i<placeArrTmp.length; i++){
-  //  placeArr.push(new google.maps.LatLng(placeArrTmp[i][0], placeArrTmp[i][1]));
-  //}
   // start point
   var start = placeArr[0];
   var marker = new google.maps.Marker({
@@ -220,7 +216,7 @@ function setAllMarkers(placeArrTmp){
 
   markers.push(marker);
   var infowindow = new google.maps.InfoWindow({
-    content: "<h1>Start</h1>" + "<div>" + placeNameArr[0] + "</div>"
+    content: "<div><b>Start</b></div>" + "<div>" + placeNameArr[0] + "</div>"
   });
   infowindow.open(map,marker);
 
@@ -236,7 +232,7 @@ function setAllMarkers(placeArrTmp){
         title: 'Location'
       });
       infowindow = new google.maps.InfoWindow({
-        content: "<h2>" + (index+1).toString() + "</h2><div>" + placeNameArr[index] + "</div>"
+        content: "<div><b>" + (index+1).toString() + "</b></div><div>" + placeNameArr[index] + "</div>"
       });
       infowindow.open(map,marker);
       start = placeArr[index];
@@ -246,8 +242,10 @@ function setAllMarkers(placeArrTmp){
 
 function resizeMap(){
   google.maps.event.addListener(map, 'idle', function() {
-       google.maps.event.trigger(map, 'resize');
+      google.maps.event.trigger(map, 'resize');
   });
+  map.setZoom(3);
+  map.setCenter(placeArr[0]);
 }
 
 //google.maps.event.addDomListener(window, 'load', initialize);
