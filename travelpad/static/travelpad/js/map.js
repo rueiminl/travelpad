@@ -2,8 +2,9 @@
 //  1. initialize(): create a google map object and initiallize all kinds of states.
 //  2. focusCenter(latitude, longitude): Focus the google map view with latitude and longitude
 //  3. setAllMarkers(placeArrTmp): create marker and route of particular time slots. Data is passed by JSON Value
-//  4. getTime(src, dest, mode): get the time from src to dest via mode (transportation mode)
-//  5. getCityItinerary(): For the start of itinerary, get the city's latLng via google autocomplete.
+//  4. call resizeMap() --> When the "map" buttom is pressed. 
+//  5. getTime(src, dest, mode): get the time from src to dest via mode (transportation mode)
+//  6. getCityItinerary(): For the start of itinerary, get the city's latLng via google autocomplete.
 
 
 
@@ -227,7 +228,7 @@ function setAllMarkers(placeArrTmp){
   for(var index=1; index<placeArr.length ; index++){
       console.log(index + ": " + placeNameArr[index-1] + " -> " + placeNameArr[index]);
       if(transportTypes[index-1] != undefined){
-        calcRoute(placeNameArr[index-1], placeNameArr[index], transportTypes[index-1], index, startTimes[index-1]);
+        calcRoute(placeArr[index-1], placeArr[index], transportTypes[index-1], index, startTimes[index-1]);
       }
       marker = new google.maps.Marker({
         position: placeArr[index],
@@ -242,5 +243,9 @@ function setAllMarkers(placeArrTmp){
       markers.push(marker);
   }
 } 
+
+function resizeMap(){
+  google.maps.event.trigger(map, 'resize');
+}
 
 //google.maps.event.addDomListener(window, 'load', initialize);
