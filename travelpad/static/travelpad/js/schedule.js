@@ -157,6 +157,10 @@
 		this.tab = 1;
 
 		this.setTab = function(newValue){
+			//resize Google map every time the map show up
+			if(newValue==2){
+				resizeMap();
+			} 
 			this.tab = newValue;
 		};
 
