@@ -5,6 +5,7 @@
 //  4. call resizeMap() --> When the "map" buttom is pressed. 
 //  5. getTime(src, dest, mode): get the time from src to dest via mode (transportation mode)
 //  6. getCityItinerary(): For the start of itinerary, get the city's latLng via google autocomplete.
+//  7. setCity(latitude, longitude): set itinerary city center;
 
 
 
@@ -27,6 +28,7 @@ var directionsDisplays = [];
 var zoomVar = 12;
 var centerVar;
 var autocomplete;
+var cityCenter = new google.maps.LatLng(40.442492, -79.94255299999998);
 function initialize() {
     //deleteMarkers();
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -90,7 +92,10 @@ function calcRoute(src, dest, mode, index, startTime) {
   var request = {
       origin: src,
       destination: dest,
-      travelMode: google.maps.TravelMode.DRIVING
+      travelMode: google.maps.TravelMode[mode],
+      transitOptions: {
+        departureTime: t
+      }
     };
   /* 
   if(mode == "TRANSIT"){
@@ -245,7 +250,14 @@ function resizeMap(){
       google.maps.event.trigger(map, 'resize');
   });
   map.setZoom(3);
-  map.setCenter(placeArr[0]);
+  if(placeArr.length != 0)
+    map.setCenter(placeArr[0]);
+  else
+    map.setCenter(cityCenter);
+}
+
+function setCity(latitude, longitude){
+  cityCenter = new google.maps.LatLng(latitude, longitude);
 }
 
 //google.maps.event.addDomListener(window, 'load', initialize);
