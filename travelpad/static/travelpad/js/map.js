@@ -41,13 +41,13 @@ function initialize() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);
-    google.maps.event.addListenerOnce(map, 'idle', function() {
+    google.maps.event.addListener(map, 'idle', function() {
        google.maps.event.trigger(map, 'resize');
     });
     //var obj = [{transporation:{start: ""}, place:{id: 1, latitude:40.442492, longitude:-79.94255299999998, name: "CMU"}}];
     //setAllMarkers(obj);
     //focusCenter(-25.363882, 131.044922);
-    
+    resizeMap();
 }
 
 function getCityItinerary(){
@@ -245,7 +245,9 @@ function setAllMarkers(placeArrTmp){
 } 
 
 function resizeMap(){
-  google.maps.event.trigger(map, 'resize');
+  google.maps.event.addListener(map, 'idle', function() {
+       google.maps.event.trigger(map, 'resize');
+  });
 }
 
 //google.maps.event.addDomListener(window, 'load', initialize);
