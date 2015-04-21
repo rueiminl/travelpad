@@ -92,7 +92,7 @@ function calcRoute(src, dest, mode, index, startTime) {
   var request = {
       origin: src,
       destination: dest,
-      travelMode: google.maps.TravelMode[mode],
+      travelMode: google.maps.TravelMode[mode.toUpperCase()],
       transitOptions: {
         departureTime: t
       }
