@@ -8,6 +8,10 @@
 <link rel="stylesheet" type="text/css" href="{% static 'travelpad/css/expense.css' %}">
 {% endblock %}
 
+{% block nav %}
+{% include "travelpad/nav.html" %}
+{% endblock %}
+
 {% block content %}
 
 <!-- here you can write angularjs template tags. -->
@@ -15,14 +19,7 @@
 <div class="cost" ng-controller="CostController as costCtrl">
 	<div class="row">
 		<aside class="col-md-2">
-			<ul class="nav nav-pills nav-stacked">
-			  <li role="presentation"><a href="{% url 'schedule' %}"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> Schedule</a></li>
-			  <li role="presentation"><a href="{% url 'feed' %}"><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> Feed</a></li>
-			  <li role="presentation"><a href="{% url 'todo' %}"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Todo</a></li>
-			  <li role="presentation" class="active"><a href="#"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> Expense</a></li>	  
-			  <li role="presentation"><a href="#"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Invitations</a></li>
-			  <li role="presentation"><a href="#"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Export</a></li>
-			</ul>			        
+			{% include "travelpad/itinerary_nav.html" with expense_active='class="active"' %}			        
 			
 		</aside>
 		{% verbatim %} 
