@@ -131,7 +131,7 @@ class Transportation(models.Model):
 class Todo(models.Model):
     created_by = models.ForeignKey(User, related_name='created_by')
     task = models.CharField(max_length=300)
-    status = models.CharField(max_length=64)
+    status = models.CharField(max_length=64, default='pending', blank=True)
     related_event = models.ForeignKey(Event, blank=True,null=True)
     related_itinerary = models.ForeignKey(Itinerary)
     owner = models.ForeignKey(User, blank=True, null=True, related_name='owned_by')

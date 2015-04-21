@@ -23,14 +23,19 @@
 				
 			    <!--  Products Container  -->
 			    <ul class="list-group">
-			        <li class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'"  ng-class="todo.status=='done'?'list-group-item-success': 'list-group-item-danger'">
+			        <!-- <li class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'"  ng-class="todo.status=='done'?'list-group-item-success': 'list-group-item-danger'"> -->
+					<li class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'">
 						<div class="row">
-							<div class="col-md-3">
-								<p>{{todo.task}}</p>
+							<div class="col-md-1">
+								<input type="checkbox" ng-model="todo.status" ng-true-value="'done'" ng-false-value="'pending'" ng-change="todoCtrl.reverseTodoStatus(todo)">
 							</div>
-						    <div class="col-md-2">
-								<p>{{todo.status}}</p>							
+							<div class="col-md-2" ng-switch="todo.status">
+								<p ng-switch-when="done"><del>{{todo.task}}</del></p>
+								<p ng-switch-default>{{todo.task}}</p>
 							</div>
+						    <!-- <div class="col-md-2">
+								<p>{{todo.status}}</p>
+							</div> -->
 						    <div class="col-md-3">
 								<p>{{todo.owner.username}}</p>
 							</div>
@@ -84,11 +89,11 @@
 						</fieldset>
 						
 						<!-- Select Status -->
-						<fieldset class="form-group">
+						<!-- <fieldset class="form-group">
 							<select ng-model="todoCtrl.newTodo.status" class="form-control" ng-options="status for status in ['pending','ongoing','done']" title="Onwer" required>
 						    <option value="">Select current Status</option>
 							</select>
-						</fieldset>
+						</fieldset> -->
 						
 						<!-- Select Owner -->
 						<fieldset class="form-group" ng-controller="ParticipantController as itCtrl">
@@ -130,11 +135,11 @@
 						</fieldset>
 						
 						<!-- Select Status -->
-						<fieldset class="form-group">
+						<!-- <fieldset class="form-group">
 							<select ng-model="todoCtrl.selectedTodo.status" class="form-control" ng-options="status for status in ['pending','ongoing','done']" title="Onwer" required>
 						    <option value="">Select current Status</option>
 							</select>
-						</fieldset>
+						</fieldset> -->
 						
 						<!-- Select Owner -->
 						<fieldset class="form-group" ng-controller="ParticipantController as itCtrl">

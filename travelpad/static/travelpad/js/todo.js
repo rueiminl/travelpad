@@ -62,6 +62,20 @@
     	});
 	};
 	
+	this.reverseTodoStatus = function(todo){
+		$http.put("/todo-json/" + todo.id, todo).success(function(data){
+			$.toaster({ priority : 'success', title : 'Success', message : 'Todo updated'});
+		}).error(function(data) {
+			//revert
+			if(todo.status=='done'){
+				todo.status = 'pending';
+			}else{
+				todo.status = 'done'
+			}
+    		$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
+    	});
+	};
+	
   }]);
 
 })();
