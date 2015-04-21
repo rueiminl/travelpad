@@ -54,9 +54,9 @@
 			-----------------------------------------------------------------*/
 			$('#calendar').fullCalendar({
 				header: {
-					left: 'prev,next',
-					center: 'title',
-					right: 'agendaWeek,agendaDay'
+					left: '',//'prev,next',
+					center: '',//'title',
+					right: '',//'agendaWeek,agendaDay'
 				},
 				contentHeight:'auto', //disable scroll bar
 				defaultView:'agendaWeek',

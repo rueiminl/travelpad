@@ -14,14 +14,18 @@
 {% block content %}
 <div class="todo" ng-controller="TodoController as todoCtrl">
 	<div class="row">
-		<aside class="col-md-2">
+		<div class="col-md-2">
 			{% include "travelpad/itinerary_nav.html" with todo_active='class="active"' %}	
-		</aside>
+		</div>
 		{% verbatim %} 
 		<div class="col-md-10">
-				<a data-toggle="modal" class="add-todo btn btn-info" href="#" data-target="#add_todo_madal">&plus;</a>
-				
-			    <!--  Products Container  -->
+			<div class="panel panel-default">
+			  <!-- Default panel contents -->
+				<div class="panel-heading">
+			 		<button data-toggle="modal" class="add-todo btn btn-default glyphicon glyphicon-plus" data-target="#add_todo_madal"></button>
+				</div>
+			  	<!-- <div class="panel-body">
+				</div> -->
 			    <ul class="list-group">
 			        <!-- <li class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'"  ng-class="todo.status=='done'?'list-group-item-success': 'list-group-item-danger'"> -->
 					<li class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'">
@@ -44,9 +48,7 @@
 							</div>
 						    <div class="col-md-1">
 								<div class="dropdown">
-								  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-								    <span class="caret"></span>
-								  </button>
+								  <a role="button" class="btn dropdown-toggle glyphicon glyphicon-option-horizontal" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true"></a>
 								  <ul class="dropdown-menu" role="menu" aria-labelledby="">
 								    <li role="presentation"><a role="menuitem" tabindex="-1" href="" ng-click="todoCtrl.showUpdateTodo(todo)">Edit todo</a></li>
 								    <li role="presentation"><a role="menuitem" tabindex="-1" href="" ng-click="todoCtrl.deleteTodo(todo)">Delete todo</a></li>
@@ -54,21 +56,9 @@
 								</div>
 							</div>
 						</div>
-						
-
-						<!-- <form name="showTodoForm" ng-submit="todoCtrl.showUpdateTodo(todo)">
-							<input type="submit" value="Edit" class="btn btn-success">
-						</form>
-						<form name="deleteTodoForm" ng-submit="todoCtrl.deleteTodo(todo)">
-							<input type="submit" value="" class="btn glyphicon glyphicon-remove">
-						</form> -->
-							
-						
-						
 					</li>
 				</ul>
-				
-				
+			</div>
 		</div>
 	</div>
 	
@@ -106,8 +96,7 @@
 						<fieldset class="form-group">
 							<textarea ng-model="todoCtrl.newTodo.note" class="form-control" placeholder="Write a note" title="Note"></textarea>
 						</fieldset>
-						
-					
+
 				</div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Add</button>

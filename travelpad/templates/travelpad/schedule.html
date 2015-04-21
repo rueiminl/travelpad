@@ -33,26 +33,29 @@
 				{% include "travelpad/itinerary_nav.html" with schedule_active='class="active"' %}	
 			</div>
 			<div class="col-md-10">
+				{% verbatim %} 
+				<h1>{{scheduleCtrl.itinerary.title}}</h1>
+				{% endverbatim %}
 				{% addevent %} 
-				<div class="btn-toolbar" role="toolbar">
+				
+				<!-- <div class="btn-toolbar" role="toolbar"> -->
 					<div class="btn-group" role="group">
 						<button type="button" class="btn btn-default glyphicon glyphicon-chevron-left" ng-click="scheduleCtrl.calendar.prev()"></button>
 				  		<button type="button" class="btn btn-default glyphicon glyphicon-chevron-right" ng-click="scheduleCtrl.calendar.next()"></button>
 					</div>
 					{% verbatim %} 
-					<h2> {{scheduleCtrl.dateTitle}} </h2>
-					{% endverbatim %}
+					<h2 class="date-title">{{scheduleCtrl.dateTitle}}</h2>		
 					<div class="btn-group" role="group">
 						<button type="button" class="btn btn-default" ng-class="{active:scheduleCtrl.calendar.isWeekView()}" ng-click="scheduleCtrl.calendar.changeWeekView()">week</button>
 				  		<button type="button" class="btn btn-default" ng-class="{active:!scheduleCtrl.calendar.isWeekView()}" ng-click="scheduleCtrl.calendar.changeDayView()">day</button>
 					</div>
-				</div>
+				<!-- </div> -->
 				<section class="tab" ng-controller="TabController as tab">
 					<ul class="nav nav-pills">
 						<li ng-class="{active:tab.isSet(1)}">
-							<a href ng-click="tab.setTab(1)">Calendar</a></li>
+							<a href role="button" ng-click="tab.setTab(1)"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> Calendar</a></li>
 						<li ng-class="{active:tab.isSet(2)}">
-				            <a href ng-click="tab.setTab(2)">Map</a></li>
+				            <a href role="button" ng-click="tab.setTab(2)"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map</a></li>
 				    </ul>
 					<!-- <div class="row" ng-show="tab.isSet(1)">
 						<div class="col-md-3" id='external-events'>
@@ -62,14 +65,15 @@
 						</div>
 						<div class="col-md-7" id='calendar'></div>
 					</div> -->
-					<div id='calendar' ng-show="tab.isSet(1)"></div>
-					<div id="map_canvas" style="width:100%; height:200%; position: absolute" ng-show="tab.isSet(2)"></div>
+					<!-- <div id='calendar' ng-show="tab.isSet(1)"></div>
+					<div id="map_canvas" style="width:100%; height:200%; position: absolute" ng-show="tab.isSet(2)"></div> -->
+					<!-- make calendar exist when hide so that we can still change time range  -->
+					<div id='calendar' ng-class="{'virtual-hide': !tab.isSet(1)}"></div> 
+					<div id="map_canvas" style="width:100%; height:200%; position: absolute" ng-class="{'virtual-hide': !tab.isSet(2)}"></div>
 				</section>
 				
 			</div>
-			<!-- <div class="col-md-5">
-				<div id="map_canvas" style="width:550px; height:400px"></div>
-			</div> -->
+			{% endverbatim %}
 		</div>
 </div>
 {% endblock %}

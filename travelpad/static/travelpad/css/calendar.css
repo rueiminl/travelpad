@@ -42,6 +42,19 @@
 		float: right;
 		width: 900px;
 	}*/
+.virtual-hide{
+	position: absolute; 
+	left: -9999px; 
+	width: 1px; 
+	height: 1px;"
+}
+
+.date-title{
+	display:inline;
+	margin-left:20px;
+	margin-right:20px;
+	vertical-align: middle;
+}
 
 .view{
 	z-index:1;
