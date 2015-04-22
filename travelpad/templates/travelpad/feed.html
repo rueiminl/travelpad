@@ -34,28 +34,29 @@
 			<div class="message-list">
 				<div class="message-list-item panel panel-default" ng-repeat="message in msgCtrl.messages| orderBy:'-creation_time'">
 					<div class="panel-heading">
-						<h4>
-						<img class="avatar" ng-src="{{message.created_by.photo}}" width="50px" height="50px">
-						<a href="#">{{message.created_by.username}}</a>
-						<span class="label label-default">{{message.creation_time | prettyDate }}</span>
-						</h4>
-						<p>{{message.content}}</p>	
+						<div class="media">
+							<div class="media-left media-middle">
+								<img class="img-circle" ng-src="{{message.created_by.photo}}" width="50px" height="50px">
+							</div>
+							<div class="media-body">
+								<a href="#">{{message.created_by.username}}</a></br>
+								<small>{{message.creation_time | prettyDate }}</small>
+							</div>
+						</div> <!-- end of media -->
+						<p>{{message.content}}</p>
 					</div>
 					<!-- Reply list -->	
 					<div class="reply-list panel-body">
 						<div class="reply-list-item" ng-repeat="reply in message.replies| orderBy:'creation_time'">
 							<div class="media">
-								<div class="media-left">
-						      	  <img class="media-object avatar" ng-src="{{reply.created_by.photo}}" width="40px" height="40px">
+								<div class="media-left media-middle">
+						      	  <img class="media-object img-circle" ng-src="{{reply.created_by.photo}}" width="40px" height="40px">
 						  		</div>
 						  		<div class="media-body">
-						    		<h6 class="media-heading">
-										{{reply.created_by.username}}
-									<span class="label label-default">{{reply.creation_time | prettyDate}}</span>
-									</h6>
-									<h6>{{reply.content}}</h6>
+						    		<h6 class="media-heading">{{reply.created_by.username}}<span> {{reply.content}}</span></h6>
+									<small>{{reply.creation_time | prettyDate}}</small>								
 						  		</div>
-							</div>
+							</div> <!-- end of media -->
 						</div>
 						<form class="form-group" name="replyForm" ng-submit="replyForm.$valid && msgCtrl.addReply(message)" novalidate>
 							<fieldset class="input-group">

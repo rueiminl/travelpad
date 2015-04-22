@@ -9,10 +9,19 @@
 	
 	this.reload = function(){
 		$http.get("/message-json").success(function(data){
-			t.messages = data;
-			for (var i = 0; i < t.messages.length; i++){
-				t.messages[i].newReply = {related_message: t.messages[i].id};
+			// t.messages = data;
+			var idMap = t.messages.map(function(message){
+				return message.id;
+			});
+			for (var i = 0; i < data.length; i++){
+				if(idMap.indexOf(data[i].id) == -1){
+					data[i].newReply = {related_message: data[i].id};
+					t.messages.push(data[i]);
+				}
 			}
+			// for (var i = 0; i < t.messages.length; i++){
+// 				t.messages[i].newReply = {related_message: t.messages[i].id};
+// 			}
 			// console.log(data);
 		}).error(function(data) {
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});

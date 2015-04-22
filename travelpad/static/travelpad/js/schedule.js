@@ -65,7 +65,8 @@
 				selectable: true,
 				selectHelper: true,
 				select: function(start, end) {
-					showeventmodal("", start.format("YYYY-MM-DD"), start.format("HH:mm"), end.format("YYYY-MM-DD"), end.format("HH:mm"))
+					//TODO: add fetchevents to callback
+					showeventmodal("", start.format("YYYY-MM-DD"), start.format("HH:mm"), end.format("YYYY-MM-DD"), end.format("HH:mm"));
 					$('#calendar').fullCalendar('unselect');
 				},
 				editable: true,

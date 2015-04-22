@@ -50,10 +50,11 @@
 }
 
 .date-title{
-	display:inline;
-	margin-left:20px;
-	margin-right:20px;
+	width:400px; /* or whatever width you want. */
+	max-width:400px; /* or whatever width you want. */
+	display: inline-block;
 	vertical-align: middle;
+	text-align: center;
 }
 
 .view{
