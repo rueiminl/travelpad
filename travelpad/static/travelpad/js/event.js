@@ -1,10 +1,13 @@
 var s_callback = function(){console.log("this is s_callback");};
 var e_callback = function(){console.log("this is e_callback");};
+var g_map;
+var g_map2;
+var g_map3;
+var g_map4;
+
 
 (function() {
   var app = angular.module('myApp');
-
-  
   
   app.controller('EventController', ['$scope', '$http', '$interval', function($scope, $http, $interval){
 	var t = this;
@@ -65,6 +68,13 @@ var e_callback = function(){console.log("this is e_callback");};
 
       $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         $('#tabName').val($('.nav-tabs .active').text());
+        google.maps.event.trigger(g_map, 'resize');
+        google.maps.event.trigger(g_map2, 'resize');
+        google.maps.event.trigger(g_map3, 'resize');
+        google.maps.event.trigger(g_map4, 'resize');
+      });
+       $("#eventModal").on("shown.bs.modal", function(e) {
+        google.maps.event.trigger(g_map, "resize");
       });
        $("#eventModal").on('hidden.bs.modal', function () {
             $(this).find('form')[0].reset();
@@ -293,10 +303,10 @@ var e_callback = function(){console.log("this is e_callback");};
           var bounds = map.getBounds();
           searchBox1.setBounds(bounds);
         });
-        var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
+        g_map = map;
+        /*var idleListener = google.maps.event.addListener(map, 'tilesloaded', function() {
           google.maps.event.trigger(map, 'resize');
-          //google.maps.event.removeListener(idleListener);
-        });
+        });*/
       }
       
       function initialize_hotel() {
@@ -370,11 +380,12 @@ var e_callback = function(){console.log("this is e_callback");};
         google.maps.event.addListener(map, 'bounds_changed', function() {
           var bounds = map.getBounds();
           searchBox.setBounds(bounds);
-        });
-        var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
           google.maps.event.trigger(map, 'resize');
-          //google.maps.event.removeListener(idleListener);
         });
+        g_map2 = map;
+        /*var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
+          google.maps.event.trigger(map, 'resize');
+        });*/
       }
       
       function initialize_transportation() {
@@ -448,11 +459,12 @@ var e_callback = function(){console.log("this is e_callback");};
         google.maps.event.addListener(map, 'bounds_changed', function() {
           var bounds = map.getBounds();
           searchBox.setBounds(bounds);
-        });
-        var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
           google.maps.event.trigger(map, 'resize');
-          //google.maps.event.removeListener(idleListener);
         });
+        g_map3 = map;
+        /*var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
+          google.maps.event.trigger(map, 'resize');
+        });*/
       }
       
       function initialize_restaurant() {
@@ -527,11 +539,12 @@ var e_callback = function(){console.log("this is e_callback");};
         google.maps.event.addListener(map, 'bounds_changed', function() {
           var bounds = map.getBounds();
           searchBox.setBounds(bounds);
-        });
-        var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
           google.maps.event.trigger(map, 'resize');
-          //google.maps.event.removeListener(idleListener);
         });
+        g_map4 = map;
+        /*var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
+          google.maps.event.trigger(map, 'resize');
+        });*/
       }
       
       function editevent(id, success_callback, error_callback) {
