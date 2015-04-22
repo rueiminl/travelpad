@@ -1,75 +1,12 @@
-
-<!DOCTYPE HTML>
-<html ng-app="myApp">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Error adding events</title>
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
-
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    {% load static from staticfiles %}
-    <script src="{% static 'travelpad/js/event_error.js' %}" type="text/javascript"></script>
-   
-    <!--{% load static from staticfiles %}
-    <link rel="stylesheet" type="text/css" href="{% static "socialnetwork/css/social.css" %}">-->
-            {{ attractionform.media }}
-            {{ hotelform.media }}
-            {{ transportationform.media }}
-            {{ restaurantform.media }}
-        
-    <style>
-      html, body {
-        width: 100%;
-        margin: 0px;
-        padding: 0px
-      }
-      .controls {
-        background-color: #fff;
-        border-radius: 2px;
-        border: 1px solid transparent;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        box-sizing: border-box;
-        font-family: Roboto;
-        font-size: 15px;
-        font-weight: 300;
-        height: 32px;
-        margin-left: 17px;
-        margin-top: 16px;
-        outline: none;
-        padding: 0 11px 0 13px;
-        text-overflow: ellipsis;
-        width: 400px;
-      }
-
-      .controls:focus {
-        border-color: #4d90fe;
-      }
-      .pac-container {
-  z-index: 1050 !important;
-}
-      #map-eventcanvas { height: 300px }
-      #map-eventcanvas2 { height: 300px }
-      #map-eventcanvas3 { height: 300px }
-      #map-eventcanvas4 { height: 300px }
-    </style>
-    
-    <!--
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&signed_in=true"></script>
-    -->
-<script>
+var s_callback = function(){console.log("this is s_callback");};
+var e_callback = function(){console.log("this is e_callback");};
 
 (function() {
   var app = angular.module('myApp');
 
   
   
-  app.controller('Event2Controller', ['$http', '$interval', function($http, $interval){
+  app.controller('EventController', ['$scope', '$http', '$interval', function($scope, $http, $interval){
 	var t = this;
 	this.events = [];
     this.newAttraction = {};
@@ -78,6 +15,7 @@
     this.newRestaurant = {};
     this.selectedEvent = {};
     this.currenttab = "Attraction";
+    this.error = [];
     
     this.setPropose = function(){
         this.button="Propose";
@@ -94,17 +32,22 @@
       document.body.appendChild(script);
       $("#mybutton").click( function()
         {
-            showeventmodal("title","2015-03-25","13:15","2015-03-25","14:15")
+            //showeventmodal("title","2015-03-25","13:15","2015-03-25","14:15")
+            showeventmodal("","","","","")
         }
       );
       $("#mybutton2").click( function()
         {
-            editevent(2);
+            var ss_callback = function(){console.log("this is ss_callback");};
+            var ee_callback = function(){console.log("this is ee_callback");};
+            editevent(107,ss_callback,ee_callback);
         }
       );
       $("#mybutton3").click( function()
         {
-            edittransport(1);
+            var ss_callback = function(){console.log("this is ss_callback");};
+            var ee_callback = function(){console.log("this is ee_callback");};
+            edittransport(1,ss_callback,ee_callback);
         }
       );
       $("#mybutton4").click( function()
@@ -129,6 +72,10 @@
             $('#map-eventcanvas2').show();
             $('#map-eventcanvas3').show();
             $('#map-eventcanvas4').show();
+            $('#pac-input').show();
+            $('#pac-input2').show();
+            $('#pac-input3').show();
+            $('#pac-input4').show();
             $('#tabBar').show();
             $('#placelabel_a').text("");
             $('#placetext_a').text("");
@@ -148,6 +95,10 @@
             $('#map-eventcanvas3').hide();
             $('.nav-tabs a[href="#Transportation"]').hide();
             $('.nav-tabs a[href="#Attraction"]').tab('show');
+            
+            $scope.$apply(function () {
+                t.error = [];
+            });
        });
        
        $("#Event_Form").submit(function(e)
@@ -166,16 +117,73 @@
                     if (ct.indexOf('html') > -1) {
                         var newDoc = document.open("text/html", "replace");
                         newDoc.write(response);
+                        /*$(response).find("script").each(function(i) {
+                            eval($(this).text());
+                        });*/
                         newDoc.close();
                     }
                     if (ct.indexOf('json') > -1) {
                         console.log("success");
-                        console.log(response.trans_up);
-                        console.log(response.pevent_up);
-                        console.log(response.nevent_up);
-                        getTime([response.pevent_up[0].place.latitude,response.pevent_up[0].place.longitude], [response.nevent_up[0].place.latitude,response.nevent_up[0].place.longitude],response.trans_up[0].type);
-                        $('#eventModal').modal('hide');
-                        $.toaster({ priority : 'success', title : 'Success', message : 'New event added'});                    
+                        console.log(response);
+                        if (response.errors){
+                            t.error = [];
+                            $scope.$apply(function () {
+                                for (ee in response.errors){
+                                    t.error.push(response.errors[ee]);
+                                }
+                            });
+                        }
+                        else{
+                            if (response.trans_up && response.trans_up.length > 0){
+                                var a = function(ids,arr){
+                                    console.log("www");
+                                    console.log(arr);
+                                    $.ajax({
+                                        url: "./updatetransport",
+                                        data: {
+                                            ids: ids,
+                                            arr: arr,
+                                        },
+                                        type:'POST',
+                                        dataType: 'json',
+                                        success: function(response, status, xhr){ 
+                                            console.log("update transport success");
+                                        },
+                                        error: function(response, status, xhr){ 
+                                            console.log("update transport fail");
+                                        }
+                                    });
+                                    
+                                };
+                                var b = function(ids,arr){
+                                    console.log("www");
+                                    console.log(arr);
+                                    $.ajax({
+                                        url: "./updatetransport",
+                                        data: {
+                                            ids: ids,
+                                            arr: arr,
+                                        },
+                                        type:'POST',
+                                        dataType: 'json',
+                                        success: function(response, status, xhr){ 
+                                            console.log("update transport success");
+                                            s_callback();
+                                        },
+                                        error: function(response, status, xhr){ 
+                                            console.log("update transport fail");
+                                        }
+                                    });
+                                    
+                                };
+                                for (var i = 0; i < response.trans_up.length-1; i++){
+                                    getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],a,e_callback);
+                                }
+                                getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,e_callback);
+                            }
+                            $('#eventModal').modal('hide');
+                            $.toaster({ priority : 'success', title : 'Success', message : 'New event added'});                      
+                        }
                     } 
                 },
                 error: function(items) 
@@ -526,7 +534,9 @@
         });
       }
       
-      function editevent(id) {
+      function editevent(id, success_callback, error_callback) {
+      s_callback = success_callback;
+      e_callback = error_callback;
     $.ajax({
         url: "./getevent",
         data: {
@@ -568,6 +578,10 @@
             $('#map-eventcanvas2').hide();
             $('#map-eventcanvas3').hide();
             $('#map-eventcanvas4').hide();
+            $('#pac-input').hide();
+            $('#pac-input2').hide();
+            $('#pac-input3').hide();
+            $('#pac-input4').hide();
             $('#eventId').val(items.data.id);
             $('#deletebtn').show();
 
@@ -577,7 +591,7 @@
 
 function editeventtime(id, sdate, stime, edate, etime, success_callback,error_callback) {
     $.ajax({
-        url: "./editeventtime",
+        url: "./editeventtime_json",
         data: {
             eid: id,
             sdate: sdate,
@@ -587,12 +601,64 @@ function editeventtime(id, sdate, stime, edate, etime, success_callback,error_ca
         },
         type:'POST',
         dataType: 'json',
-        success: success_callback,
+        success: function(response, status, xhr){ 
+            console.log("cuss");
+            console.log(response);
+            if (response.trans_up && response.trans_up.length > 0){
+                var a = function(ids,arr){
+                    console.log("www");
+                    console.log(arr);
+                    $.ajax({
+                        url: "./updatetransport",
+                        data: {
+                            ids: ids,
+                            arr: arr,
+                        },
+                        type:'POST',
+                        dataType: 'json',
+                        success: function(response, status, xhr){ 
+                            console.log("update transport success");
+                        },
+                        error: function(response, status, xhr){ 
+                            console.log("update transport fail");
+                        }
+                    });
+                    
+                };
+                var b = function(ids,arr){
+                    console.log("www");
+                    console.log(arr);
+                    $.ajax({
+                        url: "./updatetransport",
+                        data: {
+                            ids: ids,
+                            arr: arr,
+                        },
+                        type:'POST',
+                        dataType: 'json',
+                        success: function(response, status, xhr){ 
+                            console.log("update transport success");
+                            success_callback();
+                        },
+                        error: function(response, status, xhr){ 
+                            console.log("update transport fail");
+                        }
+                    });
+                    
+                };
+                for (var i = 0; i < response.trans_up.length-1; i++){
+                    getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],a,error_callback);
+                }
+                getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,error_callback);
+            }
+        },
         error: error_callback,
     });
 };
 
-function edittransport(id) {
+function edittransport(id, success_callback, error_callback) {
+    s_callback = success_callback;
+    e_callback = error_callback;
     $.ajax({
         url: "./gettransport",
         data: {
@@ -631,19 +697,72 @@ function deleteevent() {
     id = $('#eventId').val();
     if (confirm("Are you sure you want to delete this event?") == true) {
         $.ajax({
-            url: "/deleteevent",
+            url: "/deleteevent_json",
             data: {
                 eid: id,
             },
             type:'POST',
-            success: function(items){
-               $(location).attr('href',"./schedule");
+            success: function(response, status, xhr){ 
+               console.log("deleted");
+               console.log(response);
+               $('#eventModal').modal('hide');
+               if (response.trans_up && response.trans_up.length > 0){
+                    var a = function(ids,arr){
+                        console.log("www");
+                        console.log(arr);
+                        $.ajax({
+                            url: "./updatetransport",
+                            data: {
+                                ids: ids,
+                                arr: arr,
+                            },
+                            type:'POST',
+                            dataType: 'json',
+                            success: function(response, status, xhr){ 
+                                console.log("update transport success");
+                            },
+                            error: function(response, status, xhr){ 
+                                console.log("update transport fail");
+                            }
+                        });
+                        
+                    };
+                    var b = function(ids,arr){
+                        console.log("www");
+                        console.log(arr);
+                        $.ajax({
+                            url: "./updatetransport",
+                            data: {
+                                ids: ids,
+                                arr: arr,
+                            },
+                            type:'POST',
+                            dataType: 'json',
+                            success: function(response, status, xhr){ 
+                                console.log("update transport success");
+                                s_callback();
+                            },
+                            error: function(response, status, xhr){ 
+                                console.log("update transport fail");
+                            }
+                        });
+                        
+                    };
+                    for (var i = 0; i < response.trans_up.length-1; i++){
+                        getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],a,e_callback);
+                    }
+                    getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,e_callback);
+                }
+               $.toaster({ priority : 'success', title : 'Success', message : 'Event deleted'});    
+               //$(location).attr('href',"./schedule");
             }
         });
     }
 }
     
-function showeventmodal(title, sdate, stime, edate, etime) {
+function showeventmodal(title, sdate, stime, edate, etime, success_callback,error_callback) {
+    s_callback = success_callback;
+    e_callback = error_callback;
     $('#eventModal').modal('show');
     $('#id_a_-title').val(title);
     $('#id_h_-title').val(title);
@@ -676,234 +795,3 @@ function showeventmodal(title, sdate, stime, edate, etime) {
     //google.maps.event.trigger(searchBox1, 'places_changed');
 
 }
-
-
-var ready2; // Where to store the function
-
-    ready2 = function() {
-        console.log("ready2");
-      {% if tabName == "attraction" %}
-            $('.nav-tabs a[href="#Attraction"]').tab('show');
-      {% elif tabName == "hotel" %}
-            $('.nav-tabs a[href="#Hotel"]').tab('show');
-      {% elif tabName == "transportation" %}
-            $('.nav-tabs a[href="#Transportation"]').tab('show');
-      {% else %}
-            $('.nav-tabs a[href="#Restaurant"]').tab('show');
-      {% endif %}
-      {% if id %}
-            setupedit({{ id }});
-      {% endif %}
-    };
-
-    function setupedit(id) {
-        $('#tabBar').hide();
-        $('#placelabel_a').text("Place:");
-        $('#placetext_a').text("{{ place }}");
-        $('#placelabel_h').text("Place:");
-        $('#placetext_h').text("{{ place }}");
-        $('#placelabel_t').text("Place:");
-        $('#placetext_t').text("{{ place }}");
-        $('#placelabel_r').text("Place:");
-        $('#placetext_r').text("{{ place }}");
-        $('#map-eventcanvas').hide();
-        $('#map-eventcanvas2').hide();
-        $('#map-eventcanvas3').hide();
-        $('#map-eventcanvas4').hide();
-        $('#eventId').val(id);
-    }
-
-    </script>
-</head>
-
-<body>  
-    
-    <div class="container" ng-controller="Event2Controller as eventCtrl">
-        {% if errors %}
-            <p class="err"> Some error happened: </p>
-        {% endif %}
-        {% for error in errors %}
-            <p class="err">
-                {{ error }} <br>
-            </p>
-        {% endfor %}
-        <!-- Button trigger modal -->
-        <!--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" href="{% url 'eventedit' %}">
-          Launch demo modal
-        </button>-->
-        
-        <!-- Modal -->
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form id="Event_Form" method='post' class="form" role="form" action='{% url 'eventedit' %}'>
-                    {% csrf_token %}
-                    <div class="modal-header">
-                        <a href="{% url 'schedule' %}" class="btn close">&times;</a>
-                         <h4 class="modal-title">Add/Edit Event</h4>
-                    </div>			<!-- /modal-header -->
-                    <div class="modal-body">
-                    
-                        <ul id = "tabBar" class="nav nav-tabs">
-                            <li class="active"><a data-toggle="tab" href="#Attraction">Attraction</a></li>
-                            <li><a data-toggle="tab" href="#Hotel">Hotel</a></li>
-                            <li><a data-toggle="tab" href="#Transportation">Transportation</a></li>
-                            <li><a data-toggle="tab" href="#Restaurant">Restaurant</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div id="Attraction" class="tab-pane fade in active">
-                                <table>
-                                {% for field in attractionform.visible_fields %}
-                                    {% if field.label == "Note" %}
-                                        <tr>
-                                            <td>
-                                                <label id="placelabel_a" class="inputlabel"></label>
-                                            </td>
-                                            <td>
-                                                <p id="placetext_a"></p>
-                                            </td>
-                                        </tr>
-                                        </table>
-                                            <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
-                                            <div id="map-eventcanvas"></div>
-                                        <table>
-                                    {% endif %}
-                                    <tr>                                                        
-                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
-                                        {% if field.field.required %}
-                                            *
-                                        {% endif %}
-                                        </label></td>
-                                        <td>{{field}}</td>
-                                        <td>{% for error in field.errors %}
-                                        <p class="errorlabel" for="{{ error }}">{{ error }}
-                                        </p>
-                                        {% endfor %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </table>
-                            </div>
-                            <div id="Hotel" class="tab-pane fade">
-                                <table>
-                                {% for field in hotelform.visible_fields %}
-                                    {% if field.label == "Note" %}
-                                        <tr>
-                                            <td>
-                                                <label id="placelabel_h" class="inputlabel"></label>
-                                            </td>
-                                            <td>
-                                                <p id="placetext_h"></p>
-                                            </td>
-                                        </tr>
-                                        </table>
-                                            <input id="pac-input2" class="controls" type="text" placeholder="Enter a location">
-                                            <div id="map-eventcanvas2"></div>
-                                        <table>
-                                    {% endif %}
-                                    <tr>                                                        
-                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
-                                        {% if field.field.required %}
-                                            *
-                                        {% endif %}
-                                        </label></td>
-                                        <td>{{field}}</td>
-                                        <td>{% for error in field.errors %}
-                                        <p class="errorlabel" for="{{ error }}">{{ error }}
-                                        </p>
-                                        {% endfor %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </table>
-                            </div>
-                            <div id="Transportation" class="tab-pane fade">
-                                <table>
-                                {% for field in transportationform.visible_fields %}
-                                    {% if field.label == "Note" %}
-                                        <tr>
-                                            <td>
-                                                <label id="placelabel_t" class="inputlabel"></label>
-                                            </td>
-                                            <td>
-                                                <p id="placetext_t"></p>
-                                            </td>
-                                        </tr>
-                                        </table>
-                                            <input id="pac-input3" class="controls" type="text" placeholder="Enter a location">
-                                            <div id="map-eventcanvas3"></div>
-                                        <table>
-                                    {% endif %}
-                                    <tr>                                                        
-                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
-                                        {% if field.field.required %}
-                                            *
-                                        {% endif %}
-                                        </label></td>
-                                        <td>{{field}}</td>
-                                        <td>{% for error in field.errors %}
-                                        <p class="errorlabel" for="{{ error }}">{{ error }}
-                                        </p>
-                                        {% endfor %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </table>
-                            </div>
-                            <div id="Restaurant" class="tab-pane fade">
-                                <table>
-                                {% for field in restaurantform.visible_fields %}
-                                    {% if field.label == "Note" %}
-                                        <tr>
-                                            <td>
-                                                <label id="placelabel_r" class="inputlabel"></label>
-                                            </td>
-                                            <td>
-                                                <p id="placetext_r"></p>
-                                            </td>
-                                        </tr>
-                                        </table>
-                                            <input id="pac-input4" class="controls" type="text" placeholder="Enter a location">
-                                            <div id="map-eventcanvas4"></div>
-                                        <table>
-                                    {% endif %}
-                                    <tr>                                                        
-                                        <td><label class="inputlabel" for="{{ field.name }}">{{ field.label }}:
-                                        {% if field.field.required %}
-                                            *
-                                        {% endif %}
-                                        </label></td>
-                                        <td>{{field}}</td>
-                                        <td>{% for error in field.errors %}
-                                        <p class="errorlabel" for="{{ error }}">{{ error }}
-                                        </p>
-                                        {% endfor %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                </table>
-                            </div>
-                        </div>
-
-                    </div>			<!-- /modal-body -->
-                    <input id="coordinate" name="coordinate" type="hidden">
-                    <input id="placeId" name="placeId" type="hidden">
-                    <input id="placeName" name="placeName" type="hidden">
-                    <input id="tabName" name="tabName" type="hidden">
-                    <input id="eventId" name="eventId" type="hidden">
-                    <div class="modal-footer">
-                        <button type="submit" name="save" class="btn btn-primary">Save Event</button>
-                        <button type="submit" name="propose" class="btn btn-primary">Propose Event</button>
-                        <a href="{% url 'schedule' %}"  class="btn btn-default">Cancel</a>
-                    </div>			<!-- /modal-footer -->
-                    </form>
-                    <script>
-                          eventCtrl.ready();
-                          ready2();
-                    </script>
-                </div> <!-- /.modal-content -->
-            </div> <!-- /.modal-dialog -->
-
-    </div>
-</body>
-</html>
-

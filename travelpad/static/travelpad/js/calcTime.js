@@ -30,33 +30,47 @@ function getTime(src, dest, mode){
       summaryPanel.innerHTML += 'No such route' + '<br><br>';
     }
   });
-
 }
 */
 
-function getTime(src, dest, mode, time){
+function getTime2(ids, src, dest, mode, time, callback, errorhandle){
+  console.log(mode);
   var arr = [];
   var directionsService = new google.maps.DirectionsService();
   for(var i=0; i<src.length; i++){
     var srcPlace = new google.maps.LatLng(src[i][0], src[i][1]);
     var destPlace = new google.maps.LatLng(dest[i][0], dest[i][1]);
+    var timeTrans = new Date(time[i]);
+    console.log(time);
+    console.log(timeTrans);
     var request = {
       origin: srcPlace,
       destination: destPlace,
-      travelMode: google.maps.TravelMode[mode[i]],
+      travelMode: google.maps.TravelMode[mode[i].toUpperCase()],
       transitOptions: {
-        departureTime: new Date(time[i]).getTime()/1000;
+        departureTime: timeTrans
       }
     };
     directionsService.route(request, function(response, status) {
       if (status == google.maps.DirectionsStatus.OK) {
         var route = response.routes[0];
         arr.push(route.legs[0].duration.value);
+        callback(ids, arr[0]);
       }
       else{
-        arr.push(-1);
+        if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
+            console.log("resend");
+            wait = true;
+            setTimeout("wait = true", 1000);
+            getTime2(ids, src, dest, mode, time, callback, errorhandle)
+        }
+        else{
+            console.log(response);
+            console.log(status);
+            errorhandle();
+            arr.push(-1);
+        }
       }
     });
   }
-  return arr;
 }

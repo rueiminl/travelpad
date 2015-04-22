@@ -46,7 +46,6 @@ def home_page(request):
     return render(request, 'travelpad/addevent.html', context)
     
 def eventedit(request):
-    print request.user
     if request.method == 'GET':
         context = {}
         context['attractionform'] = AttractionForm(prefix = "a_")
@@ -171,6 +170,162 @@ def eventedit(request):
         context['iid'] = request.session["itinerary_id"]
         return render(request, 'travelpad/addevent_error.html', context)
         
+def eventedit_json(request):
+    print request
+    if request.method == 'GET':
+        context = {}
+        context['attractionform'] = AttractionForm(prefix = "a_")
+        context['hotelform'] = HotelForm(prefix = "h_")
+        context['transportationform'] = TransportationForm(prefix = "t_")
+        context['restaurantform'] = RestaurantForm(prefix = "r_")
+        return render(request, 'travelpad/EventWindow.html', context)
+    if request.POST['eventId']:
+        return eventeditwithID_json(request)
+    context = {}
+    errors = []
+    trans_up = []
+    pevent_up = []
+    nevent_up = []
+    context['errors'] = errors
+    success = 1
+    #if 'save' in request.POST:
+    #    isproposed = False;
+    #elif 'propose' in request.POST:
+    #    isproposed = True;
+        
+    if request.POST['button'] == 'Save':
+        isproposed = False;
+    elif request.POST['button'] == 'Propose':
+        isproposed = True;
+    
+    if request.user:
+        new_user = request.user
+    else:
+        try:
+            new_user = User.objects.get(username="username")
+        except ObjectDoesNotExist:
+            new_user = User.objects.create_user(username="username", password="password1")
+            new_user.save()
+        
+    if (not request.POST['tabName']) or (request.POST['tabName']=="Attraction"):
+        newevent = Event(created_by = new_user, type="attraction",proposed = isproposed)
+        form = AttractionForm(request.POST, prefix = "a_")
+    elif request.POST['tabName']=="Hotel":
+        newevent = Event(created_by = new_user, type="hotel",proposed = isproposed)
+        form = HotelForm(request.POST, prefix = "h_")
+    elif request.POST['tabName']=="Transportation":
+        newevent = Event(created_by = new_user, type="transportation",proposed = isproposed)
+        form = TransportationForm(request.POST, prefix = "t_")
+    elif request.POST['tabName']=="Restaurant":
+        newevent = Event(created_by = new_user, type="restaurant",proposed = isproposed)
+        form = RestaurantForm(request.POST, prefix = "r_")
+    if form.is_valid():
+        newevent.title = form.cleaned_data['title']
+        thistinery = Itinerary.objects.get(id = request.session["itinerary_id"])
+        newevent.related_itinerary = thistinery 
+        #newevent.start_date = form.cleaned_data['start_date']
+        #newevent.start_time = form.cleaned_data['start_time']
+        #newevent.end_date = form.cleaned_data['end_date']
+        #newevent.end_time = form.cleaned_data['end_time']
+        stime = datetime.combine(form.cleaned_data['start_date'], form.cleaned_data['start_time'])
+        etime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
+        newevent.start_datetime  = timezone.make_aware(stime, timezone.get_current_timezone())
+        newevent.end_datetime = timezone.make_aware(etime, timezone.get_current_timezone())
+        newevent.note = form.cleaned_data['note']
+        newevent.place_id = request.POST['placeId']
+        newevent.place_name = request.POST['placeName']
+        s = request.POST['coordinate'][1:-1]
+        tmp = s.split(', ')
+        if (len(tmp) < 2):
+            success = 0
+            errors.append("You have to input the place you are going.");
+        overlap = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__lt=newevent.end_datetime).filter(end_datetime__gt=newevent.start_datetime)
+        if overlap.count() > 0: #overlap
+            success = 0
+            errors.append("The time overlaps with another event.");
+        if success == 1:
+            newevent.place_latitude = tmp[0]
+            newevent.place_longitude = tmp[1]
+            newevent.save()
+            thistinery = Itinerary.objects.get(id = request.session["itinerary_id"])
+            if (form.cleaned_data['todo']):
+                newtodo = Todo(task = form.cleaned_data['todo'], status = "pending", created_by = new_user, related_event = newevent, related_itinerary = thistinery)
+                newtodo.save()
+            if (form.cleaned_data['cost']):
+                newcost = Cost(amount = form.cleaned_data['cost'], isall = form.cleaned_data['split'], status = "Unpaid", created_by = new_user, related_event = newevent, related_itinerary = thistinery)
+                newcost.save()
+            strange = datetime.combine(form.cleaned_data['start_date'], time(0, 0, 0))
+            srange = timezone.make_aware(strange, timezone.get_current_timezone())
+            serange = datetime.combine(form.cleaned_data['end_date'], time(0, 0, 0)) + timezone.timedelta(days=1)
+            erange = timezone.make_aware(serange, timezone.get_current_timezone())
+            try:
+                pevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                try:
+                    ptrans = pevent.pre
+                    tempplace = ptrans.destination
+                    temptime = ptrans.end_datetime
+                    ptrans.end_datetime = newevent.start_datetime
+                    ptrans.destination = newevent
+                    ptrans.save()
+                    trans_up.append(ptrans.as_dict())
+                    pevent_up.append(ptrans.source.as_dict())
+                    nevent_up.append(ptrans.destination.as_dict())
+                    newtrans = Transportation(created_by = new_user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = temptime, source = newevent, destination = tempplace, related_itinerary = thistinery)
+                    newtrans.save()
+                    trans_up.append(newtrans.as_dict());
+                    pevent_up.append(newtrans.source.as_dict())
+                    nevent_up.append(newtrans.destination.as_dict())
+                except ObjectDoesNotExist:
+                    newtrans = Transportation(created_by = new_user, type = "driving", start_datetime = pevent.end_datetime, end_datetime = newevent.start_datetime, source = pevent, destination = newevent, related_itinerary = thistinery)
+                    newtrans.save()
+                    trans_up.append(newtrans.as_dict());
+                    pevent_up.append(newtrans.source.as_dict())
+                    nevent_up.append(newtrans.destination.as_dict())
+            # first event of the day
+            except ObjectDoesNotExist:
+                try:
+                    nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                    newtrans = Transportation(created_by = new_user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent, related_itinerary = thistinery)
+                    newtrans.save()
+                    trans_up.append(newtrans.as_dict());
+                    pevent_up.append(newtrans.source.as_dict())
+                    nevent_up.append(newtrans.destination.as_dict())
+                except ObjectDoesNotExist:
+                    print "first event"
+                    pass
+            context['success'] = 1
+    else:
+        errors.append("Please check the input data.");
+        success = 0
+    #return render(request, 'travelpad/addevent.html', context)
+    if success == 1:
+        #return redirect(reverse('demo'))
+        #request.session["addevent"] = 1;
+        response_data = {}
+        response_data['status'] = 'success'
+        response_data['trans_up'] = trans_up
+        response_data['pevent_up'] = pevent_up
+        response_data['nevent_up'] = nevent_up
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+    else:
+        context['attractionform'] = AttractionForm(request.POST, prefix = "a_")
+        context['hotelform'] = HotelForm(request.POST, prefix = "h_")
+        context['transportationform'] = TransportationForm(request.POST, prefix = "t_")
+        context['restaurantform'] = RestaurantForm(request.POST, prefix = "r_")
+        context['tabName'] = newevent.type
+        context['iid'] = request.session["itinerary_id"]
+        if (newevent.type == "attraction"):
+            returnform = AttractionForm(request.POST, prefix = "a_")
+        elif (newevent.type == "hotel"):
+            returnform = HotelForm(request.POST, prefix = "h_")
+        elif (newevent.type == "transportation"):
+            returnform = TransportationForm(request.POST, prefix = "t_")
+        elif (newevent.type == "restaurant"):
+            returnform = RestaurantForm(request.POST, prefix = "r_")
+        response_data = {'errors': errors, 'formerrors': returnform.errors}
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+        #return render(request, 'travelpad/addevent_error.html', context)
+        
 def eventeditwithID(request):
     print request.user
     if request.method == 'GET':
@@ -210,7 +365,7 @@ def eventeditwithID(request):
         overlap = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__lt=newevent.end_datetime).filter(end_datetime__gt=newevent.start_datetime).exclude(id = request.POST['eventId'])
         if overlap.count() > 0: #overlap
             success = 0
-            errors.append("The time overlaps with another event:")
+            errors.append("The time overlaps with another event.")
         if success == 1:
             newevent.save()
             thistinery = Itinerary.objects.get(id = request.session["itinerary_id"])
@@ -315,7 +470,7 @@ def eventeditwithID(request):
                     pass
             context['success'] = 1
     else:
-        errors.append("Please check the message below:")
+        errors.append("Please check the message below.")
         success = 0
     #return render(request, 'travelpad/addevent.html', context)
     #return demo(request)
@@ -333,6 +488,210 @@ def eventeditwithID(request):
         context['place'] = newevent.place_name
         context['iid'] = request.session["itinerary_id"]
         return render(request, 'travelpad/addevent_error.html', context)
+        
+        
+def eventeditwithID_json(request):
+    print request.user
+    if request.method == 'GET':
+        context = {}
+        context['attractionform'] = AttractionForm(prefix = "a_")
+        context['hotelform'] = HotelForm(prefix = "h_")
+        context['transportationform'] = TransportationForm(prefix = "t_")
+        context['restaurantform'] = RestaurantForm(prefix = "r_")
+        return render(request, 'travelpad/EventWindow.html', context)
+
+    context = {}
+    errors = []
+    trans_up = []
+    pevent_up = []
+    nevent_up = []
+    context['errors'] = errors
+    success = 1
+    if request.POST['button'] == 'Save':
+        isproposed = False;
+    elif request.POST['button'] == 'Propose':
+        isproposed = True;
+        
+    if request.POST['tabName']=="Transportation":
+        return transporteditwithid_json(request)
+
+    newevent = Event.objects.get(id = request.POST['eventId'])
+    newevent.isproposed = isproposed
+    if (not request.POST['tabName']) or (request.POST['tabName']=="Attraction"):
+        form = AttractionForm(request.POST, prefix = "a_")
+    elif request.POST['tabName']=="Hotel":
+        form = HotelForm(request.POST, prefix = "h_")
+    elif request.POST['tabName']=="Restaurant":
+        form = RestaurantForm(request.POST, prefix = "r_")
+    if form.is_valid():
+        stime = datetime.combine(form.cleaned_data['start_date'], form.cleaned_data['start_time'])
+        etime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
+        newevent.start_datetime  = timezone.make_aware(stime, timezone.get_current_timezone())
+        newevent.end_datetime = timezone.make_aware(etime, timezone.get_current_timezone())
+        newevent.note = form.cleaned_data['note']
+        overlap = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__lt=newevent.end_datetime).filter(end_datetime__gt=newevent.start_datetime).exclude(id = request.POST['eventId'])
+        if overlap.count() > 0: #overlap
+            success = 0
+            errors.append("The time overlaps with another event.")
+        if success == 1:
+            newevent.save()
+            thistinery = Itinerary.objects.get(id = request.session["itinerary_id"])
+            if (form.cleaned_data['todo']):
+                newtodo = Todo(task = form.cleaned_data['todo'], status = "pending", created_by = new_user, related_event = newevent, related_itinerary = thistinery)
+                newtodo.save()
+            if (form.cleaned_data['cost']):
+                newcost = Cost(amount = form.cleaned_data['cost'], isall = form.cleaned_data['split'], status = "Unpaid", created_by = new_user, related_event = newevent, related_itinerary = thistinery)
+                newcost.save()
+            # begin edit transportation
+            strange = datetime.combine(form.cleaned_data['start_date'], time(0, 0, 0))
+            srange = timezone.make_aware(strange, timezone.get_current_timezone())
+            serange = datetime.combine(form.cleaned_data['end_date'], time(0, 0, 0)) + timezone.timedelta(days=1)
+            erange = timezone.make_aware(serange, timezone.get_current_timezone())
+            needrelocate = False;
+            hasprevious = False;
+            
+            try:
+                ptrans = newevent.next
+                hasprevious = True;
+                try:
+                    pevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                    if ptrans.source == pevent:
+                        pass    #previous event unchanged, implies next event unchanged
+                    else:
+                        needrelocate = True    #previous event changed
+                except ObjectDoesNotExist:
+                    needrelocate = True    #has previous event, now hasnot
+            except ObjectDoesNotExist:
+                try:
+                    ntrans = newevent.pre
+                    try:
+                        nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                        if ntrans.destination == nevent:
+                            pass    #next event unchanged
+                        else:
+                            needrelocate = True    #next event changed
+                    except ObjectDoesNotExist:
+                        needrelocate = True    #has next event, now has not
+                except ObjectDoesNotExist:
+                    try:
+                        pevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                        needrelocate = True    #don't have previous event, now has
+                    except ObjectDoesNotExist:
+                        try: 
+                            nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                            needrelocate = True    #don't have next event, now has
+                        except ObjectDoesNotExist:
+                            pass #only event of the day
+            
+            if needrelocate == True:
+                # remove transporation
+                try:
+                    ntrans = newevent.pre
+                    if hasprevious == True:
+                        ptrans = newevent.next
+                        ptrans.end_datetime = ntrans.end_datetime
+                        ptrans.destination = ntrans.destination
+                        ntrans.delete()
+                        ptrans.save()
+                        trans_up.append(ptrans.as_dict());
+                        pevent_up.append(ptrans.source.as_dict())
+                        nevent_up.append(ptrans.destination.as_dict())
+                    else:
+                        ntrans.delete()
+                except ObjectDoesNotExist:
+                    if hasprevious == True:
+                        ptrans.delete()
+                # now add new transporation
+                try:
+                    pevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                    try:
+                        ptrans = pevent.pre
+                        tempplace = ptrans.destination
+                        temptime = ptrans.end_datetime
+                        ptrans.end_datetime = newevent.start_datetime
+                        ptrans.destination = newevent
+                        ptrans.save()
+                        trans_up.append(ptrans.as_dict());
+                        pevent_up.append(ptrans.source.as_dict())
+                        nevent_up.append(ptrans.destination.as_dict())
+                        newtrans = Transportation(created_by = request.user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = temptime, source = newevent, destination = tempplace, related_itinerary = thistinery)
+                        newtrans.save()
+                        trans_up.append(newtrans.as_dict());
+                        pevent_up.append(newtrans.source.as_dict())
+                        nevent_up.append(newtrans.destination.as_dict())
+                    except ObjectDoesNotExist:
+                        newtrans = Transportation(created_by = request.user, type = "driving", start_datetime = pevent.end_datetime, end_datetime = newevent.start_datetime, source = pevent, destination = newevent, related_itinerary = thistinery)
+                        newtrans.save()
+                        trans_up.append(newtrans.as_dict());
+                        pevent_up.append(newtrans.source.as_dict())
+                        nevent_up.append(newtrans.destination.as_dict())
+                # first event of the day
+                except ObjectDoesNotExist:
+                    try:
+                        nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                        newtrans = Transportation(created_by = request.user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent, related_itinerary = thistinery)
+                        newtrans.save()
+                        trans_up.append(newtrans.as_dict());
+                        pevent_up.append(newtrans.source.as_dict())
+                        nevent_up.append(newtrans.destination.as_dict())
+                    except ObjectDoesNotExist:
+                        print "first event"
+                        pass
+            else:
+                try:
+                    ptrans = newevent.next
+                    ptrans.end_datetime = newevent.start_datetime
+                    ptrans.save()
+                    trans_up.append(ptrans.as_dict());
+                    pevent_up.append(ptrans.source.as_dict())
+                    nevent_up.append(ptrans.destination.as_dict())
+                except ObjectDoesNotExist:
+                    pass
+                try:
+                    ntrans = newevent.pre
+                    ntrans.start_datetime = newevent.end_datetime
+                    ntrans.save()
+                    trans_up.append(ntrans.as_dict());
+                    pevent_up.append(ntrans.source.as_dict())
+                    nevent_up.append(ntrans.destination.as_dict())
+                except ObjectDoesNotExist:
+                    pass
+            context['success'] = 1
+    else:
+        errors.append("Please check the input data.")
+        success = 0
+    #return render(request, 'travelpad/addevent.html', context)
+    #return demo(request)
+    if success == 1:
+        #return redirect(reverse('demo'))
+        #return redirect(reverse('schedule'))
+        response_data = {}
+        response_data['status'] = 'success'
+        response_data['trans_up'] = trans_up
+        response_data['pevent_up'] = pevent_up
+        response_data['nevent_up'] = nevent_up
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+        
+    else:
+        context['attractionform'] = AttractionForm(request.POST, prefix = "a_")
+        context['hotelform'] = HotelForm(request.POST, prefix = "h_")
+        context['transportationform'] = TransportationForm(request.POST, prefix = "t_")
+        context['restaurantform'] = RestaurantForm(request.POST, prefix = "r_")
+        context['tabName'] = newevent.type
+        context['id'] = newevent.id
+        context['place'] = newevent.place_name
+        context['iid'] = request.session["itinerary_id"]
+        if (newevent.type == "attraction"):
+            returnform = AttractionForm(request.POST, prefix = "a_")
+        elif (newevent.type == "hotel"):
+            returnform = HotelForm(request.POST, prefix = "h_")
+        elif (newevent.type == "transportation"):
+            returnform = TransportationForm(request.POST, prefix = "t_")
+        elif (newevent.type == "restaurant"):
+            returnform = RestaurantForm(request.POST, prefix = "r_")
+        response_data = {'errors': errors, 'formerrors': returnform.errors}
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+        #return render(request, 'travelpad/addevent_error.html', context)
         
 def editeventtime(request):
     if request.method == 'GET':
@@ -450,6 +809,149 @@ def editeventtime(request):
     response_data['status'] = 'success'
     return HttpResponse(json.dumps(response_data), content_type="application/json")
     #return HttpResponseBadRequest('', mimetype = 'application/json', status = 409)
+    
+def editeventtime_json(request):
+    if request.method == 'GET':
+        raise Http404  
+
+    context = {}
+    success = 1
+    trans_up = []
+    pevent_up = []
+    nevent_up = []
+    
+    newevent = Event.objects.get(id = request.POST['eid'])
+    nstart = datetime.combine(datetime.strptime(request.POST['sdate'], "%Y-%m-%d"), datetime.strptime(request.POST['stime'], '%H:%M').time())
+    snstart = timezone.make_aware(nstart, timezone.get_current_timezone())
+    nend = datetime.combine(datetime.strptime(request.POST['edate'], "%Y-%m-%d"), datetime.strptime(request.POST['etime'], '%H:%M').time())
+    snend = timezone.make_aware(nend, timezone.get_current_timezone())
+    overlap = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__lt=snend).filter(end_datetime__gt=snstart).exclude(id = request.POST['eid'])
+    if overlap.count() > 0: #overlap
+        return HttpResponseBadRequest('Overlapped Time!', mimetype = 'application/json', status = 409)
+    newevent.start_datetime = snstart
+    newevent.end_datetime = snend
+    newevent.save()
+    thistinery = Itinerary.objects.get(id = request.session["itinerary_id"])
+    
+    strange = datetime.combine(datetime.strptime(request.POST['sdate'], "%Y-%m-%d"), time(0, 0, 0))
+    srange = timezone.make_aware(strange, timezone.get_current_timezone())
+    serange = datetime.combine(datetime.strptime(request.POST['edate'], "%Y-%m-%d"), time(0, 0, 0)) + timezone.timedelta(days=1)
+    erange = timezone.make_aware(serange, timezone.get_current_timezone())
+    needrelocate = False;
+    hasprevious = False;
+    
+    try:
+        ptrans = newevent.next
+        hasprevious = True;
+        try:
+            pevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+            if ptrans.source == pevent:
+                pass    #previous event unchanged, implies next event unchanged
+            else:
+                needrelocate = True    #previous event changed
+        except ObjectDoesNotExist:
+            needrelocate = True    #has previous event, now hasnot
+    except ObjectDoesNotExist:
+        try:
+            ntrans = newevent.pre
+            try:
+                nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                if ntrans.destination == nevent:
+                    pass    #next event unchanged
+                else:
+                    needrelocate = True    #next event changed
+            except ObjectDoesNotExist:
+                needrelocate = True    #has next event, now has not
+        except ObjectDoesNotExist:
+            try:
+                pevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+                needrelocate = True    #don't have previous event, now has
+            except ObjectDoesNotExist:
+                try: 
+                    nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                    needrelocate = True    #don't have next event, now has
+                except ObjectDoesNotExist:
+                    pass #only event of the day
+    
+    if needrelocate == True:
+        # remove transporation
+        try:
+            ntrans = newevent.pre
+            if hasprevious == True:
+                ptrans = newevent.next
+                ptrans.end_datetime = ntrans.end_datetime
+                ptrans.destination = ntrans.destination
+                ntrans.delete()
+                ptrans.save()
+                trans_up.append(ptrans.as_dict());
+                pevent_up.append(ptrans.source.as_dict())
+                nevent_up.append(ptrans.destination.as_dict())
+            else:
+                ntrans.delete()
+        except ObjectDoesNotExist:
+            if hasprevious == True:
+                ptrans.delete()
+        # now add new transporation
+        try:
+            pevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(end_datetime__range=[srange,newevent.start_datetime]).latest("end_datetime")
+            try:
+                ptrans = pevent.pre
+                tempplace = ptrans.destination
+                temptime = ptrans.end_datetime
+                ptrans.end_datetime = newevent.start_datetime
+                ptrans.destination = newevent
+                ptrans.save()
+                trans_up.append(ptrans.as_dict());
+                pevent_up.append(ptrans.source.as_dict())
+                nevent_up.append(ptrans.destination.as_dict())
+                newtrans = Transportation(created_by = request.user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = temptime, source = newevent, destination = tempplace, related_itinerary = thistinery)
+                newtrans.save()
+                trans_up.append(newtrans.as_dict());
+                pevent_up.append(newtrans.source.as_dict())
+                nevent_up.append(newtrans.destination.as_dict())
+            except ObjectDoesNotExist:
+                newtrans = Transportation(created_by = request.user, type = "driving", start_datetime = pevent.end_datetime, end_datetime = newevent.start_datetime, source = pevent, destination = newevent, related_itinerary = thistinery)
+                newtrans.save()
+                trans_up.append(newtrans.as_dict());
+                pevent_up.append(newtrans.source.as_dict())
+                nevent_up.append(newtrans.destination.as_dict())
+        # first event of the day
+        except ObjectDoesNotExist:
+            try:
+                nevent = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__range=[newevent.end_datetime,erange]).earliest("start_datetime")
+                newtrans = Transportation(created_by = request.user, type = "driving", start_datetime = newevent.end_datetime, end_datetime = nevent.start_datetime, source = newevent, destination = nevent, related_itinerary = thistinery)
+                newtrans.save()
+                trans_up.append(newtrans.as_dict());
+                pevent_up.append(newtrans.source.as_dict())
+                nevent_up.append(newtrans.destination.as_dict())
+            except ObjectDoesNotExist:
+                print "first event"
+                pass
+    else:
+        try:
+            ptrans = newevent.next
+            ptrans.end_datetime = newevent.start_datetime
+            ptrans.save()
+            trans_up.append(ptrans.as_dict());
+            pevent_up.append(ptrans.source.as_dict())
+            nevent_up.append(ptrans.destination.as_dict())
+        except ObjectDoesNotExist:
+            pass
+        try:
+            ntrans = newevent.pre
+            ntrans.start_datetime = newevent.end_datetime
+            ntrans.save()
+            trans_up.append(ntrans.as_dict());
+            pevent_up.append(ntrans.source.as_dict())
+            nevent_up.append(ntrans.destination.as_dict())
+        except ObjectDoesNotExist:
+            pass
+    response_data = {}
+    response_data['status'] = 'success'
+    response_data['trans_up'] = trans_up
+    response_data['pevent_up'] = pevent_up
+    response_data['nevent_up'] = nevent_up
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
         
 def transporteditwithid(request):
     trans = Transportation.objects.get(id = request.POST['eventId'])
@@ -460,6 +962,28 @@ def transporteditwithid(request):
         trans.save()
     #return redirect(reverse('demo'))
     return redirect(reverse('schedule'))
+    
+def transporteditwithid_json(request):
+    trans_up = []
+    pevent_up = []
+    nevent_up = []
+    trans = Transportation.objects.get(id = request.POST['eventId'])
+    form = TransportationForm(request.POST, prefix = "t_")
+    #print request.session["itinerary_id"] 
+    if form.is_valid():
+        trans.type = form.cleaned_data['format']
+        trans.save()
+        trans_up.append(trans.as_dict());
+        pevent_up.append(trans.source.as_dict())
+        nevent_up.append(trans.destination.as_dict())
+    response_data = {}
+    response_data['status'] = 'success'
+    response_data['trans_up'] = trans_up
+    response_data['pevent_up'] = pevent_up
+    response_data['nevent_up'] = nevent_up
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    #return redirect(reverse('demo'))
+    #return redirect(reverse('schedule'))
         
 def getevent(request):
     print request.POST['eid']
@@ -487,4 +1011,46 @@ def deleteevent(request):
         #don't care because django will delete foreign key for us
         pass
     event.delete()
-    return HttpResponse("success")
+    response_data = {}
+    response_data['status'] = 'success'
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    
+def deleteevent_json(request):
+    print request.POST['eid']
+    trans_up = []
+    pevent_up = []
+    nevent_up = []
+    event = Event.objects.get(id = request.POST['eid'])
+    try:
+        ptrans = event.next
+        ntrans = event.pre
+        ptrans.end_datetime = ntrans.end_datetime
+        ptrans.destination = ntrans.destination
+        ntrans.delete()
+        ptrans.save()
+        trans_up.append(ptrans.as_dict());
+        pevent_up.append(ptrans.source.as_dict())
+        nevent_up.append(ptrans.destination.as_dict())
+    except ObjectDoesNotExist:
+        #don't care because django will delete foreign key for us
+        pass
+    event.delete()
+    response_data = {}
+    response_data['status'] = 'success'
+    response_data['trans_up'] = trans_up
+    response_data['pevent_up'] = pevent_up
+    response_data['nevent_up'] = nevent_up
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    
+def updatetransport(request):
+    ids = request.POST['ids']
+    arr = request.POST['arr']
+    print ids
+    print arr
+    trans = Transportation.objects.get(id = request.POST['ids'])
+    print trans.start_datetime
+    trans.end_datetime = trans.start_datetime + timezone.timedelta(seconds=int(arr));
+    trans.save();
+    response_data = {}
+    response_data['status'] = 'success'
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
