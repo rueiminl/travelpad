@@ -44,6 +44,9 @@ Welcome to the TravelPad.  Please click the link below to
 verify your email address and complete the registration of your account:
 
   http://%s%s
+  
+Cheers!
+TravelPad team
 """ % (request.get_host(), reverse('confirm', args=(new_user.username, token)))
 	send_mail(subject="Verify your email address", message= email_body, from_email="rueiminl@andrew.cmu.edu", recipient_list=[new_user.email])
 	context['email'] = form.cleaned_data['email']
