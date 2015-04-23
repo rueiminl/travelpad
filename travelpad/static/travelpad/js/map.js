@@ -303,6 +303,7 @@ function addMarker(marker, infowindow, last, index){
 
 function setCity(latitude, longitude){
   cityCenter = [latitude, longitude];
+  initialize();
 }
 
 //google.maps.event.addDomListener(window, 'load', initialize);
