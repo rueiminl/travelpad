@@ -17,7 +17,7 @@ import json
 @login_required    
 def expense(request):
     if 'itinerary_id' not in request.session:
-        return redirect(reverse(''))
+        return redirect(reverse('default'))
     return render(request, 'travelpad/expense.html', {})
     
 @login_required    

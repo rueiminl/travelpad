@@ -10,6 +10,7 @@
 
 
 var directionsService = new google.maps.DirectionsService();
+var directionsDisplay;
 var map;
 // Places's latitude and longitude
 var placeArr = [];
@@ -28,14 +29,14 @@ var directionsDisplays = [];
 var zoomVar = 12;
 var centerVar;
 var autocomplete;
-var cityCenter = new google.maps.LatLng(40.442492, -79.94255299999998);
+var cityCenter = [40.442492, -79.94255299999998];
 function initialize() {
     //deleteMarkers();
     directionsDisplay = new google.maps.DirectionsRenderer();
     placeArrTmp = [];
     placeArr = [];
     markers = [];
-    var myLatlng = new google.maps.LatLng(40.442492, -79.94255299999998);
+    var myLatlng = new google.maps.LatLng(cityCenter[0], cityCenter[1]);
     centerVar = myLatlng;
     mapOptions = {
         center: centerVar,
@@ -86,6 +87,7 @@ function calcRoute(src, dest, mode, index, startTime) {
   var directionsDisplay = new google.maps.DirectionsRenderer();
   directionsDisplays.push(directionsDisplay);
   directionsDisplay.setMap(map);
+  //directionsDisplay.setPanel(document.getElementById('directions-panel'));
   directionsDisplay.setOptions({ suppressMarkers: true });
   var t = new Date(startTime);
   console.log("src:" + src + ", dest: " + dest + ", mode: " + mode);
@@ -221,15 +223,23 @@ function setAllMarkers(placeArrTmp){
 
   markers.push(marker);
   var infowindow = new google.maps.InfoWindow({
-    content: "<div><b>Start</b></div>" + "<div>" + placeNameArr[0] + "</div>"
+    content: "<div><b>Start: </b>" + placeNameArr[0] + "</div>"
   });
   infowindow.open(map,marker);
 
+  if(transportTypes[0] != undefined)
+    addMarker(marker, infowindow, false, 0);
+  //addMarker(marker, infowindow);
+
   // middle points
   for(var index=1; index<placeArr.length ; index++){
+      var last = true;
       console.log(index + ": " + placeNameArr[index-1] + " -> " + placeNameArr[index]);
       if(transportTypes[index-1] != undefined){
         calcRoute(placeArr[index-1], placeArr[index], transportTypes[index-1], index, startTimes[index-1]);
+      }
+      if(transportTypes[index] != undefined){
+        last = false;
       }
       marker = new google.maps.Marker({
         position: placeArr[index],
@@ -237,9 +247,10 @@ function setAllMarkers(placeArrTmp){
         title: 'Location'
       });
       infowindow = new google.maps.InfoWindow({
-        content: "<div><b>" + (index+1).toString() + "</b></div><div>" + placeNameArr[index] + "</div>"
+        content: "<div><b>" + (index+1).toString() + ".</b>" + placeNameArr[index] + "</div>"
       });
-      infowindow.open(map,marker);
+      addMarker(marker, infowindow, last, index);
+      //infowindow.open(map,marker);
       start = placeArr[index];
       markers.push(marker);
   }
@@ -253,11 +264,44 @@ function resizeMap(){
   if(placeArr.length != 0)
     map.setCenter(placeArr[0]);
   else
-    map.setCenter(cityCenter);
+    map.setCenter();
+}
+
+function addMarker(marker, infowindow, last, index){
+  google.maps.event.addListener(marker, 'click', function() {
+        document.getElementById('directions-panel').innerHTML = "";
+        infowindow.open(map, marker);
+        if(last == false){
+          tmpInfo = new google.maps.InfoWindow({
+            content: "<div><b>" + (index+2).toString() + ".</b>" + placeNameArr[index+1] + "</div>"
+          });
+          tmpInfo.open(map, markers[index+1]);
+
+          var tmpDisplay = new google.maps.DirectionsRenderer();
+          tmpDisplay.setPanel(document.getElementById('directions-panel'));
+          var request = {
+            origin: placeArr[index],
+            destination: placeArr[index+1],
+            travelMode: google.maps.TravelMode[transportTypes[index].toUpperCase()],
+            transitOptions: {
+              departureTime: new Date(startTimes[index])
+            }
+          };
+          var tmpService = new google.maps.DirectionsService();
+          tmpService.route(request, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+              tmpDisplay.setDirections(response);
+            }
+            else{
+              document.getElementById('directions-panel').innerHTML = "No Route between these two place";
+            }
+          });
+        }
+  });
 }
 
 function setCity(latitude, longitude){
-  cityCenter = new google.maps.LatLng(latitude, longitude);
+  cityCenter = [latitude, longitude];
 }
 
 //google.maps.event.addDomListener(window, 'load', initialize);

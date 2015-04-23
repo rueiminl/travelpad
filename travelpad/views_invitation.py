@@ -7,7 +7,7 @@ from travelpad.forms_itineraries import *
 from travelpad.views_itinerary import demo
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.http import HttpResponse
+from django.core.mail import send_mail
 
 def get_itinerary_id_by_session(request):
 	if not 'itinerary_id' in request.session:
@@ -37,27 +37,11 @@ def invitation(request):
 	
 @login_required
 @transaction.atomic
-def invite(request):
-	if request.method == "GET":
-		print "invite POST only"
-		return redirect("invitation")
-	print request.POST
-	if not "username" in request.POST:
-		print "invite without username"
-		return redirect("invitation")
-	try:
-		user = User.objects.get(username=request.POST["username"])
-	except:
-		print "invite username not found"
-		request.session['errors'] = "Username not existed"
-		return redirect("invitation")
-	itinerary = get_itinerary_by_session(request)
-	itinerary.participants.add(user)
-	return redirect("invitation")
-
-@login_required
 def participant_json(request):
 	context = {}
+	if not 'itinerary_id' in request.session:
+		results = {"success":"false", "errors":"Unknown itinerary"}
+		return HttpResponse(json.dumps(results), content_type='application/json')
 	itinerary_id = request.session['itinerary_id']
 	itinerary = Itinerary.objects.get(id=itinerary_id)    
 	if request.method == 'GET':
@@ -87,12 +71,28 @@ def participant_json(request):
 				results = {"success":"false","errors":"The user has participated already"}
 				return HttpResponse(json.dumps(results), content_type='application/json')
 			itinerary.participants.add(user)
+			email_body = """
+Just a reminder that you've been invited to the itinerary \"%s\".
+Please don't forget to come to say hi to other participants.
+
+Cheers!
+TravelPad team
+""" % (itinerary.title)
+			send_mail(subject="[TravelPad] invitation notification", message= email_body, from_email="rueiminl@andrew.cmu.edu", recipient_list=[user.email])
 		else:
 			if not Itinerary.objects.filter(id=itinerary_id).filter(participants=user).exists():
 				print "Warn: username does not participate yet"
 				results = {"success":"false","errors":"The user is not participated yet"}
 				return HttpResponse(json.dumps(results), content_type='application/json')
 			itinerary.participants.remove(user)
+			email_body = """
+Just a reminder that you've been kicked out by \"%s\" from the itinerary \"%s\".
+If any question, please contact the kicker directly...
+
+Cheers!
+TravelPad team
+""" % (request.user.username, itinerary.title)
+			send_mail(subject="[TravelPad] invitation notification", message= email_body, from_email="rueiminl@andrew.cmu.edu", recipient_list=[user.email])
 		results = {"success":"true",
 		           "participant": {"id" : user.id, "username" : user.username}
 		          }
