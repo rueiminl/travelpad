@@ -192,7 +192,7 @@ var g_map4;
                                 getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,e_callback);
                             }
                             $('#eventModal').modal('hide');
-                            $.toaster({ priority : 'success', title : 'Success', message : 'New event added'});                      
+                            //$.toaster({ priority : 'success', title : 'Success', message : 'New event added'});                      
                         }
                     } 
                 },

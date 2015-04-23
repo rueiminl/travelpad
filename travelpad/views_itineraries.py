@@ -46,6 +46,12 @@ def update_itinerary(request, id):
 	print "request.POST = ", request.POST
 	if request.POST.get("clear"):
 		itinerary.photo = None
+	if not request.POST.get('place_lat'):
+		request.session["errors"] = [('location', 'invalid')]
+		return redirect("itineraries")
+	if not request.POST.get('place_lng'):
+		request.session["errors"] = [('location', 'invalid')]
+		return redirect("itineraries")
 	if not request.FILES:
 		itinerary_form = ItineraryFormWithoutPhoto(request.POST, instance = itinerary)
 	else:
