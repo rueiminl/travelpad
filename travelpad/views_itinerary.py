@@ -106,11 +106,11 @@ def get_calendar_events_json(request, itinerary_id):
 @login_required    
 def todo(request):
     if 'itinerary_id' not in request.session:
-        return redirect(reverse(''))
+        return redirect(reverse('default'))
     return render(request, 'travelpad/todo.html', {})
 # def todo(request):
 #     if 'itinerary_id' not in request.session:
-#         return redirect(reverse(''))
+#         return redirect(reverse('default'))
 #     try:
 #         itinerary_id = request.session['itinerary_id']
 #         itinerary = Itinerary.objects.get(id=itinerary_id)
@@ -198,7 +198,7 @@ def todo_id_json(request, todo_id):
 @login_required    
 def feed(request):
     if 'itinerary_id' not in request.session:
-        return redirect(reverse(''))
+        return redirect(reverse('default'))
     return render(request, 'travelpad/feed.html', {})
     # try:
 #         context = {}
