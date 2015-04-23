@@ -145,6 +145,7 @@ function setAllMap(map) {
 
 function clearMarkers(){
   setAllMap(null);
+  document.getElementById('directions-panel').innerHTML = "";
   markers = [];
   for(var i=0; i<flightPaths.length; i++){
     flightPaths[i].setMap(null);
