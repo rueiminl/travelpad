@@ -39,11 +39,13 @@ $(function() {
 				</div>
 				<div class="panel-body">
 					{% verbatim %}
-					<div ng-repeat="participant in pCtrl.participants">
-						<img class="img-circle" src="/get_user_photo/{{ participant.id }}" alt=""  width="48" height="48" /> 
-						{{ participant.username }}
-						<button class="btn btn-danger pull-right" ng-click="pCtrl.delete(participant.username)">Delete</button>
-					</div>
+					<ul class="list-group" style="list-style-type:none" ng-repeat="participant in pCtrl.participants">
+						<li>
+							<img class="img-circle" src="/get_user_photo/{{ participant.id }}" alt=""  width="48" height="48" style="vertical-align: middle; position: relative; top: -10px" /> 
+							<span style="vertical-align: middle; position: relative; top: -10px">{{ participant.username }}</span>
+							<button class="btn btn-danger pull-right" ng-click="pCtrl.delete(participant.username)">Delete</button>
+						</li>
+					</ul>
 					{% endverbatim %}
 				</div>
 			</div>
