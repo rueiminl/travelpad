@@ -5,12 +5,6 @@
 <script src="{% static 'travelpad/js/participant.js' %}" type="text/javascript"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> 
-<style>
-	.thumbnail {
-		width: 128px;
-		float: left;
-	}
-</style>
 
 <script>
 $(function() {
@@ -46,7 +40,9 @@ $(function() {
 				<div class="panel-body">
 					{% verbatim %}
 					<div ng-repeat="participant in pCtrl.participants">
-						<img class="thumbnail" title="{{ participant.username }}" src="/get_user_photo/{{ participant.id }}" alt="No picture yet" > 
+						<img class="img-circle" src="/get_user_photo/{{ participant.id }}" alt=""  width="48" height="48" /> 
+						{{ participant.username }}
+						<button class="btn btn-danger pull-right" ng-click="pCtrl.delete(participant.username)">Delete</button>
 					</div>
 					{% endverbatim %}
 				</div>
@@ -56,7 +52,6 @@ $(function() {
 					<input id="username" class='form-control' type="text" name="username" placeholder='username' ng-model="username">
 					<span class="input-group-btn">
 						<button class="btn btn-primary" ng-click="pCtrl.invite(username)">Invite</button>
-						<button class="btn btn-danger" ng-click="pCtrl.delete(username)">Delete</button>
 					</span>
 				</div>			
 				{% csrf_token %}
