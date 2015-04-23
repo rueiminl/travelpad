@@ -27,6 +27,7 @@
 			},
 		};
 		
+		
 	
 		$http.get("/itinerary-json").success(function(data){
 			console.log(data);
@@ -50,11 +51,10 @@
 					showeventmodal("", start.format("YYYY-MM-DD"), start.format("HH:mm"), end.format("YYYY-MM-DD"), end.format("HH:mm"), 
 						function(){
 							$('#calendar').fullCalendar('refetchEvents'); //refresh related transportation
-							$.toaster({ priority : 'success', title : 'Success', message : 'Event updated.'});
 						}, function(){
 							$.toaster({ priority : 'danger', title : 'Error', message : 'Update Event error.'});
 						});
-					$('#calendar').fullCalendar('unselect');
+					// $('#calendar').fullCalendar('unselect');
 				},
 				editable: true,
 				eventLimit: true, // allow "more" link when too many events
@@ -64,9 +64,19 @@
 				},
 				eventClick: function(calEvent, jsEvent, view) {
 					if(calEvent.className=='transportation'){
-						edittransport(calEvent.id);
+						edittransport(calEvent.id, function(){
+							$('#calendar').fullCalendar('refetchEvents'); //refresh related transportation
+							$.toaster({ priority : 'success', title : 'Success', message : 'Event updated.'});
+						}, function(){
+							$.toaster({ priority : 'danger', title : 'Error', message : 'Update Event error.'});
+						});
 					}else{
-						editevent(calEvent.id);
+						editevent(calEvent.id, function(){
+							$('#calendar').fullCalendar('refetchEvents'); //refresh related transportation
+							$.toaster({ priority : 'success', title : 'Success', message : 'Event updated.'});
+						}, function(){
+							$.toaster({ priority : 'danger', title : 'Error', message : 'Update Event error.'});
+						});
 					}
 				},
 				eventDrop: function(event, delta, revertFunc) {
@@ -124,11 +134,6 @@
 						setAllMarkers(mapEvents);
 					}
 				}()),
-				// droppable: true, // this allows things to be dropped onto the calendar
-// 				drop: function(date, jsEvent, ui) {
-// 					console.log('drop');
-// 					// ui.remove();
-// 				},
 			}); // end init calendar
 			
 			// init map
@@ -140,7 +145,7 @@
 		
 		
 		this.addEvent = function(){
-			showeventmodal("", "", "", "", "", 
+			showeventmodal("", "", "", "", "",
 				function(){
 					$('#calendar').fullCalendar('refetchEvents'); //refresh related transportation
 					$.toaster({ priority : 'success', title : 'Success', message : 'Event updated.'});
