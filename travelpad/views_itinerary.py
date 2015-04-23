@@ -125,10 +125,8 @@ def todo_json(request):
         form = TodoForm(data=
             {'task': in_data.get('task'),
             'status': in_data.get('status'),
-            # 'owner': in_data.get('owner').get('id'),
+            'owner': in_data.get('owner').get('id') if hasattr(in_data.get('owner'), 'get') else None,
             'note': in_data.get('note')}, instance=entry)
-        if in_data.get('owner')!='null':
-            form.update({'owner':in_data.get('owner').get('id')})
         if form.is_valid():
             new_todo = form.save()  
             results = new_todo.as_dict()
@@ -149,14 +147,11 @@ def todo_id_json(request, todo_id):
         if request.method == 'PUT':
             in_data = json.loads(request.body)
             print in_data
-            print todo
             form = TodoForm(data=
                 {'task': in_data.get('task'),'id':todo.id,
                 'status': in_data.get('status'),
-                # 'owner': in_data.get('owner').get('id'),
+                'owner': in_data.get('owner').get('id') if hasattr(in_data.get('owner'), 'get') else None,
                 'note': in_data.get('note')}, instance=todo)
-            if in_data.get('owner')!='null':
-                form.update({'owner':in_data.get('owner').get('id')})
             if form.is_valid():
                 new_todo = form.save()  
                 results = new_todo.as_dict()

@@ -40,9 +40,14 @@
 						    <!-- <div class="col-md-2">
 								<p>{{todo.status}}</p>
 							</div> -->
-						    <div class="col-md-3">
-								<img class="img-circle" ng-src="{{todo.owner.photo}}" width="50px" height="50px">
-								<p>{{todo.owner.username}}</p>
+						    <div class="col-md-3" ng-switch="todo.owner">
+								<div ng-switch-when="null">
+									<h4>Not Assgined</h4>
+								</div>
+								<div ng-switch-default>
+									<img class="img-circle" ng-src="{{todo.owner.photo}}" width="50px" height="50px">
+									<h4>{{todo.owner.username}}</h4>
+								</div>
 							</div>
 						    <!-- <div class="col-md-3">
 								<p>{{todo.note}}</p>
