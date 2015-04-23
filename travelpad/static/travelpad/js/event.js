@@ -29,10 +29,10 @@ var g_map4;
 	
     this.ready = function(){
       console.log("running ready");
-      var script = document.createElement('script');
+      /*var script = document.createElement('script');
       script.type = 'text/javascript';
       script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&signed_in=true&language=en-us&callback=initialize_event';
-      document.body.appendChild(script);
+      document.body.appendChild(script);*/
       $("#mybutton").click( function()
         {
             //showeventmodal("title","2015-03-25","13:15","2015-03-25","14:15")
@@ -191,6 +191,8 @@ var g_map4;
                                 }
                                 getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,e_callback);
                             }
+                            else
+                                s_callback();
                             $('#eventModal').modal('hide');
                             //$.toaster({ priority : 'success', title : 'Success', message : 'New event added'});                      
                         }
@@ -208,6 +210,8 @@ var g_map4;
         
        $('#map-eventcanvas3').hide();
        $('.nav-tabs a[href="#Transportation"]').hide();
+       
+       initialize_event();
        
        //$('#datetimepicker1').datetimepicker();
 	};
@@ -664,6 +668,8 @@ function editeventtime(id, sdate, stime, edate, etime, success_callback,error_ca
                 }
                 getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,error_callback);
             }
+            else 
+                success_callback();
         },
         error: error_callback,
     });
@@ -732,10 +738,10 @@ function deleteevent() {
                             type:'POST',
                             dataType: 'json',
                             success: function(response, status, xhr){ 
-                                console.log("update transport success");
+                                console.log("delete event success");
                             },
                             error: function(response, status, xhr){ 
-                                console.log("update transport fail");
+                                console.log("delete event fail");
                             }
                         });
                         
@@ -752,11 +758,11 @@ function deleteevent() {
                             type:'POST',
                             dataType: 'json',
                             success: function(response, status, xhr){ 
-                                console.log("update transport success");
+                                console.log("delete event success");
                                 s_callback();
                             },
                             error: function(response, status, xhr){ 
-                                console.log("update transport fail");
+                                console.log("delete event fail");
                             }
                         });
                         
@@ -766,7 +772,8 @@ function deleteevent() {
                     }
                     getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,e_callback);
                 }
-               $.toaster({ priority : 'success', title : 'Success', message : 'Event deleted'});    
+               $.toaster({ priority : 'success', title : 'Success', message : 'Event deleted'});
+               s_callback();               
                //$(location).attr('href',"./schedule");
             }
         });
