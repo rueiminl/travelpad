@@ -36,6 +36,7 @@
 				{% addevent %} 
 				{% verbatim %} 
 				<h1>{{scheduleCtrl.itinerary.title}}</h1>
+				<button class="btn btn-default" ng-click="scheduleCtrl.addEvent()">Add Event</button>
 				<ul class="nav nav-pills navbar-right">
 					<li ng-class="{active:tab.isSet(1)}">
 						<a href role="button" ng-click="tab.setTab(1)"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> Calendar</a></li>
@@ -69,6 +70,7 @@
 					<!-- make calendar exist when hide so that we can still change time range  -->
 				<div id='calendar' ng-class="{'virtual-hide': !tab.isSet(1)}"></div> 
 				<div id="map_canvas" style="width:100%; height:200%; position: absolute" ng-class="{'virtual-hide': !tab.isSet(2)}"></div>
+				<div id="directions-panel" style="width:300px; height:500px; position: absolute; overflow: auto;" ng-class="{'virtual-hide': !tab.isSet(2)}"></div>
 				<!-- </section> -->
 				
 			</div>
