@@ -33,7 +33,7 @@
 							<div class="col-md-1">
 								<input type="checkbox" ng-model="todo.status" ng-true-value="'done'" ng-false-value="'pending'" ng-change="todoCtrl.reverseTodoStatus(todo)">
 							</div>
-							<div class="col-md-2" ng-switch="todo.status">
+							<div class="col-md-5" ng-switch="todo.status">
 								<p ng-switch-when="done"><del>{{todo.task}}</del></p>
 								<p ng-switch-default>{{todo.task}}</p>
 							</div>
@@ -44,9 +44,9 @@
 								<img class="img-circle" ng-src="{{todo.owner.photo}}" width="50px" height="50px">
 								<p>{{todo.owner.username}}</p>
 							</div>
-						    <div class="col-md-3">
+						    <!-- <div class="col-md-3">
 								<p>{{todo.note}}</p>
-							</div>
+							</div> -->
 						    <div class="col-md-1">
 								<div class="dropdown">
 								  <a role="button" class="btn dropdown-toggle glyphicon glyphicon-option-horizontal" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true"></a>
@@ -94,9 +94,9 @@
 						</fieldset>
 						
 						<!-- Note -->
-						<fieldset class="form-group">
+						<!-- <fieldset class="form-group">
 							<textarea ng-model="todoCtrl.newTodo.note" class="form-control" placeholder="Write a note" title="Note"></textarea>
-						</fieldset>
+						</fieldset> -->
 
 				</div>
                 <div class="modal-footer">
@@ -139,9 +139,9 @@
 						</fieldset>
 						
 						<!-- Note -->
-						<fieldset class="form-group">
+						<!-- <fieldset class="form-group">
 							<textarea ng-model="todoCtrl.selectedTodo.note" class="form-control" placeholder="Write a note" title="Note"></textarea>
-						</fieldset>
+						</fieldset> -->
 						
 					
 				</div>

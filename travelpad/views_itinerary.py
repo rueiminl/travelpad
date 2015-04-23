@@ -108,6 +108,8 @@ def todo(request):
     if 'itinerary_id' not in request.session:
         return redirect(reverse('default'))
     return render(request, 'travelpad/todo.html', {})
+<<<<<<< HEAD
+=======
 # def todo(request):
 #     if 'itinerary_id' not in request.session:
 #         return redirect(reverse('default'))
@@ -127,6 +129,7 @@ def todo(request):
 #         return HttpResponseNotFound('<h1>Todo not found</h1>')
 #     except Exception as inst:
 #         print inst
+>>>>>>> d18058a7398aa6c6550fe579dd80051b33d6f2de
 
 @login_required
 @transaction.atomic
@@ -144,8 +147,10 @@ def todo_json(request):
         form = TodoForm(data=
             {'task': in_data.get('task'),
             'status': in_data.get('status'),
-            'owner': in_data.get('owner').get('id'),
+            # 'owner': in_data.get('owner').get('id'),
             'note': in_data.get('note')}, instance=entry)
+        if in_data.get('owner')!='null':
+            form.update({'owner':in_data.get('owner').get('id')})
         if form.is_valid():
             new_todo = form.save()  
             results = new_todo.as_dict()
@@ -170,9 +175,10 @@ def todo_id_json(request, todo_id):
             form = TodoForm(data=
                 {'task': in_data.get('task'),'id':todo.id,
                 'status': in_data.get('status'),
-                'owner': in_data.get('owner').get('id'),
+                # 'owner': in_data.get('owner').get('id'),
                 'note': in_data.get('note')}, instance=todo)
-            print form
+            if in_data.get('owner')!='null':
+                form.update({'owner':in_data.get('owner').get('id')})
             if form.is_valid():
                 new_todo = form.save()  
                 results = new_todo.as_dict()

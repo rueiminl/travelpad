@@ -3,17 +3,16 @@
 
 {% block head %}
 <script src="{% static 'travelpad/js/participant.js' %}" type="text/javascript"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> 
 <style>
 	.thumbnail {
 		width: 128px;
 		float: left;
 	}
 </style>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> 
-  
-<script>
 
+<script>
 $(function() {
     var availableUsers = [
 		{% for user in users %}
@@ -39,23 +38,29 @@ $(function() {
 			{% include "travelpad/itinerary_nav.html" with invitation_active='class="active"' %}	
 		</aside>
 
-		<div ng-controller="ParticipantController as pCtrl">
-			<h3>Invite</h3>
-			<form id="submitForm">
-				<input id="username" class='form-control' type="text" name="username" placeholder='username' style="width:300px" ng-model="username">
-				{% csrf_token %}
-				<button class="btn btn-primary" ng-click="pCtrl.invite(username)">Invite</button>
-				<button class="btn btn-danger" ng-click="pCtrl.delete(username)">Delete</button>
-			</form>
-
-			<h3>Participants</h3>
-			{% verbatim %}
-			<div>
-				<div ng-repeat="participant in pCtrl.participants">
-					<img class="thumbnail" title="{{ participant.username }}" src="/get_user_photo/{{ participant.id }}" alt="No picture yet"> 
+		<div class="col-md-10" ng-controller="ParticipantController as pCtrl">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Participants</h3>
+				</div>
+				<div class="panel-body">
+					{% verbatim %}
+					<div ng-repeat="participant in pCtrl.participants">
+						<img class="thumbnail" title="{{ participant.username }}" src="/get_user_photo/{{ participant.id }}" alt="No picture yet" > 
+					</div>
+					{% endverbatim %}
 				</div>
 			</div>
-			{% endverbatim %}
+			<form id="submitForm">
+				<div class="input-group">
+					<input id="username" class='form-control' type="text" name="username" placeholder='username' ng-model="username">
+					<span class="input-group-btn">
+						<button class="btn btn-primary" ng-click="pCtrl.invite(username)">Invite</button>
+						<button class="btn btn-danger" ng-click="pCtrl.delete(username)">Delete</button>
+					</span>
+				</div>			
+				{% csrf_token %}
+			</form>
 		</div>
 	</div>
 </div>

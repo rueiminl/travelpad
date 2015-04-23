@@ -11,7 +11,15 @@
 	
 	this.reload = function(){
 		$http.get("/todo-json").success(function(data){
-			t.todos = data;
+			// t.todos = data;
+			var idMap = t.todos.map(function(todo){
+				return todo.id;
+			});
+			for (var i = 0; i < data.length; i++){
+				if(idMap.indexOf(data[i].id) == -1){
+					t.todos.push(data[i]);
+				}
+			}
 		}).error(function(data) {
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
 	    });
