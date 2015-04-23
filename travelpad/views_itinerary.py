@@ -41,7 +41,7 @@ def itinerary_json(request):
 @login_required
 def schedule(request):
     if 'itinerary_id' not in request.session:
-        return redirect(reverse(''))
+        return redirect(reverse('default'))
     try:
         itinerary_id = request.session['itinerary_id']
         itinerary = Itinerary.objects.get(id=itinerary_id)
@@ -108,25 +108,6 @@ def todo(request):
     if 'itinerary_id' not in request.session:
         return redirect(reverse('default'))
     return render(request, 'travelpad/todo.html', {})
-# def todo(request):
-#     if 'itinerary_id' not in request.session:
-#         return redirect(reverse('default'))
-#     try:
-#         itinerary_id = request.session['itinerary_id']
-#         itinerary = Itinerary.objects.get(id=itinerary_id)
-#         context = {}
-#         todoes = Todo.objects.filter(related_itinerary=itinerary)
-#         if todoes:
-#             request.session['todo_last_update'] = max(todo.creation_time for todo in todoes).isoformat()
-#         context['todoes'] = todoes
-#         context['participants'] = itinerary.participants.all()
-#         # context['todo_form'] = TodoForm()
-#         print 'get ' + str(len(todoes)) + ' todoes'
-#         return render(request, 'travelpad/todo.html', context)
-#     except ObjectDoesNotExist:
-#         return HttpResponseNotFound('<h1>Todo not found</h1>')
-#     except Exception as inst:
-#         print inst
 
 @login_required
 @transaction.atomic
@@ -144,8 +125,10 @@ def todo_json(request):
         form = TodoForm(data=
             {'task': in_data.get('task'),
             'status': in_data.get('status'),
-            'owner': in_data.get('owner').get('id'),
+            # 'owner': in_data.get('owner').get('id'),
             'note': in_data.get('note')}, instance=entry)
+        if in_data.get('owner')!='null':
+            form.update({'owner':in_data.get('owner').get('id')})
         if form.is_valid():
             new_todo = form.save()  
             results = new_todo.as_dict()
@@ -170,9 +153,10 @@ def todo_id_json(request, todo_id):
             form = TodoForm(data=
                 {'task': in_data.get('task'),'id':todo.id,
                 'status': in_data.get('status'),
-                'owner': in_data.get('owner').get('id'),
+                # 'owner': in_data.get('owner').get('id'),
                 'note': in_data.get('note')}, instance=todo)
-            print form
+            if in_data.get('owner')!='null':
+                form.update({'owner':in_data.get('owner').get('id')})
             if form.is_valid():
                 new_todo = form.save()  
                 results = new_todo.as_dict()
@@ -200,30 +184,6 @@ def feed(request):
     if 'itinerary_id' not in request.session:
         return redirect(reverse('default'))
     return render(request, 'travelpad/feed.html', {})
-    # try:
-#         context = {}
-#         itinerary_id = request.session['itinerary_id']
-#         itinerary = Itinerary.objects.get(id=itinerary_id)
-#         messages = Message.objects.filter(related_itinerary=itinerary).order_by('-creation_time')
-#         # context['itinerary'] = {'id':1, 'start_date':'2015-03-23'}
-# #         messages = Message.objects.all().order_by('-creation_time')
-#         context['itinerary'] = itinerary
-#         context['messages'] = messages
-#         last_update = ''
-#         for message in messages:
-#             message.replies = Reply.objects.filter(related_message=message).order_by('creation_time')
-#             if message.replies:
-#                 message.last_update_reply = max(reply.creation_time for reply in message.replies).isoformat()
-#             else :
-#                 message.last_update_reply = ''
-#         if messages:
-#             context['last_update'] = max(message.creation_time for message in messages)
-#         else:
-#             context['last_update'] = ''
-#
-#     except ObjectDoesNotExist:
-#         return HttpResponseNotFound('<h1>Itinerary not found</h1>')
-#     return render(request, 'travelpad/feed.html', context)
 
 @login_required
 @transaction.atomic
@@ -267,72 +227,6 @@ def reply_json(request):
             errors = []
             errors.append('Woops! Something wrong.')
             return HttpResponseBadRequest(json.dumps({'errors':errors}), content_type='application/json')
-
-# @login_required
-# @transaction.atomic
-# def add_message(request):
-#     errors = []
-#     try:
-#         itinerary_id = request.POST.get('itinerary_id')
-#         itinerary = Itinerary.objects.get(id=itinerary_id)
-#         entry = Message(created_by=request.user, related_itinerary=itinerary)
-#         message_form = MessageForm(request.POST, instance=entry)
-#         if not message_form.is_valid():
-#             errors.append('You must enter content to post.')
-#             return HttpResponse(json.dumps({'errors':errors}), content_type='application/json')
-#         else:
-#             message_form.save()
-#             return get_message_json(request, itinerary_id)
-#     except ObjectDoesNotExist:
-#         return HttpResponseNotFound('<h1>Recourse not found</h1>')
-#     except Exception as inst:
-#         print inst
-#
-# @login_required
-# def get_message_json(request, itinerary_id):
-#     context = {}
-#     try:
-#         itinerary = Itinerary.objects.get(id=itinerary_id)
-#         last_update = dateutil.parser.parse(request.POST.get('last_update'))
-#         # print last_update
-#         messages = Message.objects.filter(creation_time__gt=last_update, related_itinerary=itinerary).order_by('-creation_time')
-#         print 'get ' + str(len(messages)) + ' messages'
-#         if messages:
-#             context['last_update'] = max(message.creation_time for message in messages).isoformat()
-#         else:
-#             context['last_update'] = ''
-#
-#         messages_json = []
-#         for message in messages:
-#             message.replies = Reply.objects.filter(related_message=message).order_by('creation_time')
-#             replies_json = []
-#             for reply in message.replies:
-#                 replies_json.append({
-#                     'created_by_username':reply.created_by.username,
-#                     'created_by_uid': reply.created_by.id,
-#                     'content': reply.content,
-#                     'creation_time': reply.creation_time.isoformat(),
-#                     # 'photo_url' : reverse('photo', kwargs={'uid':comment.created_by.id})
-#                 })
-#             if message.replies:
-#                 last_update_reply = max(reply.creation_time for reply in message.replies).isoformat()
-#             else:
-#                 last_update_reply = ''
-#
-#             messages_json.append(
-#                 {'id' : message.id,
-#                 'created_by_username':message.created_by.username,
-#                 'created_by_uid': message.created_by.id,
-#                 'content': message.content,
-#                 'creation_time': message.creation_time.isoformat(),
-#                 'last_update_reply' : last_update_reply,
-#                 'replies' : replies_json})
-#         context['messages'] = messages_json
-#         response_text = json.dumps(context)
-#         return HttpResponse(response_text, content_type='application/json')
-#     except Exception as inst:
-#         print inst
-
 
 @login_required
 @transaction.atomic

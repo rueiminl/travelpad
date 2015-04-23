@@ -5,7 +5,6 @@
 	var t = this;
 	this.messages = [];
 	this.newMessage = {};
-	// this.newReply = {};
 	
 	this.reload = function(){
 		$http.get("/message-json").success(function(data){
@@ -112,15 +111,49 @@
 			day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago";
 		}
 
-		// If jQuery is included in the page, adds a jQuery plugin to handle it as well
-		if ( typeof jQuery != "undefined" )
-			jQuery.fn.prettyDate = function(){
-				return this.each(function(){
-					var date = prettyDate(this.title);
-					if ( date )
-						jQuery(this).text( date );
-				});
-  			};
+		// // If jQuery is included in the page, adds a jQuery plugin to handle it as well
+// 		if ( typeof jQuery != "undefined" )
+// 			jQuery.fn.prettyDate = function(){
+// 				return this.each(function(){
+// 					var date = prettyDate(this.title);
+// 					if ( date )
+// 						jQuery(this).text( date );
+// 				});
+//   			};
 	});
+	
+  app.directive('time', 
+    [
+      '$timeout',
+      '$filter',
+      function($timeout, $filter) {
+
+        return function(scope, element, attrs) {
+          var time = attrs.time;
+          var intervalLength = 1000 * 60; // 60 seconds
+          var filter = $filter('prettyDate');
+
+          function updateTime() {
+            element.text(filter(time));
+          }
+
+          function updateLater() {
+            timeoutId = $timeout(function() {
+              updateTime();
+              updateLater();
+            }, intervalLength);
+          }
+
+          element.bind('$destroy', function() {
+            $timeout.cancel(timeoutId);
+          });
+
+          updateTime();
+          updateLater();
+        };
+
+      }  
+    ]
+  );
 
 })();
