@@ -145,6 +145,7 @@ function setAllMap(map) {
 
 function clearMarkers(){
   setAllMap(null);
+  document.getElementById('directions-panel').innerHTML = "";
   markers = [];
   for(var i=0; i<flightPaths.length; i++){
     flightPaths[i].setMap(null);
@@ -302,6 +303,7 @@ function addMarker(marker, infowindow, last, index){
 
 function setCity(latitude, longitude){
   cityCenter = [latitude, longitude];
+  initialize();
 }
 
 //google.maps.event.addDomListener(window, 'load', initialize);
