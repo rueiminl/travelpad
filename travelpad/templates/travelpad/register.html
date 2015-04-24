@@ -7,7 +7,7 @@
 		#registerForm {
 			position: relative;
 			top: 100px;
-			width: 270px;
+			width: 500px;
 			margin-left: auto;
 			margin-right: auto;
     	}
@@ -19,34 +19,43 @@
 {% endblock %}
 
 {% block content %}
-			<form id="registerForm" method="post" enctype="multipart/form-data" action="{% url 'register' %}" class="form-signin">
-				{% for _,error in form.errors.items %}
-					<strong>{{ error }}</strong>
-				{% endfor %}
-				<div class="col-md-10">
-				<table>
-					<tr><td>
-						<input class="form-control" id="id_username" type="text" name="username" placeholder="Username" required/>
-					</td></tr>
-					<tr><td>
-						<input class="form-control" id="id_first_name" type="text" name="first_name" placeholder="First Name" required/>
-					</td></tr>
-					<tr><td>
-						<input class="form-control" id="id_last_name" type="text" name="last_name" placeholder="Last Name" required/>
-					</td></tr>
-					<tr><td>
-						<input class="form-control" id="id_email" type="text" name="email" placeholder="E-Mail" required/>
-					</td></tr>
-					<tr><td>
-						<input class="form-control" id="id_password1" type="password" name="password1" placeholder="Password" required/>
-					</td></tr>
-					<tr><td>
-						<input class="form-control" id="id_password2" type="password" name="password2" placeholder="Confirm Password" required/>
-					</td></tr>
-				</table>
-				<input type="submit" value="Register" class="btn btn-sm btn-primary btn-block"/>
+		<form id="registerForm" method="post" enctype="multipart/form-data" action="{% url 'register' %}" class="form-signin">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-subtitle">Sign up</h3>
 				</div>
-				{% csrf_token %}
+				<div class="panel-body">
+					{% if form.errors %}
+					<div class="form-group" style="color:red">
+						{% for _,error in form.errors.items %}
+						<strong>{{ error }}</strong>
+						{% endfor %}
+					</div>
+					{% endif %}
+					<div class="form-group">
+						<input class="form-control" id="id_username" type="text" name="username" placeholder="Username" required/>
+					</div>
+					<div class="form-group">
+						<input class="form-control" id="id_first_name" type="text" name="first_name" placeholder="First Name" required/>
+					</div>
+					<div class="form-group">
+						<input class="form-control" id="id_last_name" type="text" name="last_name" placeholder="Last Name" required/>
+					</div>
+					<div class="form-group">
+						<input class="form-control" id="id_email" type="text" name="email" placeholder="E-Mail" required/>
+					</div>
+					<div class="form-group">
+						<input class="form-control" id="id_password1" type="password" name="password1" placeholder="Password" required/>
+					</div>
+					<div class="form-group">
+						<input class="form-control" id="id_password2" type="password" name="password2" placeholder="Confirm Password" required/>
+					</div>
+					{% csrf_token %}
+					<input type="submit" value="Create an account" class="btn btn-primary btn-block"/>
+				</div>
+				<div class="panel-footer" style="text-align:center">
+					<a href="{% url 'login' %}">Already signed up? Click HERE to sign in.</a>
+				</div>
 			</form>
 {% endblock %}
 
