@@ -46,7 +46,7 @@ def update_profile(request):
 	travelpaduser = get_travelpaduser(request.user.id)
 	if request.POST.get("clear"):
 		travelpaduser.photo = None
-		user_form = TravelPadUserForm(request.POST, instance = travelpaduser)
+		user_form = TravelPadUserFormWithoutPhoto(request.POST, instance = travelpaduser)
 	elif request.FILES:
 		user_form = TravelPadUserForm(request.POST, request.FILES, instance = travelpaduser)
 	else:
@@ -72,6 +72,11 @@ def delete_user(request):
 def get_user_photo(request, id):
 	travelpaduser = get_travelpaduser(id)
 	if not travelpaduser.photo:
+		try:
+			with open("pictures/DefaultPersonPhoto.png", "rb") as f:
+				return HttpResponse(f.read(), content_type="image/png")
+		except:
+			raise Http404
 		print "travelpaduser[" + id + "].photo not found"
 		raise Http404
 	return HttpResponse(travelpaduser.photo, content_type="image")

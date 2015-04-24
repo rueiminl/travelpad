@@ -84,5 +84,10 @@ def get_itinerary_photo(request, id):
 	itinerary = get_itinerary(id)
 	if not itinerary.photo:
 		print "itinerary[" + id + "].photo not found"
-		raise Http404
+		try:
+			with open("pictures/photo-default-th.png", "rb") as f:
+				return HttpResponse(f.read(), content_type="image/png")
+		except:
+			raise Http404
+	print "itinerary.photo =", itinerary.photo
 	return HttpResponse(itinerary.photo, content_type="image")
