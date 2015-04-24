@@ -51,7 +51,7 @@
 						<input class="form-control" id="id_password2" type="password" name="password2" placeholder="Confirm Password" required/>
 					</div>
 					{% csrf_token %}
-					<input type="submit" value="Create an account" class="btn btn-primary btn-block"/>
+					<input type="submit" value="Create an account" class="btn btn-primary pull-right"/>
 				</div>
 				<div class="panel-footer" style="text-align:center">
 					<a href="{% url 'login' %}">Already signed up? Click HERE to sign in.</a>
