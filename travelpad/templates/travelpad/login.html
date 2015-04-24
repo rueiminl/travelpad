@@ -2,12 +2,11 @@
 {% load staticfiles %}
 {% block head %}
 		<title>TravelPad - Login</title>
-		<link rel="stylesheet" type="text/css" href="{% static 'travelpad/css/general.css' %}" />
 		<style>
 		#loginForm {
 			position: relative;
 			top: 100px;
-			width: 300px;
+			width: 500px;
 			margin-left: auto;
 			margin-right: auto;
     	}
@@ -19,20 +18,36 @@
 {% endblock %}
 
 {% block content %}
-			<form id="loginForm" class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login' %}">
-				{% if form.errors %}
-				<p style="color:red">
-					Incorrect user name and password.
-				</p>
-				{% endif %}
-				<h2 class="form-signin-heading">Please sign in</h2>
-				<label for="inputUsername" class="sr-only">Username</label>
-				<input id="inputUsername" class="form-control" placeholder="Username" required autofocus name="username">
-				<label for="inputPassword" class="sr-only">Password</label>
-				<input type="password" id="inputPassword" class="form-control" placeholder="Password" required name="password">
-				<input type="submit" value="Login" class="btn btn-sm btn-primary btn-block"/>
-				<input type="hidden" name="next" value="{{ next }}" />
-				{% csrf_token %}
-				<a href="{% url 'register' %}">Not registered yet? Click HERE to register one.</a>
+			<form id="loginForm" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-subtitle">Sign in</h3>
+				</div>
+				<div class="panel-body">
+					{% if form.errors %}
+					<div class="form-group">
+						<p style="color:red">
+							Incorrect user name and password.
+						</p>
+					</div>
+					{% endif %}
+					<div class="form-group">
+						<label for="inputUsername">Username</label>
+						<input id="inputUsername" class="form-control" placeholder="Username" required autofocus name="username">
+					</div>
+					<div class="form-group">
+						<label for="inputPassword">Password</label>
+						<input type="password" id="inputPassword" class="form-control" placeholder="Password" required name="password">
+					</div>
+					<div class="form-group">
+						<input type="submit" value="Sign in" class="btn btn-primary" />
+					</div>
+					<input style="align:center" type="hidden" name="next" value="{{ next }}" />
+					{% csrf_token %}
+				</div>
+				<div class="panel-footer" style="text-align:center">
+					<a href="{% url 'register' %}">Not registered yet? Click HERE to register one.</a>
+				</div>
+			</div>
 			</form>
 {% endblock %}
