@@ -24,8 +24,8 @@ class TravelPadUserForm(forms.ModelForm):
 			raise forms.ValidationError('File too big (max size is {0} bytes)'.format(MAX_UPLOAD_SIZE))
 		return photo		
 class TravelPadUserFormWithoutPhoto(forms.ModelForm):
-	firstname = forms.CharField(max_length = 20)
-	lastname = forms.CharField(max_length = 20)
+	first_name = forms.CharField(max_length = 20)
+	last_name = forms.CharField(max_length = 20)
 	email = forms.CharField(max_length = 40, validators = [validate_email])
 	class Meta:
 		model = TravelPadUser
