@@ -25,7 +25,7 @@
 							</label></td>
 							<td>
 								{% if field.label == "Photo" %}
-								<img class="thumbnail" id="modalImg" src="{% url 'get_user_photo' %}/{{user.id}}"  alt="Not uploaded yet" />
+								<img class="thumbnail" id="modalImg" src="{% url 'get_user_photo' %}/{{user.id}}"  alt="Not uploaded yet" onerror="this.src='http://ksl.kaust.edu.sa/_layouts/KAUST_CoreLabs_Template/images/DefaultPersonPhoto.png'" />
 								<input name="clear" type="checkbox">Clear</input>
 								{% endif %}
 								{{field}}

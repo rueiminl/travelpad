@@ -32,7 +32,9 @@
 		<table>
 		{% for itinerary in itineraries %}
 			<tr>
-				<td><a href="{% url 'itinerary' itinerary.id %}"><img src="{% url 'get_itinerary_photo' itinerary.id %}" alt="no picture uploaded yet" class="thumbnail"></a></td>
+				<td><a href="{% url 'itinerary' itinerary.id %}">
+					<img src="{% url 'get_itinerary_photo' itinerary.id %}" class="thumbnail" onerror="this.src = 'http://boomfinanceandeconomics.com/assets/backgrounds/photo-default-th.png';" />
+				</a></td>
 				<td class="info">
 						<input class="btn btn-info" id="editItineraryButton" type="button" value="Edit" onclick="editItinerary({{itinerary.id}})" />
 					<h2>{{itinerary.title}}</h2>

@@ -41,7 +41,7 @@ $(function() {
 					{% verbatim %}
 					<ul class="list-group" style="list-style-type:none" ng-repeat="participant in pCtrl.participants">
 						<li>
-							<img class="img-circle" src="/get_user_photo/{{ participant.id }}" alt=""  width="48" height="48" style="vertical-align: middle; position: relative; top: -10px" /> 
+							<img class="img-circle" src="/get_user_photo/{{ participant.id }}" alt=""  width="48" height="48" style="vertical-align: middle; position: relative; top: -10px" onerror="this.src='http://ksl.kaust.edu.sa/_layouts/KAUST_CoreLabs_Template/images/DefaultPersonPhoto.png'" /> 
 							<span style="vertical-align: middle; position: relative; top: -10px">{{ participant.username }}</span>
 							<button class="btn btn-danger pull-right" ng-click="pCtrl.delete(participant.username)">Delete</button>
 						</li>
