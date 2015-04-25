@@ -23,7 +23,8 @@
 				margin-top:12%;
 			}
 			/*overwrite container class*/
-			.container {
+			.my-container {
+				 margin-top: 50px;
 			    display: table;
 			    position: relative;
 			    width: 100%;
@@ -37,11 +38,50 @@
 		</style>
 {% endblock %}
 
-{% block content %}
+
+{% block body %}
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">TravelPad</a>
+				</div>
+				<div id="navbar" class="collapse navbar-collapse">				
+					<form class="navbar-form navbar-right" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+						{% if form.errors %}
+							<p style="color:red;display:inline;">
+								Incorrect username and password.
+							</p>
+						{% endif %}
+						<!-- <div class="form-group">
+					                        <input type="text" class="form-control" name="username" placeholder="Username">
+					    </div>
+		                    <div class="form-group">
+		                        <input type="text" class="form-control" name="password" placeholder="Password">
+		                    </div>
+							 -->
+						<div class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+						    <input id="login-username" type="text" class="form-control" name="username" value="" placeholder="username">
+						</div>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+						    <input id="login-password" type="password" class="form-control" name="password" placeholder="password">
+						</div>
+					                    
+					    <button type="submit" class="btn btn-success">Sign In</button>
+						<button href="{% url 'register' %}" class="btn btn-info">Register</button>
+						<input style="align:center" type="hidden" name="next" value="{{ next }}" />
+						{% csrf_token %}
+					</form>
+				</div>
+			</div>
+		</nav>
+
+<div class="my-container">
 	<div class="header">
-		<h1 style="font-size:100px;color:#fff;">TravelPad</font></h1>
-		<h3 style="color:#fff;font-family: Montserrat;">Your collaborative platform for planning itinerary with friends </h3>
-		<button data-toggle="modal" class="login btn btn-primary" data-target="#login_madal">GET STARTED NOW</button>
+		<h1 style="font-size:100px;color:#fff;text-shadow: 2px 2px 3px rgba(0,0,0,0.6);font-family: Copperplate, 'Copperplate Gothic Light', fantasy;">TravelPad</font></h1>
+		<h3 style="color:#fff;font-family: Montserrat;text-shadow: 2px 2px 3px rgba(0,0,0,0.6);">Your collaborative platform for planning itinerary with friends </h3>
+		<!-- <button data-toggle="modal" class="login btn btn-primary" data-target="#login_madal">GET STARTED NOW</button> -->
 	</div>
 	
 	<div class="modal fade" id="login_madal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
@@ -82,4 +122,5 @@
 			</div>
 		</div>
 	</div>
+</div>
 {% endblock %}

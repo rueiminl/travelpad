@@ -46,3 +46,8 @@
     background-size: cover;
     -o-background-size: cover;
 }
+
+.navbar-brand{
+	font-family: Copperplate, 'Copperplate Gothic Light', fantasy;
+}
+
