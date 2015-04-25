@@ -1,29 +1,58 @@
 {% extends "travelpad/base.html" %}
-{% load staticfiles %}
+
 {% block head %}
+{% load staticfiles %}
 		<title>TravelPad - Login</title>
-		<style>
-		#loginForm {
+		<style type="text/css">
+		/*#loginForm {
 			position: relative;
 			top: 100px;
 			width: 500px;
 			margin-left: auto;
 			margin-right: auto;
-    	}
+    	}*/
+			html,
+			body {
+			    width: 100%;
+			    height: 100%;
+			}
+			
+			
+			.header {
+			    text-align:center;
+				margin-top:15%;
+			}
+			/*overwrite container class*/
+			.container {
+			    display: table;
+			    position: relative;
+			    width: 100%;
+			    height: 100%;
+			    background: url("{% static 'travelpad/img/landing_bg.jpg' %}") no-repeat center center scroll;
+			    -webkit-background-size: cover;
+			    -moz-background-size: cover;
+			    background-size: cover;
+			    -o-background-size: cover;
+			}
 		</style>
 {% endblock %}
 
-{% block nav %}
-{% include "travelpad/nav_unlogin.html" with login_active='class="active"' %}
-{% endblock %}
-
 {% block content %}
-		<form id="loginForm" method="post" action="{% url 'django.contrib.auth.views.login' %}">
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-subtitle">Sign in</h3>
+	<div class="header">
+		<h1>Start Your Journey Here!</h1>
+		<p>Use Travelpad to ...</p>
+		<button data-toggle="modal" class="login btn btn-default" data-target="#login_madal">GET STARTED NOW</button>
+	</div>
+	
+	<div class="modal fade" id="login_madal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+                <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3>Sign in</h3>
 				</div>
-				<div class="panel-body">
+                <div class="modal-body">
+					<form id="loginForm" method="post" action="{% url 'django.contrib.auth.views.login' %}">
 					{% if form.errors %}
 					<div class="form-group">
 						<p style="color:red">
@@ -41,13 +70,16 @@
 					</div>
 					<div class="form-group">
 						<input type="submit" value="Sign in" class="btn btn-primary" />
+						<a href="{% url 'register' %}" role="button" class="btn btn-info">Register</a>
 					</div>
 					<input style="align:center" type="hidden" name="next" value="{{ next }}" />
 					{% csrf_token %}
+					</form>
 				</div>
-				<div class="panel-footer" style="text-align:center">
+				<!-- <div class="modal-footer"  style="text-align:center">
 					<a href="{% url 'register' %}">Not registered yet? Click HERE to register one.</a>
-				</div>
+				</div> -->
 			</div>
-		</form>
+		</div>
+	</div>
 {% endblock %}
