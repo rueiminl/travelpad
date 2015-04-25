@@ -67,13 +67,13 @@
                           </tr>
                         </thead>
 						<tr ng-repeat="cost in costCtrl.costs| orderBy:'-creation_time'" ng-class="costCtrl.backcolor(cost)">
-						<td>{{cost.amount}}</td>
-						<td>{{cost.note}}</td>
-						<td>{{cost.owner.username}}</td>
+						<td><h4>{{cost.amount}}</h4></td>
+						<td><h4>{{cost.note}}</h4></td>
+						<td><h4>{{cost.owner.username}}</h4></td>
                         <td>
-                            <p ng-repeat="ptuser in cost.participant">
+                            <h4 ng-repeat="ptuser in cost.participant">
                                 {{ptuser.username}}
-                            </p>
+                            </h4>
                         </td>
                         <td>
                             <button class="btn btn-success" ng-click="costCtrl.editCost(cost)">Edit</button>
