@@ -30,24 +30,40 @@
 			    <ul class="list-group">
 			        <!-- <li class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'"  ng-class="todo.status=='done'?'list-group-item-success': 'list-group-item-danger'"> -->
 					<li class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'">
-						<div class="row">
-							<div class="col-md-1">
-								<div class="h3">
-									<input type="checkbox" ng-model="todo.status" ng-true-value="'done'" ng-false-value="'pending'" ng-change="todoCtrl.reverseTodoStatus(todo)" >
+						<div class="row h3">
+							<div class="col-md-8">
+									<!-- <input type="checkbox" ng-model="todo.status" ng-true-value="'done'" ng-false-value="'pending'" ng-change="todoCtrl.reverseTodoStatus(todo)" > -->
+								<div class="checkbox">
+									          <label style="vertical-align:middle;">
+									            <input type="checkbox" ng-model="todo.status" ng-true-value="'done'" ng-false-value="'pending'" ng-change="todoCtrl.reverseTodoStatus(todo)">
+									            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+												<!-- <ng-show="todo.status=='done'">
+												    <del>{{todo.task}}</del>
+												</ng-show>
+												<ng-show="todo.status!='done'">
+												    {{todo.task}}
+												</ng-show> -->
+												<span ng-switch="todo.status">
+													<span ng-switch-when="done"><del>{{todo.task}}</del></span>
+													<span ng-switch-default>{{todo.task}}</span>
+												</span>
+									          </label>
+											
 								</div>
+								
 							</div>
-							<div class="col-md-7" ng-switch="todo.status">
+							<!-- <div class="col-md-7" ng-switch="todo.status">
 								<h3 ng-switch-when="done"><del>{{todo.task}}</del></h3>
 								<h3 ng-switch-default>{{todo.task}}</h3>
-							</div>
+							</div> -->
 						    <!-- <div class="col-md-2">
 								<p>{{todo.status}}</p>
 							</div> -->
 						    <div class="col-md-3" ng-switch="todo.owner">
-								<div ng-switch-when="null" class="h3">
+								<div ng-switch-when="null">
 									<h4>Not Assgined</h4>
 								</div>
-								<div ng-switch-default class="h3">
+								<div ng-switch-default>
 									<img class="img-circle" ng-src="{{todo.owner.photo}}" width="50px" height="50px" style="vertical-align:middle;">
 									<span class="message-username">{{todo.owner.username}}</span>
 								</div>
@@ -56,7 +72,7 @@
 								<p>{{todo.note}}</p>
 							</div> -->
 						    <div class="col-md-1">
-								<div class="dropdown h3">
+								<div class="dropdown">
 								  <a role="button" class="btn dropdown-toggle glyphicon glyphicon-option-horizontal" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true"></a>
 								  <ul class="dropdown-menu" role="menu" aria-labelledby="">
 								    <li role="presentation"><a role="menuitem" tabindex="-1" href="" ng-click="todoCtrl.showUpdateTodo(todo)">Edit todo</a></li>
