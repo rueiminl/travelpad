@@ -28,14 +28,14 @@
 				</div> -->
 			    <ul class="list-group">
 			        <!-- <li class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'"  ng-class="todo.status=='done'?'list-group-item-success': 'list-group-item-danger'"> -->
-					<li class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'">
-						<div class="row">
+					<li class="list-group-item" ng-repeat="todo in todoCtrl.todos| orderBy:'-creation_time'" style="height: 80px;">
+						<div class="row" style=" vertical-align: middle;">
 							<div class="col-md-1">
-								<input type="checkbox" ng-model="todo.status" ng-true-value="'done'" ng-false-value="'pending'" ng-change="todoCtrl.reverseTodoStatus(todo)">
+								<input type="checkbox" ng-model="todo.status" ng-true-value="'done'" ng-false-value="'pending'" ng-change="todoCtrl.reverseTodoStatus(todo)" >
 							</div>
-							<div class="col-md-5" ng-switch="todo.status">
-								<p ng-switch-when="done"><del>{{todo.task}}</del></p>
-								<p ng-switch-default>{{todo.task}}</p>
+							<div class="col-md-7" ng-switch="todo.status">
+								<h3 ng-switch-when="done"><del>{{todo.task}}</del></h3>
+								<h3 ng-switch-default>{{todo.task}}</h3>
 							</div>
 						    <!-- <div class="col-md-2">
 								<p>{{todo.status}}</p>
@@ -45,8 +45,8 @@
 									<h4>Not Assgined</h4>
 								</div>
 								<div ng-switch-default>
-									<img class="img-circle" ng-src="{{todo.owner.photo}}" width="50px" height="50px">
-									<h4>{{todo.owner.username}}</h4>
+									<img class="img-circle" ng-src="{{todo.owner.photo}}" width="50px" height="50px" style="vertical-align:middle;">
+									<span class="message-username">{{todo.owner.username}}</span>
 								</div>
 							</div>
 						    <!-- <div class="col-md-3">

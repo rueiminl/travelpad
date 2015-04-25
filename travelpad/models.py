@@ -236,16 +236,16 @@ def create_message(instance, created, raw, **kwargs):
         entry = Message(
             created_by=instance.created_by, 
             related_itinerary=instance.related_itinerary,
-            content=instance.created_by.username + " created " + instance.title + " event",
+            content='I just created a "' + instance.title + '" event!',
             )
         entry.save()
-    elif isinstance(instance, Todo):
-        entry = Message(
-            created_by=instance.created_by, 
-            related_itinerary=instance.related_itinerary,
-            content=instance.created_by.username + " created " + instance.task + " task",
-            )
-        entry.save()
+    # elif isinstance(instance, Todo):
+#         entry = Message(
+#             created_by=instance.created_by,
+#             related_itinerary=instance.related_itinerary,
+#             content=instance.created_by.username + " created " + instance.task + " task",
+#             )
+#         entry.save()
 
 models.signals.post_save.connect(create_message, sender=Event, dispatch_uid='create_message')
 models.signals.post_save.connect(create_message, sender=Todo, dispatch_uid='create_message')

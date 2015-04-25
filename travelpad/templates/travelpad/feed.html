@@ -3,6 +3,7 @@
 {% block head %}
 {% load staticfiles %}
 <script src="{% static 'travelpad/js/message.js' %}" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'travelpad/css/feed.css' %}" />
 {% endblock %}
 
 {% block nav %}
@@ -39,22 +40,22 @@
 								<img class="img-circle" ng-src="{{message.created_by.photo}}" width="50px" height="50px">
 							</div>
 							<div class="media-body">
-								<a href="#"><b>{{message.created_by.username}}</b></a></br>
+								<p class="message-username"><b>{{message.created_by.username}}</b></p>
 								<!-- <small>{{message.creation_time | prettyDate }}</small> -->
 								<small time="{{message.creation_time}}"></small>
 							</div>
 						</div> <!-- end of media -->
-						<p>{{message.content}}</p>
+						<p style="margin-top:15px;margin-left:10px;" class="message-content">{{message.content}}</p>
 					</div>
 					<!-- Reply list -->	
 					<div class="reply-list panel-body">
-						<div class="reply-list-item" ng-repeat="reply in message.replies| orderBy:'creation_time'">
+						<div class="reply-list-item" ng-repeat="reply in message.replies| orderBy:'creation_time'" style="margin-bottom:15px;">
 							<div class="media">
 								<div class="media-left media-middle">
 						      	  <img class="media-object img-circle" ng-src="{{reply.created_by.photo}}" width="40px" height="40px">
 						  		</div>
 						  		<div class="media-body">
-						    		<h6 class="media-heading"><b>{{reply.created_by.username}}</b><span> {{reply.content}}</span></h6>
+						    		<p class="media-heading reply-username"><b>{{reply.created_by.username}}</b><span class="reply-content">  {{reply.content}}</span></p>
 									<!-- <small>{{reply.creation_time | prettyDate}}</small>	 -->
 									<small time="{{reply.creation_time}}"></small>							
 						  		</div>
