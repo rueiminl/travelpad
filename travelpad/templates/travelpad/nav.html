@@ -1,6 +1,6 @@
 		<nav class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
-				<a class="navbar-brand" href="#">TravelPad</a>
+				<a class="navbar-brand" href="{% url 'default' %}">TravelPad</a>
 				<ul class="nav navbar-nav">
 					<li {{ itineraries_active }}><a href="{% url 'itineraries' %}">Itineraries</a></li>
 					<li {{ profile_active }}><a href="{% url 'profile' %}">Profile</a></li>
