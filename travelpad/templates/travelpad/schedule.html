@@ -73,12 +73,9 @@
 					<div id="map_canvas" style="width:100%; height:200%; position: absolute" ng-show="tab.isSet(2)"></div> -->
 					<!-- make calendar exist when hide so that we can still change time range  -->
 				<div id='calendar' ng-class="{'virtual-hide': !tab.isSet(1)}"></div> 
-				<div class="row" ng-class="{'virtual-hide': !tab.isSet(2)}">
-					<div class="col-md-8">
-						<div id="map_canvas" style="width:100%; height:200%; position: absolute"></div>
-					</div>
-					<div class="col-md-4" id="directions-panel" style="width:300px; height:500px; position: absolute; overflow: auto;"></div>
+				<div id="map_canvas" style="width:75%; height:200%; position: absolute" ng-class="{'virtual-hide': !tab.isSet(2)}">
 				</div>
+				<div id="directions-panel" style="width:25%; height:200%; position: absolute; overflow: auto; right: 75%"  ng-class="{'virtual-hide': !tab.isSet(2)}"></div>
 				<!-- </section> -->
 				
 			</div>
