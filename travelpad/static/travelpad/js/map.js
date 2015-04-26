@@ -30,6 +30,13 @@ var zoomVar = 12;
 var centerVar;
 var autocomplete;
 var cityCenter = [40.442492, -79.94255299999998];
+// marker icon for last viewpoint
+var pinColor = "06A20B";
+var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+    new google.maps.Size(21, 34),
+    new google.maps.Point(0,0),
+    new google.maps.Point(10, 34));
+
 function initialize() {
     //deleteMarkers();
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -221,6 +228,8 @@ function setAllMarkers(placeArrTmp){
         map: map,
         title: 'start'
   });
+  if(transportTypes[0] == undefined)
+    marker.setIcon(pinImage);
 
   markers.push(marker);
   var infowindow = new google.maps.InfoWindow({
@@ -230,6 +239,7 @@ function setAllMarkers(placeArrTmp){
 
   if(transportTypes[0] != undefined)
     addMarker(marker, infowindow, false, 0);
+
   //addMarker(marker, infowindow);
 
   // middle points
@@ -239,14 +249,17 @@ function setAllMarkers(placeArrTmp){
       if(transportTypes[index-1] != undefined){
         calcRoute(placeArr[index-1], placeArr[index], transportTypes[index-1], index, startTimes[index-1]);
       }
-      if(transportTypes[index] != undefined){
-        last = false;
-      }
       marker = new google.maps.Marker({
         position: placeArr[index],
         map: map,
         title: 'Location'
       });
+      if(transportTypes[index] != undefined){
+        last = false;
+      }
+      else{
+         marker.setIcon(pinImage);
+      }
       infowindow = new google.maps.InfoWindow({
         content: "<div><b>" + (index+1).toString() + ".</b>" + placeNameArr[index] + "</div>"
       });
@@ -279,14 +292,6 @@ function resizeMap(){
 		//setAllMarkers
 	}
   }, 100);
-  //map.fitBounds(bounds);
-  //var tmpPlace = new google.maps.LatLng(city)
-  //if(placeArr.length == 0){
-//	map.setCenter(tmpPlace);
-//	map.setZoom(10);
-//      }
-  //map.setZoom(10);
-  //map.setZoom(3);
 }
 
 function addMarker(marker, infowindow, last, index){
