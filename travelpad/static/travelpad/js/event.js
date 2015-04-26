@@ -321,9 +321,13 @@ var g_map4;
         var input = /** @type {HTMLInputElement} */(
             document.getElementById('pac-input2'));
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+	
+	var options = {
+    	    types: ['lodging']
+  	};
 
-        var searchBox = new google.maps.places.SearchBox(
-          /** @type {HTMLInputElement} */(input));
+        var searchBox = new google.maps.places.Autocomplete(
+          /** @type {HTMLInputElement} */input, options);
 
         // [START region_getplaces]
         // Listen for the event fired when the user selects an item from the
