@@ -31,9 +31,11 @@
 		<div class="row row-offcanvas row-offcanvas-right">
 			<div class="col-xs-12 col-lg-12">
 				<div class="jumbotron">
-					<h1>TravelPad</h1>
-					<p>Here lists all your itinerary.</p>
-					<input class="btn btn-info" id="addItineraryButton" type="button" value="&plus;" onclick="addItinerary()" />
+					<h1>Welcome to TravelPad!</h1>
+					<h2>Your collaborative platform for planning itinerary with friends</h2>
+					<p>Here is the gallery of all the itineraries belonging to you!<br>
+					You could enter each itinerary for detail by just clicking the image any time, and you could come back to this collection by clicking the "Itinerary" button on the navigation bar above. By pressing the "Update" button, you could update the main properties of each itinerary. Moreover, you could click the button belowed to create a new itinerary belonging to you easily. Enjoy!</p>
+					<input class="btn btn-info" id="addItineraryButton" type="button" value="Create an itinerary" onclick="addItinerary()" />
 				</div>
 				<div class="row">
 					{% for itinerary in itineraries %}
@@ -41,7 +43,7 @@
 						<a href="{% url 'itinerary' itinerary.id %}">
 						<img src="{% url 'get_itinerary_photo' itinerary.id %}" class="img-thumbnail" />
 						</a>
-						<input style="float:right;" class="btn btn-info" id="editItineraryButton" type="button" value="Edit" onclick="editItinerary({{itinerary.id}})" />
+						<input style="float:right;" class="btn btn-info" id="editItineraryButton" type="button" value="Update" onclick="editItinerary({{itinerary.id}})" />
 						<h2>{{itinerary.title}}</h2>
 						<p>{{itinerary.description}}</p>
 					</div><!--/.col-xs-6.col-lg-4-->
