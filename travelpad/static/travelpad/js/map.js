@@ -258,14 +258,35 @@ function setAllMarkers(placeArrTmp){
 } 
 
 function resizeMap(){
-  google.maps.event.addListener(map, 'idle', function() {
+  var listener = google.maps.event.addListener(map, 'idle', function() {
       google.maps.event.trigger(map, 'resize');
+      //google.maps.event.removeListener(listener); 
   });
-  map.setZoom(3);
-  if(placeArr.length != 0)
-    map.setCenter(placeArr[0]);
-  else
-    map.setCenter();
+  var tmpPlace = new google.maps.LatLng(cityCenter[0], cityCenter[1]);
+  setTimeout(function(){ 
+	if(placeArr.length == 0){
+		initialize();
+	}	
+	else{
+		google.maps.event.trigger(map, 'resize');
+		var bounds = new google.maps.LatLngBounds();
+		for(var i=0; i<placeArr.length; i++){
+			bounds.extend(placeArr[i]);
+		}
+		//map.setCenter(placeArr[0]);
+		//map.setZoom(10);
+		map.fitBounds(bounds);
+		//setAllMarkers
+	}
+  }, 100);
+  //map.fitBounds(bounds);
+  //var tmpPlace = new google.maps.LatLng(city)
+  //if(placeArr.length == 0){
+//	map.setCenter(tmpPlace);
+//	map.setZoom(10);
+//      }
+  //map.setZoom(10);
+  //map.setZoom(3);
 }
 
 function addMarker(marker, infowindow, last, index){
