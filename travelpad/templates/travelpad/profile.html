@@ -2,11 +2,6 @@
 {% load staticfiles %}
 {% block head %}
 		<title>TravelPad - Profile</title>
-		<style>
-			.thumbnail {
-				width:200px;
-			}
-		</style>
 {% endblock %}
 
 {% block nav %}
@@ -14,9 +9,10 @@
 {% endblock %}
 
 {% block content %}
+			<div class="row row-offcanvas row-offcanvas-right">
 				<div class="col-xs-12 col-lg-12">
 					<div class="col-xs-4 col-lg-4">
-						<img class="img.thumbnail" src="{% url 'get_user_photo' %}/{{user.id}}"  alt="Not uploaded yet" />
+						<img class="img-thumbnail" src="{% url 'get_user_photo' %}/{{user.id}}"  alt="Not uploaded yet"  />
 						<h3>{{user.first_name}}&nbsp;{{user.last_name}}</h3>
 						<h4>{{user.username}}</h4>
 					<hr class="featurette-divider">
@@ -74,7 +70,7 @@
 										</label></td>
 										<td>
 											{% if field.label == "Photo" %}
-											<img class="img.thumbnail" id="modalImg" src="{% url 'get_user_photo' %}/{{user.id}}"  alt="Not uploaded yet" />
+											<img class="img-thumbnail" id="modalImg" src="{% url 'get_user_photo' %}/{{user.id}}"  alt="Not uploaded yet" />
 											<input name="clear" type="checkbox">Clear</input>
 											{% endif %}
 											{{field}}
@@ -97,6 +93,7 @@
 						</div>
 					</div>
 				</div>
+			</div>
 {% endblock %}
 
 
@@ -113,8 +110,8 @@
 				reader.readAsDataURL(input.files[0]);
 			}
 		}
-
 		$("#id_photo").change(function(){
+
 			readURL(this);
 		});
 		
