@@ -7,6 +7,7 @@
 		this.itinerary = {};
 		this.events = [];
 		this.dateTitle;
+		this.collapseDesc = true;
 		
 		this.calendar = {
 			prev: function(){
@@ -51,6 +52,7 @@
 					showeventmodal("", start.format("YYYY-MM-DD"), start.format("HH:mm"), end.format("YYYY-MM-DD"), end.format("HH:mm"), 
 						function(){
 							$('#calendar').fullCalendar('refetchEvents'); //refresh related transportation
+							$.toaster({ priority : 'success', title : 'Success', message : 'Event added.'});
 						}, function(){
 							$.toaster({ priority : 'danger', title : 'Error', message : 'Update Event error.'});
 						});
