@@ -12,11 +12,11 @@
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
 	    });
 	};
-	this.invite = function(username) {
+	this.invite = function() {
 		$http({
 			url: "/participant-json",
 			method: "POST",
-			data: $.param({username:username, type:'add'}),
+			data: $.param({username:$('#username').val(), type:'add'}),
 			headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 		}).success(function(data){
 			if (data.success == "false") {
