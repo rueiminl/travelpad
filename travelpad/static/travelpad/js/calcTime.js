@@ -34,15 +34,12 @@ function getTime(src, dest, mode){
 */
 
 function getTime2(ids, src, dest, mode, time, callback, errorhandle){
-  console.log(mode);
   var arr = [];
   var directionsService = new google.maps.DirectionsService();
   for(var i=0; i<src.length; i++){
     var srcPlace = new google.maps.LatLng(src[i][0], src[i][1]);
     var destPlace = new google.maps.LatLng(dest[i][0], dest[i][1]);
     var timeTrans = new Date(time[i]);
-    console.log(time);
-    console.log(timeTrans);
     var request = {
       origin: srcPlace,
       destination: destPlace,
@@ -59,9 +56,8 @@ function getTime2(ids, src, dest, mode, time, callback, errorhandle){
       }
       else{
         if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
-            console.log("resend");
             wait = true;
-            setTimeout("wait = true", 1000);
+            setTimeout("wait = true", 2000);
             getTime2(ids, src, dest, mode, time, callback, errorhandle)
         }
         else{

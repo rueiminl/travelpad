@@ -27,6 +27,12 @@ html, body {
 .pac-container {
     z-index: 1050 !important;
 }
+
+.err{
+  font-size:large;
+  color: Red
+}
+
 #map-eventcanvas { height: 300px }
 #map-eventcanvas2 { height: 300px }
 #map-eventcanvas3 { height: 300px }

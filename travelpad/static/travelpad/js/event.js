@@ -28,7 +28,6 @@ var g_map4;
     };
 	
     this.ready = function(){
-      console.log("running ready");
       /*var script = document.createElement('script');
       script.type = 'text/javascript';
       script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&signed_in=true&language=en-us&callback=initialize_event';
@@ -133,8 +132,6 @@ var g_map4;
                         newDoc.close();
                     }
                     if (ct.indexOf('json') > -1) {
-                        console.log("success");
-                        console.log(response);
                         if (response.errors){
                             t.error = [];
                             $scope.$apply(function () {
@@ -142,12 +139,11 @@ var g_map4;
                                     t.error.push(response.errors[ee]);
                                 }
                             });
+                            $('#eventModal').animate({ scrollTop: 0 }, 'fast');
                         }
                         else{
                             if (response.trans_up && response.trans_up.length > 0){
                                 var a = function(ids,arr){
-                                    console.log("www");
-                                    console.log(arr);
                                     $.ajax({
                                         url: "./updatetransport",
                                         data: {
@@ -166,8 +162,6 @@ var g_map4;
                                     
                                 };
                                 var b = function(ids,arr){
-                                    console.log("www");
-                                    console.log(arr);
                                     $.ajax({
                                         url: "./updatetransport",
                                         data: {
@@ -200,7 +194,6 @@ var g_map4;
                 },
                 error: function(items) 
                 {
-                    console.log("error");
                     var newDoc = document.open("text/html", "replace");
                     newDoc.write(items);
                     newDoc.close();
@@ -619,12 +612,8 @@ function editeventtime(id, sdate, stime, edate, etime, success_callback,error_ca
         type:'POST',
         dataType: 'json',
         success: function(response, status, xhr){ 
-            console.log("cuss");
-            console.log(response);
             if (response.trans_up && response.trans_up.length > 0){
                 var a = function(ids,arr){
-                    console.log("www");
-                    console.log(arr);
                     $.ajax({
                         url: "./updatetransport",
                         data: {
@@ -643,8 +632,6 @@ function editeventtime(id, sdate, stime, edate, etime, success_callback,error_ca
                     
                 };
                 var b = function(ids,arr){
-                    console.log("www");
-                    console.log(arr);
                     $.ajax({
                         url: "./updatetransport",
                         data: {
@@ -722,13 +709,9 @@ function deleteevent() {
             },
             type:'POST',
             success: function(response, status, xhr){ 
-               console.log("deleted");
-               console.log(response);
                $('#eventModal').modal('hide');
                if (response.trans_up && response.trans_up.length > 0){
                     var a = function(ids,arr){
-                        console.log("www");
-                        console.log(arr);
                         $.ajax({
                             url: "./updatetransport",
                             data: {
@@ -747,8 +730,6 @@ function deleteevent() {
                         
                     };
                     var b = function(ids,arr){
-                        console.log("www");
-                        console.log(arr);
                         $.ajax({
                             url: "./updatetransport",
                             data: {
