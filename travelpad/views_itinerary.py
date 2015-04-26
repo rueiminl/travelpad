@@ -97,7 +97,7 @@ def get_calendar_events_json(request, itinerary_id):
             # 'start': timezone.localtime(tran.start_datetime).isoformat(),#event.start_datetime.isoformat(), #ISO8601
             # 'end': timezone.localtime(tran.end_datetime).isoformat(),#event.end_datetime.isoformat(), #ISO8601
             'editable' : False, # disable time ediable for transportation
-            'className' : 'transportation'})
+            'className' : ['transportation', tran.type]})
         calendar_events.append(tran_json)           
     response_text = json.dumps(calendar_events)
     return HttpResponse(response_text, content_type='application/json')

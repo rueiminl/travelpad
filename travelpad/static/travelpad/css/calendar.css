@@ -45,3 +45,22 @@
 	background: #00AAE7;
 /*	background: url("../img/dots.png") repeat-y center top;*/
 }
+
+.transportation.driving{
+	background-image:  url("../img/car.png");
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.transportation.walking{
+	background-image:  url("../img/walking.png");
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.transportation.transit{
+	background-image:  url("../img/bus.png");
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
