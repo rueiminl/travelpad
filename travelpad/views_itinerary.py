@@ -188,6 +188,8 @@ def message_json(request):
     if request.method == 'GET':
         messages = Message.objects.filter(related_itinerary=itinerary)
         results = [message.as_dict() for message in messages]
+        for message in results:
+            message.update({'can_edit':True})
         response_text = json.dumps(results)
         return HttpResponse(response_text, content_type='application/json')
     elif request.method == 'POST':

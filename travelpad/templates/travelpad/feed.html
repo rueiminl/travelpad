@@ -40,9 +40,16 @@
 								<img class="img-circle" ng-src="{{message.created_by.photo}}" width="50px" height="50px">
 							</div>
 							<div class="media-body">
+								<!-- <div class="dropdown pull-right" ng-show="message.can_edit">
+								  <a role="button" class="btn dropdown-toggle glyphicon glyphicon-option-horizontal" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true"></a>
+								  <ul class="dropdown-menu" role="menu" aria-labelledby="">
+								    <li role="presentation"><a role="menuitem" tabindex="-1" href="" ng-click="msgCtrl.deleteMessage(message)">Delete</a></li>
+								  </ul>
+								</div> -->
 								<p class="message-username"><b>{{message.created_by.username}}</b></p>
 								<!-- <small>{{message.creation_time | prettyDate }}</small> -->
 								<small time="{{message.creation_time}}"></small>
+								
 							</div>
 						</div> <!-- end of media -->
 						<p style="margin-top:15px;margin-left:10px;" class="message-content">{{message.content}}</p>

@@ -38,7 +38,7 @@
 	</head>
 
 	<body>
-	
+		{% block body %}
 		<div class="nav">
 			{% block nav %}
 			{% endblock %}
@@ -59,7 +59,8 @@
 		    {% endblock %}
 		</div>
 		
-		{% block tail %}
+			{% block tail %}
+			{% endblock %}
 		{% endblock %}
 	</body>
 	
