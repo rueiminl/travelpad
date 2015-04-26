@@ -195,10 +195,17 @@ var g_map4;
                                     });
                                     
                                 };
+                                var te_callback = function(){
+                                    alert("Can't find a path! Will use place filler for transportation");
+                                };
+                                var te2_callback = function(){
+                                    alert("Can't find a path! Will use place filler for transportation");
+                                    s_callback();
+                                };
                                 for (var i = 0; i < response.trans_up.length-1; i++){
-                                    getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],a,e_callback);
+                                    getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],a,te_callback);
                                 }
-                                getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,e_callback);
+                                getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,te2_callback);
                             }
                             else
                                 s_callback();
@@ -675,10 +682,17 @@ function editeventtime(id, sdate, stime, edate, etime, success_callback,error_ca
                     });
                     
                 };
+                var te_callback = function(){
+                    alert("Can't find a path! Will use place filler for transportation");
+                };
+                var te2_callback = function(){
+                    alert("Can't find a path! Will use place filler for transportation");
+                    success_callback();
+                };
                 for (var i = 0; i < response.trans_up.length-1; i++){
-                    getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],a,error_callback);
+                    getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],a,te_callback);
                 }
-                getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,error_callback);
+                getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,te2_callback);
             }
             else 
                 success_callback();
@@ -774,10 +788,17 @@ function deleteevent() {
                         });
                         
                     };
+                    var te_callback = function(){
+                        alert("Can't find a path! Will use place filler for transportation");
+                    };
+                    var te2_callback = function(){
+                        alert("Can't find a path! Will use place filler for transportation");
+                        s_callback();
+                    };
                     for (var i = 0; i < response.trans_up.length-1; i++){
-                        getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],a,e_callback);
+                        getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],a,te_callback);
                     }
-                    getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,e_callback);
+                    getTime2(response.trans_up[i].id, [[response.pevent_up[i].place.latitude,response.pevent_up[i].place.longitude]], [[response.nevent_up[i].place.latitude,response.nevent_up[i].place.longitude]],[response.trans_up[i].type],[response.trans_up[i].start],b,te2_callback);
                 }
                $.toaster({ priority : 'success', title : 'Success', message : 'Event deleted'});
                s_callback();               
