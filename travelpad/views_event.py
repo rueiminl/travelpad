@@ -231,6 +231,9 @@ def eventedit_json(request):
         etime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
         newevent.start_datetime  = timezone.make_aware(stime, timezone.get_current_timezone())
         newevent.end_datetime = timezone.make_aware(etime, timezone.get_current_timezone())
+        if (newevent.start_datetime >= newevent.end_datetime):
+            success = 0
+            errors.append("End date/time can't be earlier than start date/time.");
         newevent.note = form.cleaned_data['note']
         newevent.place_id = request.POST['placeId']
         newevent.place_name = request.POST['placeName']
@@ -528,6 +531,9 @@ def eventeditwithID_json(request):
         etime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
         newevent.start_datetime  = timezone.make_aware(stime, timezone.get_current_timezone())
         newevent.end_datetime = timezone.make_aware(etime, timezone.get_current_timezone())
+        if (newevent.start_datetime >= newevent.end_datetime):
+            success = 0
+            errors.append("End date/time can't be earlier than start date/time.");
         newevent.note = form.cleaned_data['note']
         overlap = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__lt=newevent.end_datetime).filter(end_datetime__gt=newevent.start_datetime).exclude(id = request.POST['eventId'])
         if overlap.count() > 0: #overlap
@@ -825,6 +831,8 @@ def editeventtime_json(request):
     snstart = timezone.make_aware(nstart, timezone.get_current_timezone())
     nend = datetime.combine(datetime.strptime(request.POST['edate'], "%Y-%m-%d"), datetime.strptime(request.POST['etime'], '%H:%M').time())
     snend = timezone.make_aware(nend, timezone.get_current_timezone())
+    if (newevent.start_datetime >= newevent.end_datetime):
+        return HttpResponseBadRequest('End Time Larger Than Start Time!', mimetype = 'application/json', status = 409)
     overlap = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__lt=snend).filter(end_datetime__gt=snstart).exclude(id = request.POST['eid'])
     if overlap.count() > 0: #overlap
         return HttpResponseBadRequest('Overlapped Time!', mimetype = 'application/json', status = 409)
