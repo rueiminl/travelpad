@@ -29,8 +29,9 @@
 	//initialize
 	this.getuser();
 	
+    this.reload()
 	//periodically update elements
-    $interval(t.reload, 3000);
+    $interval(t.reload, 5000);
     
     //setup attributes in modal 
     this.addCost = function(){
@@ -42,6 +43,7 @@
 		}).error(function(data) {
 			$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
     	});
+        this.reload()
 	};
     
 	this.editCost = function(cost){
@@ -59,6 +61,7 @@
                 $.toaster({ priority : 'danger', title : 'Error', message : data.errors});
             });
         }
+        this.reload()
 	};
     
     this.backcolor = function(cost){
@@ -86,6 +89,7 @@
         }).error(function(data) {
             $.toaster({ priority : 'danger', title : 'Error', message : data.errors});
         });
+        this.reload()
     };
     
     this.updateMyCost = function(){
