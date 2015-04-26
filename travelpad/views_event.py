@@ -29,6 +29,8 @@ from travelpad.forms_event import *
 from travelpad.views_itinerary import demo
 from datetime import time, datetime
 
+@login_required    
+@transaction.atomic
 def home_page(request):
     # render takes: (1) the request,
     #               (2) the name of the view to generate, and
@@ -44,7 +46,9 @@ def home_page(request):
     context['transportationform'] = TransportationForm(prefix = "t_")
     context['restaurantform'] = RestaurantForm(prefix = "r_")
     return render(request, 'travelpad/addevent.html', context)
-    
+
+@login_required    
+@transaction.atomic    
 def eventedit(request):
     if request.method == 'GET':
         context = {}
@@ -170,6 +174,8 @@ def eventedit(request):
         context['iid'] = request.session["itinerary_id"]
         return render(request, 'travelpad/addevent_error.html', context)
         
+@login_required    
+@transaction.atomic        
 def eventedit_json(request):
     print request
     if request.method == 'GET':
@@ -328,7 +334,9 @@ def eventedit_json(request):
         response_data = {'errors': errors, 'formerrors': returnform.errors}
         return HttpResponse(json.dumps(response_data), content_type="application/json")
         #return render(request, 'travelpad/addevent_error.html', context)
-        
+
+@login_required    
+@transaction.atomic        
 def eventeditwithID(request):
     print request.user
     if request.method == 'GET':
@@ -493,7 +501,8 @@ def eventeditwithID(request):
         context['iid'] = request.session["itinerary_id"]
         return render(request, 'travelpad/addevent_error.html', context)
         
-        
+@login_required    
+@transaction.atomic        
 def eventeditwithID_json(request):
     print request.user
     if request.method == 'GET':
@@ -701,6 +710,8 @@ def eventeditwithID_json(request):
         return HttpResponse(json.dumps(response_data), content_type="application/json")
         #return render(request, 'travelpad/addevent_error.html', context)
         
+@login_required    
+@transaction.atomic        
 def editeventtime(request):
     if request.method == 'GET':
         raise Http404  
@@ -817,7 +828,9 @@ def editeventtime(request):
     response_data['status'] = 'success'
     return HttpResponse(json.dumps(response_data), content_type="application/json")
     #return HttpResponseBadRequest('', mimetype = 'application/json', status = 409)
-    
+
+@login_required    
+@transaction.atomic    
 def editeventtime_json(request):
     if request.method == 'GET':
         raise Http404  
@@ -962,7 +975,9 @@ def editeventtime_json(request):
     response_data['pevent_up'] = pevent_up
     response_data['nevent_up'] = nevent_up
     return HttpResponse(json.dumps(response_data), content_type="application/json")
-        
+
+@login_required    
+@transaction.atomic    
 def transporteditwithid(request):
     trans = Transportation.objects.get(id = request.POST['eventId'])
     form = TransportationForm(request.POST, prefix = "t_")
@@ -972,7 +987,9 @@ def transporteditwithid(request):
         trans.save()
     #return redirect(reverse('demo'))
     return redirect(reverse('schedule'))
-    
+
+@login_required    
+@transaction.atomic    
 def transporteditwithid_json(request):
     trans_up = []
     pevent_up = []
@@ -994,19 +1011,25 @@ def transporteditwithid_json(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
     #return redirect(reverse('demo'))
     #return redirect(reverse('schedule'))
-        
+
+@login_required    
+@transaction.atomic    
 def getevent(request):
     print request.POST['eid']
     event = Event.objects.get(id = request.POST['eid'])
     dictionary = event.as_dict()
     return HttpResponse(json.dumps({"data": dictionary}), content_type='application/json')
-    
+
+@login_required    
+@transaction.atomic    
 def gettransport(request):
     print request.POST['eid']
     trans = Transportation.objects.get(id = request.POST['eid'])
     dictionary = trans.as_dict()
     return HttpResponse(json.dumps({"data": dictionary}), content_type='application/json')
-    
+
+@login_required    
+@transaction.atomic    
 def deleteevent(request):
     print request.POST['eid']
     event = Event.objects.get(id = request.POST['eid'])
@@ -1024,7 +1047,9 @@ def deleteevent(request):
     response_data = {}
     response_data['status'] = 'success'
     return HttpResponse(json.dumps(response_data), content_type="application/json")
-    
+
+@login_required    
+@transaction.atomic    
 def deleteevent_json(request):
     print request.POST['eid']
     trans_up = []
@@ -1051,7 +1076,9 @@ def deleteevent_json(request):
     response_data['pevent_up'] = pevent_up
     response_data['nevent_up'] = nevent_up
     return HttpResponse(json.dumps(response_data), content_type="application/json")
-    
+
+@login_required    
+@transaction.atomic    
 def updatetransport(request):
     ids = request.POST['ids']
     arr = request.POST['arr']
