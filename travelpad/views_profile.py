@@ -78,7 +78,7 @@ def get_user_photo(request, id):
 	travelpaduser = get_travelpaduser(id)
 	if not travelpaduser.photo:
 		try:
-			with open("pictures/DefaultPersonPhoto.png", "rb") as f:
+			with open("travelpad/static/travelpad/img/DefaultPersonPhoto.png", "rb") as f:
 				return HttpResponse(f.read(), content_type="image/png")
 		except:
 			raise Http404
