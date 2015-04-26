@@ -55,9 +55,9 @@ class TransportationForm(forms.Form):
     ('transit', 'transit'),)
     format = forms.ChoiceField(choices = FORMAT_CHOICES,required = True, label = 'Transportation type')
     note = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}))
-    todo = forms.CharField(max_length=60, required=False, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'add things to do'}))
-    cost = forms.DecimalField(max_digits=10,decimal_places=2, required=False)
-    split = forms.BooleanField(required=False, label='Need split')
+    #todo = forms.CharField(max_length=60, required=False, widget = forms.TextInput(attrs={'class' : 'form-control', 'placeholder': 'add things to do'}))
+    #cost = forms.DecimalField(max_digits=10,decimal_places=2, required=False)
+    #split = forms.BooleanField(required=False, label='Need split')
         
     def clean(self):
         cleaned_data = super(TransportationForm, self).clean()
