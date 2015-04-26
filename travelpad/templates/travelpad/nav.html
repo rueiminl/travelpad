@@ -1,20 +1,20 @@
 		<nav class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
-				<a style="padding-top: 0" class="navbar-brand" href="{% url 'default' %}"><h3>TravelPad</h3></a>
+				<a class="navbar-brand" href="{% url 'default' %}">TravelPad</a>
 				<ul class="nav navbar-nav">
-					<li {{ itineraries_active }}><a href="{% url 'itineraries' %}"><h4>Itinerary</h4></a></li>
+					<li {{ itineraries_active }}><a href="{% url 'itineraries' %}">Itinerary</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<!-- <li style="margin-right:20px;">
 
 						<span style="color:white;">{{user.username}}</span>
 					</li> -->
-					<li {{ profile_active }}><a href="{% url 'profile' %}">
+					<li {{ profile_active }}><a style="padding: 5px;" href="{% url 'profile' %}">
 						<img class="img-circle" src="{% url 'get_user_photo' user.id %} " width="40px" height="40px">
 						{{user.username}}
 					</a></li>
 					<!-- <li {{ profile_active }}><a href="{% url 'profile' %}">Profile</a></li> -->
-					<li><a href="{% url 'logout' %}"><h4>Logout</h4></a></li>
+					<li><a href="{% url 'logout' %}">Logout</a></li>
 				</ul>
 			</div>
 		</nav>
