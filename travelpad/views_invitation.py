@@ -8,6 +8,7 @@ from travelpad.views_itinerary import demo
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 
 def get_itinerary_id_by_session(request):
 	if not 'itinerary_id' in request.session:
@@ -47,8 +48,8 @@ def participant_json(request):
 	if request.method == 'GET':
 		results = []
 		results = [participant.as_dict() for participant in itinerary.participants.all()]
-		for result in results:
-			del result["photo"]
+		# for result in results:
+		#	del result["photo"]
 		response_text = json.dumps(results)
 		print response_text
 		return HttpResponse(response_text, content_type='application/json')
@@ -102,7 +103,7 @@ TravelPad team
 				print "exception happens while send_mail"
 				print err
 		results = {"success":"true",
-		           "participant": {"id" : user.id, "username" : user.username}
+		           "participant": {"id" : user.id, "username" : user.username, "photo" : reverse('get_user_photo', kwargs={'id':user.id})}
 		          }
 		return HttpResponse(json.dumps(results), content_type='application/json')
 	
