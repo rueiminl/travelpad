@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
+    url('^debug$', 'travelpad.views_debug.debug', name='debug'),
     url('^debug_database$', 'travelpad.views_debug.debug_database', name='debug_database'),
     url('^debug_add_itinerary$', 'travelpad.views_debug.debug_add_itinerary', name='debug_add_itinerary'),
     url('^debug_add_user$', 'travelpad.views_debug.debug_add_user', name='debug_add_user'),

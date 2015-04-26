@@ -26,6 +26,16 @@ var g_map4;
     this.setSave = function(){
         this.button="Save";
     };
+    
+    this.initialize_event = function(){
+        $http.get("/itinerary-json").success(function(data){
+            myLatlng = new google.maps.LatLng(data.place.latitude, data.place.longitude);
+            initialize_attraction();
+            initialize_hotel();
+            initialize_transportation();
+            initialize_restaurant();
+        });
+    };
 	
     this.ready = function(){
       /*var script = document.createElement('script');
@@ -68,12 +78,17 @@ var g_map4;
       $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         $('#tabName').val($('.nav-tabs .active').text());
         google.maps.event.trigger(g_map, 'resize');
+        g_map.setCenter(myLatlng);
         google.maps.event.trigger(g_map2, 'resize');
+        g_map2.setCenter(myLatlng);
         google.maps.event.trigger(g_map3, 'resize');
+        g_map3.setCenter(myLatlng);
         google.maps.event.trigger(g_map4, 'resize');
+        g_map4.setCenter(myLatlng);
       });
        $("#eventModal").on("shown.bs.modal", function(e) {
         google.maps.event.trigger(g_map, "resize");
+        //g_map.setCenter(myLatlng);
       });
        $("#eventModal").on('hidden.bs.modal', function () {
             $(this).find('form')[0].reset();
@@ -204,7 +219,7 @@ var g_map4;
        $('#map-eventcanvas3').hide();
        $('.nav-tabs a[href="#Transportation"]').hide();
        
-       initialize_event();
+       this.initialize_event();
        
        //$('#datetimepicker1').datetimepicker();
 	};
@@ -215,29 +230,25 @@ var g_map4;
   }]);
 })();
 
-// This sample uses the Place Autocomplete widget to allow the user to search
-// for and select a place. The sample then displays an info window containing
-// the place ID and other information about the place that the user has
-// selected.
-      function initialize_event() {
-        initialize_attraction();
-        initialize_hotel();
-        initialize_transportation();
-        initialize_restaurant();
-      }
       var searchBox1;
+      var mapOptions;
+      var myLatlng;
+      var zoomVar = 12;
       
       function initialize_attraction() {
 
         var markers = [];
-        var map = new google.maps.Map(document.getElementById('map-eventcanvas'), {
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        });
+        mapOptions = {
+        center: myLatlng,
+        zoom: zoomVar, 
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map-eventcanvas'), mapOptions);
 
-        var defaultBounds = new google.maps.LatLngBounds(
+        /*var defaultBounds = new google.maps.LatLngBounds(
             new google.maps.LatLng(-33.8902, 151.1759),
             new google.maps.LatLng(-33.8474, 151.2631));
-        map.fitBounds(defaultBounds);
+        map.fitBounds(defaultBounds);*/
 
         // Create the search box and link it to the UI element.
         var input = /** @type {HTMLInputElement} */(
@@ -291,6 +302,7 @@ var g_map4;
           }
 
           map.fitBounds(bounds);
+          map.setZoom(15);
         });
         // [END region_getplaces]
 
@@ -308,14 +320,17 @@ var g_map4;
       
       function initialize_hotel() {
         var markers = [];
-        var map = new google.maps.Map(document.getElementById('map-eventcanvas2'), {
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        });
+        mapOptions = {
+        center: myLatlng,
+        zoom: zoomVar, 
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map-eventcanvas2'), mapOptions);
 
-        var defaultBounds = new google.maps.LatLngBounds(
+        /*var defaultBounds = new google.maps.LatLngBounds(
             new google.maps.LatLng(-33.8902, 151.1759),
             new google.maps.LatLng(-33.8474, 151.2631));
-        map.fitBounds(defaultBounds);
+        map.fitBounds(defaultBounds);*/
 
         // Create the search box and link it to the UI element.
         var input = /** @type {HTMLInputElement} */(
@@ -373,6 +388,7 @@ var g_map4;
           }
 
           map.fitBounds(bounds);
+          map.setZoom(15);
         });
         // [END region_getplaces]
 
@@ -381,7 +397,6 @@ var g_map4;
         google.maps.event.addListener(map, 'bounds_changed', function() {
           var bounds = map.getBounds();
           searchBox.setBounds(bounds);
-          google.maps.event.trigger(map, 'resize');
         });
         g_map2 = map;
         /*var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
@@ -391,14 +406,17 @@ var g_map4;
       
       function initialize_transportation() {
         var markers = [];
-        var map = new google.maps.Map(document.getElementById('map-eventcanvas3'), {
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        });
+        mapOptions = {
+        center: myLatlng,
+        zoom: zoomVar, 
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map-eventcanvas3'), mapOptions);
 
-        var defaultBounds = new google.maps.LatLngBounds(
+        /*var defaultBounds = new google.maps.LatLngBounds(
             new google.maps.LatLng(-33.8902, 151.1759),
             new google.maps.LatLng(-33.8474, 151.2631));
-        map.fitBounds(defaultBounds);
+        map.fitBounds(defaultBounds);*/
 
         // Create the search box and link it to the UI element.
         var input = /** @type {HTMLInputElement} */(
@@ -452,6 +470,7 @@ var g_map4;
           }
 
           map.fitBounds(bounds);
+          map.setZoom(15);
         });
         // [END region_getplaces]
 
@@ -460,7 +479,6 @@ var g_map4;
         google.maps.event.addListener(map, 'bounds_changed', function() {
           var bounds = map.getBounds();
           searchBox.setBounds(bounds);
-          google.maps.event.trigger(map, 'resize');
         });
         g_map3 = map;
         /*var idleListener = google.maps.event.addListener(map, 'mousemove', function() {
@@ -470,14 +488,17 @@ var g_map4;
       
       function initialize_restaurant() {
         var markers = [];
-        var map = new google.maps.Map(document.getElementById('map-eventcanvas4'), {
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        });
+        mapOptions = {
+        center: myLatlng,
+        zoom: zoomVar, 
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map-eventcanvas4'), mapOptions);
 
-        var defaultBounds = new google.maps.LatLngBounds(
+        /*var defaultBounds = new google.maps.LatLngBounds(
             new google.maps.LatLng(-33.8902, 151.1759),
             new google.maps.LatLng(-33.8474, 151.2631));
-        map.fitBounds(defaultBounds);
+        map.fitBounds(defaultBounds);*/
 
         // Create the search box and link it to the UI element.
         var input = /** @type {HTMLInputElement} */(
@@ -532,6 +553,7 @@ var g_map4;
           }
 
           map.fitBounds(bounds);
+          map.setZoom(15);
         });
         // [END region_getplaces]
 
@@ -540,7 +562,6 @@ var g_map4;
         google.maps.event.addListener(map, 'bounds_changed', function() {
           var bounds = map.getBounds();
           searchBox.setBounds(bounds);
-          google.maps.event.trigger(map, 'resize');
         });
         g_map4 = map;
         /*var idleListener = google.maps.event.addListener(map, 'mousemove', function() {

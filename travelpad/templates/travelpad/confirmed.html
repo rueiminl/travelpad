@@ -4,9 +4,30 @@
 {% endblock %}
 {% block content %}
 <div class="jumbotron">
+<h1>Welcome to TravelPad!</h1>
+<h2>Your collaborative platform for planning itinerary with friends</h2>
 <p>
-Congratulations! You have confirmed your email address and thus signed up successfully!
-Please <a href="{% url 'login' %}">login</a> and enjoy the TravelPad!
+Congratulations! You have confirmed your email address and thus signed up successfully!<br>
+Please <a href="{% url 'login' %}">login</a> and enjoy the TravelPad!<br>
+<br>
+You will be redirect to the <a href="{% url 'login' %}">Login</a> page in <span id="remainSeconds">5</span> seconds...
 </p>
 </div>
+{% endblock %}
+
+{% block tail %}
+	<script>
+		secondPass = function() {
+			var sec = parseInt($('#remainSeconds').text());
+			if (sec == 0) {
+				location.href = "{% url 'login' %}";
+				return;
+			}
+			$("#remainSeconds").text(sec - 1);
+			setTimeout(secondPass, 1000);
+		};
+		$(document).ready(function(){
+			setTimeout(secondPass, 1000);
+		});
+	</script>
 {% endblock %}
