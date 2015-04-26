@@ -9,11 +9,15 @@ from django.core import serializers
 from django.http import HttpResponse
 
 def get_travelpaduser(id):
-	user = get_object_or_404(TravelPadUser, id=id)
+	user = get_object_or_404(User, id=id)
 	if not user:
 		print "get_travelpaduser(" + id + ") not found"
 		raise Http404
-	return user
+	travelpaduser = get_object_or_404(TravelPadUser, user=user)
+	if not travelpaduser:
+		print "get_travelpaduser(" + id + ") not found"
+		raise Http404
+	return travelpaduser
 
 @login_required
 def profile(request):
