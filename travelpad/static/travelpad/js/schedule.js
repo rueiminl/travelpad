@@ -28,6 +28,15 @@
 			},
 		};
 		
+		//TODO
+		this.getShortString = function(str){
+			console.log(str);
+			if(str.length > 80){
+				return str.substring(0,80) + "...";
+			}else{
+				return str;
+			}
+		};
 		
 	
 		$http.get("/itinerary-json").success(function(data){
