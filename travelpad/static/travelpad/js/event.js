@@ -207,10 +207,10 @@ var g_map4;
                         }
                     } 
                 },
-                error: function(items) 
+                error: function(xhr, status, error)
                 {
                     var newDoc = document.open("text/html", "replace");
-                    newDoc.write(items);
+                    newDoc.write(xhr.responseText);
                     newDoc.close();
                 }
             });
