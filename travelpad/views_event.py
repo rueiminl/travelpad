@@ -354,7 +354,16 @@ def eventeditwithID(request):
     if 'save' in request.POST:
         isproposed = False;
     elif 'propose' in request.POST:
-        isproposed = True;
+        isproposed = True;   
+        
+    if request.user:
+        new_user = request.user
+    else:
+        try:
+            new_user = User.objects.get(username="username")
+        except ObjectDoesNotExist:
+            new_user = User.objects.create_user(username="username", password="password1")
+            new_user.save()
 
     newevent = Event.objects.get(id = request.POST['eventId'])
     newevent.isproposed = isproposed
@@ -524,6 +533,15 @@ def eventeditwithID_json(request):
         isproposed = False;
     elif request.POST['button'] == 'Propose':
         isproposed = True;
+     
+    if request.user:
+        new_user = request.user
+    else:
+        try:
+            new_user = User.objects.get(username="username")
+        except ObjectDoesNotExist:
+            new_user = User.objects.create_user(username="username", password="password1")
+            new_user.save()
         
     if request.POST['tabName']=="Transportation":
         return transporteditwithid_json(request)
@@ -994,15 +1012,27 @@ def transporteditwithid_json(request):
     trans_up = []
     pevent_up = []
     nevent_up = []
+    
+    if request.user:
+        new_user = request.user
+    else:
+        try:
+            new_user = User.objects.get(username="username")
+        except ObjectDoesNotExist:
+            new_user = User.objects.create_user(username="username", password="password1")
+            new_user.save()
+            
     trans = Transportation.objects.get(id = request.POST['eventId'])
     form = TransportationForm(request.POST, prefix = "t_")
     #print request.session["itinerary_id"] 
     if form.is_valid():
         trans.type = form.cleaned_data['format']
+        trans.note = form.cleaned_data['note']
         trans.save()
         trans_up.append(trans.as_dict());
         pevent_up.append(trans.source.as_dict())
         nevent_up.append(trans.destination.as_dict())
+        thistinery = Itinerary.objects.get(id = request.session["itinerary_id"])
     response_data = {}
     response_data['status'] = 'success'
     response_data['trans_up'] = trans_up
