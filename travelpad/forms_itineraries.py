@@ -12,9 +12,13 @@ class ItineraryForm(forms.ModelForm):
 	start_date = forms.DateField(widget = DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
 	end_date = forms.DateField(widget = DateTimePicker(options={"format": "YYYY-MM-DD", "pickTime": False}))
 	description = forms.CharField(max_length=3000, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add description here'}))
+	place_id = forms.CharField(widget=forms.HiddenInput())
+	place_lat = forms.CharField(widget=forms.HiddenInput())
+	place_lng = forms.CharField(widget=forms.HiddenInput())
+	place_name = forms.CharField(widget=forms.HiddenInput())
 	class Meta:
 		model = Itinerary
-		exclude = ('created_by', 'participants', 'place_id', 'place_lat', 'place_lng', 'place_name', )
+		exclude = ('created_by', 'participants', )
 	def clean_photo(self):
 		photo = self.cleaned_data['photo']
 		if not photo:

@@ -67,6 +67,9 @@
 					<div class="modal-body">
 						<form id="itineraryForm" enctype="multipart/form-data" action="{% url 'update_itinerary' %}" method="POST">
 							<input type="hidden" id="existed_id" />
+							{% for hidden in itinerary_form.hidden_fields %}
+							{{ hidden }}
+							{% endfor %}								
 							<table>
 								{% for field in itinerary_form.visible_fields %}
 								<tr>
@@ -77,7 +80,7 @@
 									</label></td>
 									<td>
 										{% if field.label == "Photo" %}
-										<img class="dialogthumbnail" id="modalImg" src="{% url 'get_itinerary_photo' %}/0"  alt="Not uploaded yet" />
+										<img class="img-thumbnail" id="modalImg" src="{% url 'get_itinerary_photo' %}/0"  alt="Not uploaded yet" />
 										<input name="clear" type="checkbox">Clear</input>
 										{% endif %}
 										{{field}}
@@ -98,10 +101,6 @@
 									</td>
 								</tr>
 							</table>
-							<input type="hidden" id="id_place_id" name="place_id" />
-							<input type="hidden" id="id_place_name" name="place_name" />
-							<input type="hidden" id="id_place_lat" name="place_lat" />
-							<input type="hidden" id="id_place_lng" name="place_lng" />
 							{% csrf_token %}
 						</form>
 					</div>
