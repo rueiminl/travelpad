@@ -28,21 +28,30 @@
 {% endblock %}
 
 {% block content %}
-		<input class="btn btn-info" id="addItineraryButton" type="button" value="&plus;" onclick="addItinerary()" />
-		<table>
-		{% for itinerary in itineraries %}
-			<tr>
-				<td><a href="{% url 'itinerary' itinerary.id %}">
-					<img src="{% url 'get_itinerary_photo' itinerary.id %}" class="thumbnail" />
-				</a></td>
-				<td class="info">
-						<input class="btn btn-info" id="editItineraryButton" type="button" value="Edit" onclick="editItinerary({{itinerary.id}})" />
-					<h2>{{itinerary.title}}</h2>
-					{{itinerary.description}}
-				</td>
-			</tr>
-		{% endfor %}
-		</table>
+		<div class="row row-offcanvas row-offcanvas-right">
+			<div class="col-xs-12 col-lg-12">
+				<div class="jumbotron">
+					<h1>TravelPad</h1>
+					<p>Here lists all your itinerary.</p>
+					<input class="btn btn-info" id="addItineraryButton" type="button" value="&plus;" onclick="addItinerary()" />
+				</div>
+				<div class="row">
+					{% for itinerary in itineraries %}
+					<div class="col-xs-6 col-lg-4">
+						<img src="{% url 'get_itinerary_photo' itinerary.id %}" class="img-thumbnail" />
+						<input style="float:right;" class="btn btn-info" id="editItineraryButton" type="button" value="Edit" onclick="editItinerary({{itinerary.id}})" />
+						<h2>{{itinerary.title}}</h2>
+						<p>{{itinerary.description}}</p>
+					</div><!--/.col-xs-6.col-lg-4-->
+				{% if forloop.counter|divisibleby:3 %}
+				</div>
+				<hr class="featurette-divider">
+				<div class="row">
+				{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+		</div>
 
 		<div class="modal fade" id="itineraryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
