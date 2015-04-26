@@ -1,15 +1,14 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-  <meta charset="utf-8">
+{% extends "travelpad/base.html" %}
+{% block head %}
   <title>TravelPad -- Confirmation needed</title>
-</head>
-
-<body>
+{% endblock %}
+{% block content %}
+<div class="jumbotron">
 <p>
 A confirmation email has been sent to {{email}}.  Please click the link in that email to confirm your email address and complete your registation for your TravelPad.
 </p>
-</body>
-</html>
+</div>
+{% endblock %}
+
 
 

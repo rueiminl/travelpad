@@ -208,6 +208,37 @@ def message_json(request):
 
 @login_required
 @transaction.atomic
+def message_id_json(request, message_id):
+    itinerary_id = request.session['itinerary_id']
+    itinerary = Itinerary.objects.get(id=itinerary_id)  
+    try:
+        message = Message.objects.get(id=message_id)
+        if request.method == 'PUT':
+            in_data = json.loads(request.body)
+            print in_data
+            form = MessageForm(data={'content': in_data.get('content')}, instance=message)
+            if form.is_valid():
+                entry = form.save()  
+                results = entry.as_dict()
+                response_text = json.dumps(results)          
+                return HttpResponse(response_text, content_type='application/json')
+            else:
+                print form
+                errors = []
+                errors.append('Woops! Something wrong.')
+                return HttpResponseBadRequest(json.dumps({'errors':errors}), content_type='application/json')
+        elif request.method == 'DELETE':
+            message.delete()
+            return HttpResponse({}, content_type='application/json')
+    except ObjectDoesNotExist:
+        errors = []
+        errors.append('Message not found.')
+        return HttpResponseNotFound(json.dumps({'errors':errors}), content_type='application/json')
+    except Exception as inst:
+        print inst
+
+@login_required
+@transaction.atomic
 def reply_json(request):
     if request.method == 'POST':
         in_data = json.loads(request.body)
