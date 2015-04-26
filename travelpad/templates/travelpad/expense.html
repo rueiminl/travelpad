@@ -153,7 +153,7 @@
 						
 						<!-- Select Owner -->
 						<fieldset class="form-group" ng-controller="ParticipantController as itCtrl">
-							<select ng-model="costCtrl.newCost.owner" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants track by owner.id" title="Onwer">
+							<select ng-model="costCtrl.newCost.owner" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants track by owner.id">
 						    <option value="">Select Owner</option>
 							</select>
 						</fieldset>
@@ -161,7 +161,7 @@
                         <!-- Select participant -->
 						<fieldset class="form-group" ng-controller="ParticipantController as itCtrl">
                             <label>Select participiants:</label>
-							<select multiple ng-model="costCtrl.newCost.participant" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants track by owner.id" title="Onwer">
+							<select multiple ng-model="costCtrl.newCost.participant" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants track by owner.id">
 							</select>
 						</fieldset>				
 				</div>
@@ -214,7 +214,7 @@
 						
 						<!-- Select Owner -->
 						<fieldset class="form-group" ng-controller="ParticipantController as itCtrl">
-							<select ng-model="costCtrl.selectedCost.owner" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants track by owner.id" title="Onwer">
+							<select ng-model="costCtrl.selectedCost.owner" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants track by owner.id">
 						    <option value="">Select Owner</option>
 							</select>
 						</fieldset>
@@ -222,7 +222,7 @@
                         <!-- Select participant -->
 						<fieldset class="form-group" ng-controller="ParticipantController as itCtrl">
                             <label>Select participiants:</label>
-							<select multiple ng-model="costCtrl.selectedCost.participant" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants track by owner.id" title="Onwer">
+							<select multiple ng-model="costCtrl.selectedCost.participant" class="form-control" ng-options="owner as owner.username for owner in itCtrl.participants track by owner.id">
 							</select>
 						</fieldset>
 					
