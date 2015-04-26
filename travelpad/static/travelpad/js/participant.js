@@ -37,6 +37,8 @@
 		});
 	};
 	this.delete = function(username) {
+		if (confirm("Are you sure you want to kick out the user from this itinerary? It might break his/her heart...") == false)
+			return;
 		$http({
 			url: "/participant-json",
 			method: "POST",

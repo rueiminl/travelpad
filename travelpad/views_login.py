@@ -48,7 +48,7 @@ verify your email address and complete the registration of your account:
 Cheers!
 TravelPad team
 """ % (request.get_host(), reverse('confirm', args=(new_user.username, token)))
-	send_mail(subject="Verify your email address", message= email_body, from_email="rueiminl@andrew.cmu.edu", recipient_list=[new_user.email])
+	send_mail(subject="Verify your email address", message= email_body, from_email="travelpadteam@gmail.com", recipient_list=[new_user.email])
 	context['email'] = form.cleaned_data['email']
 	return render(request, 'travelpad/needs-confirmation.html', context)
 
