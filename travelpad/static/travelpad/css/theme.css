@@ -1,3 +1,8 @@
+body{
+	/*background-color: #f7f8f9;*/
+	  background: #f5f6f7 url("../img/gradient_texture.jpg") repeat-x 0 0;
+}
+
 .ng-invalid.ng-dirty{
     border-color:red;
 }
@@ -47,9 +52,11 @@
     -o-background-size: cover;
 }
 
+
 .navbar-brand{
 	font-family: Copperplate, 'Copperplate Gothic Light', fantasy;
 }
+
 
 /* Checkbox ref: http://bootsnipp.com/snippets/featured/animated-radios-amp-checkboxes-nojs */
 .checkbox label:after, 

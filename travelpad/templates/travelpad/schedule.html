@@ -43,13 +43,14 @@
 	  					<li ng-class="{active:tab.isSet(2)}">
 	  			            <a href role="button" ng-click="tab.setTab(2)"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map</a></li>
 	  			    </ul>
-					<h1>{{scheduleCtrl.itinerary.title}} <br/>
-						<small ng-show="scheduleCtrl.collapseDesc">{{scheduleCtrl.itinerary.description.substring(0,80) + "..."}}</small>		
-						<small ng-hide="scheduleCtrl.collapseDesc">{{scheduleCtrl.itinerary.description}}</small>			
-					</h1>
+					<h1>{{scheduleCtrl.itinerary.title}}</h1>
+					<h4><span class="glyphicon glyphicon-map-marker"><span> {{scheduleCtrl.itinerary.place.name}}</h4>
+					<h4><span class="glyphicon glyphicon-calendar"><span> {{scheduleCtrl.itinerary.start_date|date:'MMM d, yyyy'}}&#8213;{{scheduleCtrl.itinerary.end_date|date:'MMM d, yyyy'}}</h4>
+					<h3><small ng-show="scheduleCtrl.collapseDesc" class="">{{scheduleCtrl.itinerary.description.substring(0,80) + "..."}}</small>
+					<small ng-hide="scheduleCtrl.collapseDesc">{{scheduleCtrl.itinerary.description}}</small></h3>
 					
-					<button class="hidden-xs btn btn-default glyphicon glyphicon-menu-down" ng-show="scheduleCtrl.collapseDesc" ng-click="scheduleCtrl.collapseDesc = !scheduleCtrl.collapseDesc;"></button>
-					<button class="hidden-xs btn btn-default glyphicon glyphicon-menu-up" ng-hide="scheduleCtrl.collapseDesc" ng-click="scheduleCtrl.collapseDesc = !scheduleCtrl.collapseDesc;"></button>
+					<a role="button" class="hidden-xs btn glyphicon glyphicon-menu-down" ng-show="scheduleCtrl.collapseDesc" ng-click="scheduleCtrl.collapseDesc = !scheduleCtrl.collapseDesc;"></a>
+					<a role="button" class="hidden-xs btn glyphicon glyphicon-menu-up" ng-hide="scheduleCtrl.collapseDesc" ng-click="scheduleCtrl.collapseDesc = !scheduleCtrl.collapseDesc;"></a>
 				</div>
 				<button class="btn btn-default" ng-click="scheduleCtrl.addEvent()">Add Event</button>
 				

@@ -2,7 +2,7 @@
 	var app = angular.module('myApp');
 	
   	
-	app.controller('ScheduleController', ['$http', function($http){
+	app.controller('ScheduleController', ['$http', '$interval', function($http, $interval){
 		var t = this;
 		this.itinerary = {};
 		this.events = [];
@@ -137,6 +137,11 @@
 					}
 				}()),
 			}); // end init calendar
+			
+			
+			// $interval(function(){
+// 				$('#calendar').fullCalendar('refetchEvents');
+// 			}, 3000);
 			
 			// init map
 			setCity(data.place.latitude, data.place.longitude);
