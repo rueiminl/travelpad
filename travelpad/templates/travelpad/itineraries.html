@@ -53,8 +53,8 @@
 								<div class="dropdown pull-right">
 								  <a role="button" class="btn dropdown-toggle glyphicon glyphicon-option-horizontal" type="button"  data-toggle="dropdown" aria-expanded="true"></a>
 								  <ul class="dropdown-menu" role="menu" aria-labelledby="" >
-									  <li role="presentation"><a role="menuitem" tabindex="-1" href="">Edit Itinerary</a></li>
-								  	  <li role="presentation"><a role="menuitem" tabindex="-1" href="">Delete</a></li>
+									  <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:editItinerary({{itinerary.id}});">Edit Itinerary</a></li>
+								  	  <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:deleteItinerary({{itinerary.id}});">Delete</a></li>
 								  </ul>
 								</div>
 								</span>
@@ -90,8 +90,8 @@
 								<div class="dropdown pull-right">
 								  <a role="button" class="btn dropdown-toggle glyphicon glyphicon-option-horizontal" type="button"  data-toggle="dropdown" aria-expanded="true"></a>
 								  <ul class="dropdown-menu" role="menu" aria-labelledby="" >
-									  <li role="presentation"><a role="menuitem" tabindex="-1" href="">Edit Itinerary</a></li>
-								  	  <li role="presentation"><a role="menuitem" tabindex="-1" href="">Delete</a></li>
+									  <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:editItinerary({{itinerary.id}});">Edit Itinerary</a></li>
+								  	  <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:deleteItinerary({{itinerary.id}});">Delete</a></li>
 								  </ul>
 								</div>
 								</span>
@@ -127,8 +127,8 @@
 								<div class="dropdown pull-right">
 								  <a role="button" class="btn dropdown-toggle glyphicon glyphicon-option-horizontal" type="button"  data-toggle="dropdown" aria-expanded="true"></a>
 								  <ul class="dropdown-menu" role="menu" aria-labelledby="" >
-									  <li role="presentation"><a role="menuitem" tabindex="-1" href="">Edit Itinerary</a></li>
-								  	  <li role="presentation"><a role="menuitem" tabindex="-1" href="">Delete</a></li>
+									  <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:editItinerary({{itinerary.id}});">Edit Itinerary</a></li>
+								  	  <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:deleteItinerary({{itinerary.id}});">Delete</a></li>
 								  </ul>
 								</div>
 								</span>
@@ -295,6 +295,10 @@
 					$('#itineraryModal').modal('show');
 				}
 			});
+		}
+		function deleteItinerary(id) {
+			$('#delete_id').val(id);
+			$('#deleteItineraryForm').submit();
 		}
 		function readURL(input) {
 			if (input.files && input.files[0]) {
