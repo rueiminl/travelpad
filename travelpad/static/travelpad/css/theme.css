@@ -39,7 +39,9 @@ body{
 /**
 * customize bootstrap
 */
-
+/*.jumbotron{
+	background: #fff;
+}*/
 .container {
     display: table;
     position: relative;
