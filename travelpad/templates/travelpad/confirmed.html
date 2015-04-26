@@ -1,16 +1,12 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>TravelPad - Confirmation</title>
-</head>
-
-<body>
+{% extends "travelpad/base.html" %}
+{% block head %}
+		<title>TravelPad - Itinerary List</title>
+{% endblock %}
+{% block content %}
+<div class="jumbotron">
 <p>
-Thank you for confirming your email address.
-Please <a href="{% url 'login' %}">login</a> to access the TravelPad.
+Congratulations! You have confirmed your email address and thus signed up successfully!
+Please <a href="{% url 'login' %}">login</a> and enjoy the TravelPad!
 </p>
-</body>
-</html>
-
-
+</div>
+{% endblock %}
