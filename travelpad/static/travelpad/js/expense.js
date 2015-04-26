@@ -18,8 +18,6 @@
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
 	    });
 	};
-	//initialize
-	this.reload();
     
     this.getuser = function(){
 		$http.get("/costs-user").success(function(data){
@@ -28,8 +26,8 @@
 	};
 	//initialize
 	this.getuser();
+    this.reload();
 	
-    this.reload()
 	//periodically update elements
     $interval(t.reload, 5000);
     
@@ -67,7 +65,7 @@
     this.backcolor = function(cost){
         if (cost.status == "Paid")
             return "paid";
-        else if (cost.owner && cost.owner.username==t.user.username)
+        else if (cost.owner && t.user && cost.owner.username==t.user.username)
             return "unpaid";
         else{
             for (var i = 0; i < cost.participant.length; i++){

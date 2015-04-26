@@ -82,9 +82,17 @@
 						<tr ng-repeat="cost in costCtrl.costs| orderBy:'-creation_time'" ng-class="costCtrl.backcolor(cost)">
 						<td><h4>${{cost.amount | number:2}}</h4></td>
 						<td><h4>{{cost.note}}</h4></td>
-						<td><h4>{{cost.owner.username}}</h4></td>
+						<td>
+                        <div ng-if="cost.owner">
+                            <h4>
+                            <img class="img-circle" ng-src="{{cost.owner.photo}}" width="30px" height="30px">
+                            {{cost.owner.username}}
+                            </h4>
+                        </div>
+                        </td>
                         <td>
                             <h4 ng-repeat="ptuser in cost.participant">
+                                <img class="img-circle" ng-src="{{ptuser.photo}}" width="30px" height="30px">
                                 {{ptuser.username}}
                             </h4>
                         </td>
