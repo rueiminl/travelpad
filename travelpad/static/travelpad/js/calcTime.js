@@ -56,9 +56,7 @@ function getTime2(ids, src, dest, mode, time, callback, errorhandle){
       }
       else{
         if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
-            wait = true;
-            setTimeout("wait = true", 2000);
-            getTime2(ids, src, dest, mode, time, callback, errorhandle)
+            setTimeout(function() {getTime2(ids, src, dest, mode, time, callback, errorhandle)}, 2000);     
         }
         else{
             console.log(response);
