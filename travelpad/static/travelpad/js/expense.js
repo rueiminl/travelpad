@@ -8,6 +8,7 @@
 	this.costs = [];
     this.newCost = {};
     this.selectedCost = {};
+    this.calculating = true;
 	
 	this.reload = function(){
 		$http.get("/costs").success(function(data){
@@ -28,8 +29,9 @@
 	//initialize
 	this.getuser();
 	
+    this.reload()
 	//periodically update elements
-    $interval(t.reload, 3000);
+    $interval(t.reload, 5000);
     
     //setup attributes in modal 
     this.addCost = function(){
@@ -41,6 +43,7 @@
 		}).error(function(data) {
 			$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
     	});
+        this.reload()
 	};
     
 	this.editCost = function(cost){
@@ -58,12 +61,13 @@
                 $.toaster({ priority : 'danger', title : 'Error', message : data.errors});
             });
         }
+        this.reload()
 	};
     
     this.backcolor = function(cost){
         if (cost.status == "Paid")
             return "paid";
-        else if (cost.owner.username==t.user.username)
+        else if (cost.owner && cost.owner.username==t.user.username)
             return "unpaid";
         else{
             for (var i = 0; i < cost.participant.length; i++){
@@ -85,6 +89,7 @@
         }).error(function(data) {
             $.toaster({ priority : 'danger', title : 'Error', message : data.errors});
         });
+        this.reload()
     };
     
     this.updateMyCost = function(){
@@ -93,7 +98,7 @@
             t.unpaidCost = 0;
             t.receiveCost = 0;
             for (var i = 0; i < t.costs.length; i++){
-                if (t.user.username == t.costs[i].owner.username)
+                if (t.user.username == t.costs[i].owner.username && t.costs[i].status == "Unpaid")
                     t.receiveCost += t.costs[i].amount;
                 for (var j = 0; j < t.costs[i].participant.length; j++){
                     if (t.user.username == t.costs[i].participant[j].username){
@@ -113,11 +118,10 @@
                     }
                 }
             }
+            t.calculating = false;
         }
         else{
-            t.unpaidCost = "Calculating....";
-            t.myCost = "Calculating....";
-            t.receiveCost = "Calculating....";
+            t.calculating = true;
         }
     };
 
