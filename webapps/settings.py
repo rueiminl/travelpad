@@ -103,9 +103,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    '/var/www/travelpad/travelpad/static',
-)
+
+STATIC_ROOT = '/home/ubuntu/team27/travelpad/'
+
+MEDIA_ROOT = '/home/ubuntu/team27/'
+
+MEDIA_URL = '/pictures/'
+#STATICFILES_DIRS = (
+#    '/var/www/travelpad/travelpad/static',
+#)
 
 EMAIL_HOST = config.get('Email', 'Host')
 EMAIL_PORT = config.get('Email', 'Port')

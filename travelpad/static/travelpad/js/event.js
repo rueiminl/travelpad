@@ -338,12 +338,12 @@ var g_map4;
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 	
 	var options = {
-    	    types: ['lodging']
+	    bounds: map.getBounds(),
+    	    types: ['restaurant']
   	};
 
-        var searchBox = new google.maps.places.Autocomplete(
-          /** @type {HTMLInputElement} */input, options);
-
+        var searchBox = new google.maps.places.SearchBox(input);
+//	searchBox.setTypes(["police"]);
         // [START region_getplaces]
         // Listen for the event fired when the user selects an item from the
         // pick list. Retrieve the matching places for that item.
