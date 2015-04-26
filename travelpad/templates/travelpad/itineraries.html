@@ -137,9 +137,9 @@
 			$('#id_end_date').val("");
 			$('#id_participants').val("");
 			$('#myModalLabel').text("Add Itinerary");
-			$('#itineraryModal').modal('show');
 			$('#modalButton').text("Create Itinerary");
 			$('#modalDeleteButton').hide();
+			$('#itineraryModal').modal('show');
 		}
 		function editItinerary(id) {
 			$.ajax( {
@@ -162,7 +162,6 @@
 					$('#id_end_date').val(itinerary.end_date);
 					$('#id_participants').val(itinerary.participants);
 					$('#myModalLabel').text("Update Itinerary");
-					$('#itineraryModal').modal('show');
 					$('#modalButton').text("Save Change");
 					$('#modalDeleteButton').click( function() {
 						$.ajax( {
@@ -173,6 +172,7 @@
 					});
 					$('#delete_id').val(id);
 					$('#modalDeleteButton').show();
+					$('#itineraryModal').modal('show');
 				}
 			});
 		}
