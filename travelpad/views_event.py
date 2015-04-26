@@ -17,7 +17,6 @@ from django.db import transaction
 # for reverse url
 from django.core.urlresolvers import reverse
 
-from datetime import datetime, time
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 import json
@@ -28,6 +27,7 @@ from django.template.loader import render_to_string
 from travelpad.models import *
 from travelpad.forms_event import *
 from travelpad.views_itinerary import demo
+from datetime import time, datetime
 
 def home_page(request):
     # render takes: (1) the request,
