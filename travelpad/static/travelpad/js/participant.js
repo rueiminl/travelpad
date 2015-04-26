@@ -12,6 +12,15 @@
 	    	$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
 	    });
 	};
+
+	this.getuser = function(){
+		$http.get("/costs-user").success(function(data){
+			p.user = data;
+		})
+	};
+
+	this.getuser();
+
 	this.invite = function() {
 		$http({
 			url: "/participant-json",

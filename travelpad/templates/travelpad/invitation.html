@@ -46,7 +46,7 @@ $(function() {
 									<img class="img-circle" src="/get_user_photo/{{ participant.id }}" alt=""  width="50px" height="50px" style="vertical-align:middle;" /> 
 									<span class="message-username">{{participant.username}}</span>
 								</div>
-								<div class="col-md-1">
+								<div class="col-md-1" ng-hide="pCtrl.user.username === participant.username">
 									<a role="button" class="glyphicon glyphicon-trash" ng-click="pCtrl.delete(participant.username)"></a>
 								</div>
 							</div>
