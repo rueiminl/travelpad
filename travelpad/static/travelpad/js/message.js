@@ -1,7 +1,7 @@
 (function() {
   var app = angular.module('myApp');
 	
-  app.controller('MessageController', ['$http', '$interval', function($http, $interval){
+  app.controller('MessageController', ['$http', '$interval', '$scope', function($http, $interval, $scope){
 	var t = this;
 	this.messages = [];
 	this.newMessage = {};
@@ -16,6 +16,11 @@
 				if(idMap.indexOf(data[i].id) == -1){
 					data[i].newReply = {related_message: data[i].id};
 					t.messages.push(data[i]);
+				}else{
+					for (var j = 0; j < t.messages.length; j++){
+					    if (t.messages[j].id == data[i].id && t.messages[j].timestamp < data[i].timestamp)
+					        t.messages[j] = data[i]; //replace an item in array
+					}
 				}
 			}
 			// for (var i = 0; i < t.messages.length; i++){
@@ -37,6 +42,7 @@
 	this.addMessage = function(){
 		$http.post("/message-json", t.newMessage).success(function(data){
 			data.newReply = {related_message: data.id};
+			data.editMode = false;
 			t.messages.push(data);
 			t.newMessage = {};
 			$.toaster({ priority : 'success', title : 'Success', message : 'Message posted.'});
@@ -54,8 +60,27 @@
     	});
 	};
 	
+	this.toggleEditMessage = function(message){
+		message.editMode = !message.editMode;
+		if(message.editMode){
+			message.editContent = message.content;
+		}
+	}
+	
+	this.updateMessage = function(message){
+		message.editMode = false;
+		$http.put("/message-json/" + message.id, message).success(function(data){
+			message.content = message.editContent;
+			$.toaster({ priority : 'success', title : 'Success', message : 'Message updated'});
+		}).error(function(data) {
+    		$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
+    	});
+	};
+	
+	/**
+	* Reply
+	*/
 	this.addReply = function(message){
-		console.log(message);
 		// message.newReply.related_message = message.id;
 		$http.post("/reply-json", message.newReply).success(function(data){
 			message.replies.push(data);
@@ -76,17 +101,30 @@
     	});
 	};
 	
-	// this.updateMessage = function(){
-// 		$http.put("/message-json/" + t.selectedTodo.id, t.selectedTodo).success(function(data){
-// 			for (var i = 0; i < t.messages.length; i++){
-// 			    if (t.todos[i].id == t.selectedTodo.id)
-// 			        t.todos[i] = data; //replace an item in array
-// 			}
-// 			$.toaster({ priority : 'success', title : 'Success', message : 'Message updated'});
-// 		}).error(function(data) {
-//     		$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
-//     	});
-// 	};
+	
+	this.toggleEditReply = function(reply){
+		reply.editMode = !reply.editMode;
+		if(reply.editMode){
+			reply.editContent = reply.content;
+		}
+	}
+	
+	this.updateReply = function(reply){
+		reply.editMode = false;
+		$http.put("/reply-json/" + reply.id, reply).success(function(data){
+			reply.content = reply.editContent;
+			$.toaster({ priority : 'success', title : 'Success', message : 'Reply updated'});
+		}).error(function(data) {
+    		$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
+    	});
+	};
+	
+	//TODO: not working
+	$scope.reset = function() {
+		  $scope.form.$setPristine();
+	}
+	
+	
 	
   }]);
   	

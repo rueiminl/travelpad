@@ -187,9 +187,13 @@ def message_json(request):
     itinerary = Itinerary.objects.get(id=itinerary_id)  
     if request.method == 'GET':
         messages = Message.objects.filter(related_itinerary=itinerary)
-        results = [message.as_dict() for message in messages]
-        for message in results:
-            message.update({'can_edit':True})
+        results = []
+        for message in messages:
+            message_json = message.as_dict()
+            message_json.update({'can_edit':request.user==message.created_by})
+            for reply_json in message_json['replies']:
+                reply_json.update({'can_edit':request.user.id==reply_json['created_by']['id']})
+            results.append(message_json)
         response_text = json.dumps(results)
         return HttpResponse(response_text, content_type='application/json')
     elif request.method == 'POST':
@@ -199,6 +203,9 @@ def message_json(request):
         if form.is_valid():
             new_entry = form.save()  
             results = new_entry.as_dict()
+            results.update({'can_edit':request.user==new_entry.created_by})
+            for reply_json in results['replies']:
+                reply_json.update({'can_edit':request.user.id==reply_json['created_by']['id']})
             response_text = json.dumps(results)          
             return HttpResponse(response_text, content_type='application/json')
         else:
@@ -216,7 +223,7 @@ def message_id_json(request, message_id):
         if request.method == 'PUT':
             in_data = json.loads(request.body)
             print in_data
-            form = MessageForm(data={'content': in_data.get('content')}, instance=message)
+            form = MessageForm(data={'content': in_data.get('editContent')}, instance=message)
             if form.is_valid():
                 entry = form.save()  
                 results = entry.as_dict()
@@ -249,6 +256,7 @@ def reply_json(request):
         if form.is_valid():
             new_entry = form.save()  
             results = new_entry.as_dict()
+            results.update({'can_edit':request.user==new_entry.created_by})
             response_text = json.dumps(results)          
             return HttpResponse(response_text, content_type='application/json')
         else:
@@ -256,49 +264,81 @@ def reply_json(request):
             errors.append('Woops! Something wrong.')
             return HttpResponseBadRequest(json.dumps({'errors':errors}), content_type='application/json')
 
+
 @login_required
 @transaction.atomic
-def add_reply(request):
-    errors = []   
-    context = {}
+def reply_id_json(request, reply_id):
+    itinerary_id = request.session['itinerary_id']
+    itinerary = Itinerary.objects.get(id=itinerary_id)  
     try:
-        message_id = request.POST.get('message_id')
-        last_update_reply = dateutil.parser.parse(request.POST.get('last_update_reply'))
-        message = Message.objects.get(id=message_id)
-        entry = Reply(created_by=request.user, related_message=message)
-        reply_form = ReplyForm(request.POST, instance=entry)
-        if not reply_form.is_valid():
-            errors.append('You must enter content to reply.')
-            return HttpResponse(json.dumps({'errors':errors}), content_type='application/json')
-        else:
-            reply_form.save()
-        # query new comments
-        replies = Reply.objects.filter(
-            related_message=message,
-            creation_time__gt=last_update_reply
-        ).order_by('creation_time')
-        print 'get ' + str(len(replies)) + ' comments'
-        replies_json = []
-        for reply in replies:
-            replies_json.append({
-                'created_by_username':reply.created_by.username,
-                'created_by_uid': reply.created_by.id,
-                'content': reply.content,
-                'creation_time': reply.creation_time.isoformat(),
-                # 'photo_url' : reverse('photo', kwargs={'uid':comment.created_by.id})
-            })
-        context['replies'] = replies_json
-        # update last update time
-        if replies:
-            context['last_update_reply'] = max(reply.creation_time for reply in replies).isoformat()
-        else:
-            context['last_update_reply'] = ''
-        
-        response_text = json.dumps(context)
-        return HttpResponse(response_text, content_type='application/json')
+        reply = Reply.objects.get(id=reply_id)
+        if request.method == 'PUT':
+            in_data = json.loads(request.body)
+            print in_data
+            form = ReplyForm(data={'content': in_data.get('editContent')}, instance=reply)
+            if form.is_valid():
+                entry = form.save()  
+                results = entry.as_dict()
+                response_text = json.dumps(results)          
+                return HttpResponse(response_text, content_type='application/json')
+            else:
+                print form
+                errors = []
+                errors.append('Woops! Something wrong.')
+                return HttpResponseBadRequest(json.dumps({'errors':errors}), content_type='application/json')
+        elif request.method == 'DELETE':
+            reply.delete()
+            return HttpResponse({}, content_type='application/json')
     except ObjectDoesNotExist:
-        return HttpResponseNotFound('<h1>Post not found</h1>')
+        errors = []
+        errors.append('Reply not found.')
+        return HttpResponseNotFound(json.dumps({'errors':errors}), content_type='application/json')
     except Exception as inst:
         print inst
-    
+
+# @login_required
+# @transaction.atomic
+# def add_reply(request):
+#     errors = []
+#     context = {}
+#     try:
+#         message_id = request.POST.get('message_id')
+#         last_update_reply = dateutil.parser.parse(request.POST.get('last_update_reply'))
+#         message = Message.objects.get(id=message_id)
+#         entry = Reply(created_by=request.user, related_message=message)
+#         reply_form = ReplyForm(request.POST, instance=entry)
+#         if not reply_form.is_valid():
+#             errors.append('You must enter content to reply.')
+#             return HttpResponse(json.dumps({'errors':errors}), content_type='application/json')
+#         else:
+#             reply_form.save()
+#         # query new comments
+#         replies = Reply.objects.filter(
+#             related_message=message,
+#             creation_time__gt=last_update_reply
+#         ).order_by('creation_time')
+#         print 'get ' + str(len(replies)) + ' comments'
+#         replies_json = []
+#         for reply in replies:
+#             replies_json.append({
+#                 'created_by_username':reply.created_by.username,
+#                 'created_by_uid': reply.created_by.id,
+#                 'content': reply.content,
+#                 'creation_time': reply.creation_time.isoformat(),
+#                 # 'photo_url' : reverse('photo', kwargs={'uid':comment.created_by.id})
+#             })
+#         context['replies'] = replies_json
+#         # update last update time
+#         if replies:
+#             context['last_update_reply'] = max(reply.creation_time for reply in replies).isoformat()
+#         else:
+#             context['last_update_reply'] = ''
+#
+#         response_text = json.dumps(context)
+#         return HttpResponse(response_text, content_type='application/json')
+#     except ObjectDoesNotExist:
+#         return HttpResponseNotFound('<h1>Post not found</h1>')
+#     except Exception as inst:
+#         print inst
+#
     

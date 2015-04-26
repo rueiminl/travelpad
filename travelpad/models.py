@@ -5,6 +5,7 @@ from django.utils import timezone
 
 from django.contrib.auth.models import User 
 from django.core.urlresolvers import reverse
+import time
 
 # add as_dict mthod to User
 def user_as_dict(self):
@@ -73,34 +74,7 @@ class Event(models.Model):
             "proposed": self.proposed,
             "transportation": self.pre.as_dict() if hasattr(self,'pre') else 'null',
         }
-        
-# class Vote(models.Model):
-#     created_by = models.ForeignKey(User)
-#     type = models.CharField(max_length=30)
-#     title = models.CharField(max_length=30)
-#     note = models.CharField(max_length=60, blank=True)
-#     related_itinerary = models.ForeignKey(Itinerary)
-#     place_id = models.CharField(max_length=30,blank=True)
-#     place_name = models.CharField(max_length=100,blank=True)
-#     place_latitude = models.CharField(max_length=30,blank=True)
-#     place_longitude = models.CharField(max_length=30,blank=True)
-#     voted_by = models.ManyToManyField(User, blank=True, related_name='voted_by')
-#     agreed_by = models.ManyToManyField(User, blank=True, related_name='agreed_by')
-#     creation_time = models.DateTimeField(auto_now_add=True)
-#     timestamp = models.DateTimeField(auto_now=True)
-#     def as_dict(self):
-#         return dict(
-#             id=self.id,
-#             created_by=self.created_by.as_dict(),
-#             title=self.title,
-#             note=self.note,
-#             type=self.type,
-#             place=dict(id=self.place_id, name=self.place_name, latitude=self.place_latitude, longitude=self.place_longitude),
-#             voted_by=[user.as_dict() for user in self.voted_by.all()] if hasattr(self,'voted_by') else [],
-#             agreed_by=[user.as_dict() for user in self.agreed_by.all()] if hasattr(self,'agreed_by') else [],
-#             creation_time=timezone.localtime(self.creation_time).isoformat(),
-#             timestamp=timezone.localtime(self.timestamp).isoformat(),
-#         )
+
         
 class Transportation(models.Model):
     created_by = models.ForeignKey(User)
@@ -189,7 +163,8 @@ class Message(models.Model):
             content=self.content,
             replies=[reply.as_dict() for reply in self.replies.all()] if hasattr(self,'replies') else [],
             creation_time=timezone.localtime(self.creation_time).isoformat(),
-            timestamp=timezone.localtime(self.timestamp).isoformat(),
+            # timestamp=timezone.localtime(self.timestamp).isoformat(),
+            timestamp=int(time.mktime(self.timestamp.timetuple())*1000)
         )
         
 class Reply(models.Model):
@@ -247,7 +222,22 @@ def create_message(instance, created, raw, **kwargs):
 #             )
 #         entry.save()
 
+def update_message_timestamp(instance, created, raw, **kwargs):
+    # Ignore fixtures and saves for existing courses.
+    if raw:
+        return
+    if isinstance(instance, Reply):
+        message = Message.objects.get(id=instance.related_message.id)
+        message.save() #update timestamp
+
+def update_message_timestamp(sender, instance, **kwargs):
+    if isinstance(instance, Reply):
+        message = Message.objects.get(id=instance.related_message.id)
+        message.save() #update timestamp
+
 models.signals.post_save.connect(create_message, sender=Event, dispatch_uid='create_message')
 models.signals.post_save.connect(create_message, sender=Todo, dispatch_uid='create_message')
+models.signals.post_save.connect(update_message_timestamp, sender=Reply, dispatch_uid='update_message_timestamp')
+models.signals.post_delete.connect(update_message_timestamp, sender=Reply, dispatch_uid='update_message_timestamp')
 
 
