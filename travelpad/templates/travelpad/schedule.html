@@ -52,7 +52,8 @@
 					<a role="button" class="hidden-xs btn glyphicon glyphicon-menu-down" ng-show="scheduleCtrl.collapseDesc" ng-click="scheduleCtrl.collapseDesc = !scheduleCtrl.collapseDesc;"></a>
 					<a role="button" class="hidden-xs btn glyphicon glyphicon-menu-up" ng-hide="scheduleCtrl.collapseDesc" ng-click="scheduleCtrl.collapseDesc = !scheduleCtrl.collapseDesc;"></a>
 				</div>
-				<button class="btn btn-default" ng-click="scheduleCtrl.addEvent()">Add Event</button>
+				<!-- <button class="btn btn-default" ng-click="scheduleCtrl.addEvent()">Add Event</button> -->
+				<a role="button" class="btn btn-primary" id="addItineraryButton" type="button" ng-click="scheduleCtrl.addEvent()"><span class="glyphicon glyphicon-plus-sign"></span> Add Event</a>
 				
 				
 				<!-- <div class="btn-toolbar" role="toolbar"> -->
