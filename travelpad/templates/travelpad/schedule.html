@@ -21,13 +21,6 @@
 <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3"></script>-->
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&language=en-us"></script>
 <script src="{% static 'travelpad/js/map.js' %}"></script>
-
-<!-- css for this page -->
-<style type="text/css">
-	.container{
-		background-color: @gray-light;
-	}
-</style>
 {% endblock %}
 
 {% block nav %}
@@ -50,8 +43,13 @@
 	  					<li ng-class="{active:tab.isSet(2)}">
 	  			            <a href role="button" ng-click="tab.setTab(2)"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map</a></li>
 	  			    </ul>
-					<h1><span id="toggleSign" class="glyphicon glyphicon-minus"></span>&nbsp;&nbsp;&nbsp;{{scheduleCtrl.itinerary.title}}</h1>
-					<h1><small><span id="itineraryDescription">{{scheduleCtrl.itinerary.description}}</span></small></h1>
+					<h1>{{scheduleCtrl.itinerary.title}} <br/>
+						<small ng-show="scheduleCtrl.collapseDesc">{{scheduleCtrl.itinerary.description.substring(0,80) + "..."}}</small>		
+						<small ng-hide="scheduleCtrl.collapseDesc">{{scheduleCtrl.itinerary.description}}</small>			
+					</h1>
+					
+					<button class="hidden-xs btn btn-default glyphicon glyphicon-menu-down" ng-show="scheduleCtrl.collapseDesc" ng-click="scheduleCtrl.collapseDesc = !scheduleCtrl.collapseDesc;"></button>
+					<button class="hidden-xs btn btn-default glyphicon glyphicon-menu-up" ng-hide="scheduleCtrl.collapseDesc" ng-click="scheduleCtrl.collapseDesc = !scheduleCtrl.collapseDesc;"></button>
 				</div>
 				<button class="btn btn-default" ng-click="scheduleCtrl.addEvent()">Add Event</button>
 				
@@ -90,22 +88,4 @@
 			{% endverbatim %}
 		</div>
 </div>
-{% endblock %}
-{% block tail %}
-<script>
-	$(document).ready(function(){
-		$('#toggleSign').on("click", function(){
-			if( $('#itineraryDescription').is(':visible') ) {
-				$("#itineraryDescription").hide();
-				$(this).removeClass("glyphicon-minus");
-				$(this).addClass("glyphicon-plus");
-			}
-			else {
-				$("#itineraryDescription").show();
-				$(this).removeClass("glyphicon-plus");
-				$(this).addClass("glyphicon-minus");
-			}
-		});
-	});
-</script>
 {% endblock %}
