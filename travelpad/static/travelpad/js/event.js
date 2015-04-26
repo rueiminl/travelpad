@@ -718,6 +718,7 @@ function edittransport(id, success_callback, error_callback) {
             $('#id_' + fix + '_-format').val(items.data.type);
             $('#eventId').val(items.data.id);
             $('#map-eventcanvas3').hide();
+            $('#pac-input3').hide();
 
         }
     });

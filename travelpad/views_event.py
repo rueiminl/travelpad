@@ -360,6 +360,7 @@ def eventeditwithID(request):
     elif request.POST['tabName']=="Restaurant":
         form = RestaurantForm(request.POST, prefix = "r_")
     if form.is_valid():
+        
         stime = datetime.combine(form.cleaned_data['start_date'], form.cleaned_data['start_time'])
         etime = datetime.combine(form.cleaned_data['end_date'], form.cleaned_data['end_time'])
         newevent.start_datetime  = timezone.make_aware(stime, timezone.get_current_timezone())
@@ -535,6 +536,7 @@ def eventeditwithID_json(request):
             success = 0
             errors.append("End date/time can't be earlier than start date/time.");
         newevent.note = form.cleaned_data['note']
+        newevent.title = form.cleaned_data['title']
         overlap = Event.objects.filter(related_itinerary__id=request.session["itinerary_id"]).filter(start_datetime__lt=newevent.end_datetime).filter(end_datetime__gt=newevent.start_datetime).exclude(id = request.POST['eventId'])
         if overlap.count() > 0: #overlap
             success = 0

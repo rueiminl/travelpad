@@ -52,7 +52,6 @@ class TransportationForm(forms.Form):
     FORMAT_CHOICES = (
     ('driving', 'driving'),
     ('walking', 'walking'),
-    ('bicycling', 'bicycling'),
     ('transit', 'transit'),)
     format = forms.ChoiceField(choices = FORMAT_CHOICES,required = True, label = 'Transportation type')
     note = forms.CharField(max_length=60, required=False, widget = forms.Textarea(attrs={'class' : 'form-control', 'rows': '3', 'placeholder': 'add notes here'}))
