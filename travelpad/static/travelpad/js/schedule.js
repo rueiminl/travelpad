@@ -1,6 +1,9 @@
 (function() {
 	var app = angular.module('myApp');
 	
+	Array.prototype.contains = function(element){
+	    return this.indexOf(element) > -1;
+	};
   	
 	app.controller('ScheduleController', ['$http', '$interval', function($http, $interval){
 		var t = this;
@@ -74,7 +77,7 @@
 					t.dateTitle = view.title;
 				},
 				eventClick: function(calEvent, jsEvent, view) {
-					if(calEvent.className=='transportation'){
+					if(calEvent.className.contains('transportation')){
 						edittransport(calEvent.id, function(){
 							$('#calendar').fullCalendar('refetchEvents'); //refresh related transportation
 							$.toaster({ priority : 'success', title : 'Success', message : 'Event updated.'});
@@ -122,7 +125,7 @@
 				},
 				eventOverlap: function(stillEvent, movingEvent) {
 					// event other than transportation cannot overlap
-					return stillEvent.className=='transportation' || movingEvent.className=='transportation'||
+					return stillEvent.className.contains('transportation') || movingEvent.className.contains('transportation')||
 							stillEvent.className=='background' || movingEvent.className=='background';
 				},
 				eventAfterAllRender: (function(){
@@ -130,7 +133,7 @@
 						// //refresh map view whenever calendar is rendering
 						// Retrieves events that FullCalendar has in memory.
 						var mapEvents = $('#calendar').fullCalendar('clientEvents', function(evt) {
-							if(evt.className!='background' && evt.className!='transportation'){
+							if(evt.className!='background' && !evt.className.contains('transportation')){
 								// console.log(evt);
 								var startDate = moment(new Date(evt.startdate));
 								var endDate = moment(new Date(evt.enddate));

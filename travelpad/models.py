@@ -90,6 +90,7 @@ class Transportation(models.Model):
     def as_dict(self):
         return {
             "id": self.id,
+            "title": self.type,
             "startdate": timezone.localtime(self.start_datetime).strftime("%Y-%m-%d"),
             "starttime": timezone.localtime(self.start_datetime).strftime("%H:%M"),
             "enddate": timezone.localtime(self.end_datetime).strftime("%Y-%m-%d"),
