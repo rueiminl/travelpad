@@ -3,7 +3,7 @@
 
   
   
-  app.controller('CostController', ['$http', '$interval', function($http, $interval){
+  app.controller('CostController', ['$http', '$interval', '$scope', function($http, $interval, $scope){
 	var t = this;
 	this.costs = [];
     this.newCost = {};
@@ -41,7 +41,8 @@
 		}).error(function(data) {
 			$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
     	});
-        this.reload()
+        this.reload();
+        $scope.addCostForm.$setPristine();
 	};
     
 	this.editCost = function(cost){
