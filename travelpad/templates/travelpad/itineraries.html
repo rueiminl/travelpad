@@ -298,6 +298,8 @@
 			});
 		}
 		function deleteItinerary(id) {
+			if (confirm("Please think twice. Are you sure you want to delete this itinerary?") == false)
+				return;
 			$('#delete_id').val(id);
 			$('#deleteItineraryForm').submit();
 		}
