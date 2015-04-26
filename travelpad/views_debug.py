@@ -154,3 +154,7 @@ def debug_add_travelpaduser(request):
 		return debug_database(request)
 	travelpaduser_form.save()
 	return redirect("debug_database")
+
+def debug(request):
+	context={"email":"lrm0617@gmail.com"}
+	return render(request, 'travelpad/needs-confirmation.html', context)
