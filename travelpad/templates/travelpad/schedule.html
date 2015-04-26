@@ -50,7 +50,8 @@
 	  					<li ng-class="{active:tab.isSet(2)}">
 	  			            <a href role="button" ng-click="tab.setTab(2)"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map</a></li>
 	  			    </ul>
-				  	<h1>{{scheduleCtrl.itinerary.title}} <small>{{scheduleCtrl.itinerary.description}}</small></h1>
+					<h1><span id="toggleSign" class="glyphicon glyphicon-minus"></span>&nbsp;&nbsp;&nbsp;{{scheduleCtrl.itinerary.title}}</h1>
+					<h1><small><span id="itineraryDescription">{{scheduleCtrl.itinerary.description}}</span></small></h1>
 				</div>
 				<button class="btn btn-default" ng-click="scheduleCtrl.addEvent()">Add Event</button>
 				
@@ -89,4 +90,22 @@
 			{% endverbatim %}
 		</div>
 </div>
+{% endblock %}
+{% block tail %}
+<script>
+	$(document).ready(function(){
+		$('#toggleSign').on("click", function(){
+			if( $('#itineraryDescription').is(':visible') ) {
+				$("#itineraryDescription").hide();
+				$(this).removeClass("glyphicon-minus");
+				$(this).addClass("glyphicon-plus");
+			}
+			else {
+				$("#itineraryDescription").show();
+				$(this).removeClass("glyphicon-plus");
+				$(this).addClass("glyphicon-minus");
+			}
+		});
+	});
+</script>
 {% endblock %}

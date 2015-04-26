@@ -81,6 +81,9 @@ def delete_itinerary(request):
 
 @login_required
 def get_itinerary_photo(request, id):
+	print "get it", id
+	if id == "0":
+		return redirect("/static/travelpad/img/photo-default-th.png")	
 	itinerary = get_itinerary(id)
 	if not itinerary.photo:
 		print "itinerary[" + id + "].photo not found"
