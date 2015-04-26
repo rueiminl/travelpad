@@ -34,19 +34,24 @@ $(function() {
 
 		<div class="col-md-10" ng-controller="ParticipantController as pCtrl">
 			<div class="panel panel-default">
+			{% verbatim %}
 				<div class="panel-heading">
 					<h3 class="panel-subtitle">Collaborators</h3>
 				</div>
 				<div class="panel-body">
-					{% verbatim %}
-					<ul class="list-group" style="list-style-type:none" ng-repeat="participant in pCtrl.participants">
-						<li>
-							<img class="img-circle" src="/get_user_photo/{{ participant.id }}" alt=""  width="48" height="48" /> 
-							<span>{{ participant.username }}</span>
-							<button class="btn btn-danger pull-right" ng-click="pCtrl.delete(participant.username)">Delete</button>
+					<ul class="list-group" style="list-style-type:none">
+						<li class="list-group-item" ng-repeat="participant in pCtrl.participants">
+							<div class="row h3">
+								<div class="col-md-11">
+									<img class="img-circle" src="/get_user_photo/{{ participant.id }}" alt=""  width="50px" height="50px" style="vertical-align:middle;" /> 
+									<span class="message-username">{{participant.username}}</span>
+								</div>
+								<div class="col-md-1">
+									<a role="button" class="glyphicon glyphicon-trash" ng-click="pCtrl.delete(participant.username)"></a>
+								</div>
+							</div>
 						</li>
 					</ul>
-					{% endverbatim %}
 				</div>
 			</div>
 			<form id="submitForm">
@@ -56,6 +61,7 @@ $(function() {
 						<button class="btn btn-primary" ng-click="pCtrl.invite(username)">Invite</button>
 					</span>
 				</div>			
+			{% endverbatim %}
 				{% csrf_token %}
 			</form>
 		</div>

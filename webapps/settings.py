@@ -104,9 +104,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = '/home/ubuntu/team27/travelpad/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'travelpad/')
+#STATIC_ROOT = '/home/ubuntu/team27/travelpad/'
 
-MEDIA_ROOT = '/home/ubuntu/team27/'
+MEDIA_ROOT = os.path.join(BASE_DIR)
+#MEDIA_ROOT = '/home/ubuntu/team27/'
 
 MEDIA_URL = '/pictures/'
 #STATICFILES_DIRS = (
