@@ -5,11 +5,15 @@
 					<li {{ itineraries_active }}><a href="{% url 'itineraries' %}">Itinerary</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					<li style="margin-right:20px;">
-						<img class="img-circle" src="{{user.photo}}" width="50px" height="50px" style="vertical-align:middle;">
-						<span>{{user.username}}</span>				
-					</li>
-					<li {{ profile_active }}><a href="{% url 'profile' %}">Profile</a></li>
+					<!-- <li style="margin-right:20px;">
+
+						<span style="color:white;">{{user.username}}</span>
+					</li> -->
+					<li><a href="{% url 'profile' %}">
+						<img class="img-circle" src="{% url 'get_user_photo' user.id %} " width="40px" height="40px">
+						{{user.username}}
+					</a></li>
+					<!-- <li {{ profile_active }}><a href="{% url 'profile' %}">Profile</a></li> -->
 					<li><a href="{% url 'logout' %}">Logout</a></li>
 				</ul>
 			</div>
