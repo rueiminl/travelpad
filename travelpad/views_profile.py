@@ -23,8 +23,13 @@ def profile(request):
 	travelpaduser_form.fields["last_name"].initial = request.user.last_name
 	travelpaduser_form.fields["email"].initial = request.user.email
 
+	itineraries = Itinerary.objects.filter(participants__id=request.user.id)
+	todoes = Todo.objects.filter(owner__id=request.user.id)
+	
 	context = {}
 	context["travelpaduser_form"] = travelpaduser_form
+	context["itineraries"] = itineraries
+	context["todoes"] = todoes
 	return render(request, 'travelpad/profile.html', context)
 
 @login_required
