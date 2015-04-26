@@ -118,5 +118,12 @@
 		function editProfile() {
 			$('#profileModal').modal('show');
 		}
+		
+		$(document).ready(function(){
+			{% for error in errors %}
+			$.toaster({ priority : 'danger', title : 'Error', message : "{{error}}" });
+			{% endfor %}
+		});
+
 	</script>
 {% endblock %}

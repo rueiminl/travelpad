@@ -31,6 +31,9 @@ def profile(request):
 	todoes = Todo.objects.filter(owner__id=request.user.id)
 	
 	context = {}
+	if 'errors' in request.session:
+		context["errors"] = request.session["errors"]
+		del request.session["errors"]	
 	context["travelpaduser_form"] = travelpaduser_form
 	context["itineraries"] = itineraries
 	context["todoes"] = todoes
@@ -48,10 +51,6 @@ def update_profile(request):
 	if request.method == "GET":
 		print "update_user POST only"
 		return redirect("profile")
-	request.user.first_name = request.POST['first_name']
-	request.user.last_name = request.POST['last_name']
-	request.user.email = request.POST['email']
-	request.user.save()
 	travelpaduser = get_travelpaduser(request.user.id)
 	if request.POST.get("clear"):
 		travelpaduser.photo = None
@@ -63,8 +62,13 @@ def update_profile(request):
 	if not user_form.is_valid():
 		print "update_profile user_form.is_valid fail"
 		print user_form.errors
+		request.session["errors"] = [k + ":" + v[0] for k, v in user_form.errors.items()]
 		return redirect("profile")
 	user_form.save()
+	request.user.first_name = request.POST['first_name']
+	request.user.last_name = request.POST['last_name']
+	request.user.email = request.POST['email']
+	request.user.save()
 	return redirect("profile")
 
 @login_required
