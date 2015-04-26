@@ -1,8 +1,8 @@
 		<nav class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container">
-				<a class="navbar-brand" href="{% url 'default' %}">TravelPad</a>
+				<a style="padding-top: 0" class="navbar-brand" href="{% url 'default' %}"><h3>TravelPad</h3></a>
 				<ul class="nav navbar-nav">
-					<li {{ itineraries_active }}><a href="{% url 'itineraries' %}">Itinerary</a></li>
+					<li {{ itineraries_active }}><a href="{% url 'itineraries' %}"><h4>Itinerary</h4></a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<!-- <li style="margin-right:20px;">
@@ -14,7 +14,7 @@
 						{{user.username}}
 					</a></li>
 					<!-- <li {{ profile_active }}><a href="{% url 'profile' %}">Profile</a></li> -->
-					<li><a href="{% url 'logout' %}">Logout</a></li>
+					<li><a href="{% url 'logout' %}"><h4>Logout</h4></a></li>
 				</ul>
 			</div>
 		</nav>
