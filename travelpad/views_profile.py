@@ -77,11 +77,6 @@ def delete_user(request):
 def get_user_photo(request, id):
 	travelpaduser = get_travelpaduser(id)
 	if not travelpaduser.photo:
-		try:
-			with open("travelpad/static/travelpad/img/DefaultPersonPhoto.png", "rb") as f:
-				return HttpResponse(f.read(), content_type="image/png")
-		except:
-			raise Http404
 		print "travelpaduser[" + id + "].photo not found"
-		raise Http404
+		return redirect("/static/travelpad/img/DefaultPersonPhoto.png")
 	return HttpResponse(travelpaduser.photo, content_type="image")
