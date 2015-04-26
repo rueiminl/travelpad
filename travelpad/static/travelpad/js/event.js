@@ -88,7 +88,7 @@ var g_map4;
       });
        $("#eventModal").on("shown.bs.modal", function(e) {
         google.maps.event.trigger(g_map, "resize");
-        //g_map.setCenter(myLatlng);
+        g_map.setCenter(myLatlng);
       });
        $("#eventModal").on('hidden.bs.modal', function () {
             $(this).find('form')[0].reset();
@@ -239,7 +239,7 @@ var g_map4;
 
         var markers = [];
         mapOptions = {
-        center: myLatlng,
+        //center: myLatlng,
         zoom: zoomVar, 
         mapTypeId: google.maps.MapTypeId.ROADMAP
         };
@@ -321,7 +321,7 @@ var g_map4;
       function initialize_hotel() {
         var markers = [];
         mapOptions = {
-        center: myLatlng,
+        //center: myLatlng,
         zoom: zoomVar, 
         mapTypeId: google.maps.MapTypeId.ROADMAP
         };
@@ -407,7 +407,7 @@ var g_map4;
       function initialize_transportation() {
         var markers = [];
         mapOptions = {
-        center: myLatlng,
+        //center: myLatlng,
         zoom: zoomVar, 
         mapTypeId: google.maps.MapTypeId.ROADMAP
         };
@@ -489,7 +489,7 @@ var g_map4;
       function initialize_restaurant() {
         var markers = [];
         mapOptions = {
-        center: myLatlng,
+        //center: myLatlng,
         zoom: zoomVar, 
         mapTypeId: google.maps.MapTypeId.ROADMAP
         };
