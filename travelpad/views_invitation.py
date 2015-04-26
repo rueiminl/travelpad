@@ -78,7 +78,11 @@ Please don't forget to come to say hi to other participants.
 Cheers!
 TravelPad team
 """ % (itinerary.title)
-			send_mail(subject="[TravelPad] invitation notification", message= email_body, from_email="rueiminl@andrew.cmu.edu", recipient_list=[user.email])
+			try:
+				send_mail(subject="[TravelPad] invitation notification", message= email_body, from_email="travelpadteam@gmail.com", recipient_list=[user.email])
+			except Exception as err:
+				print "exception happens while send_mail"
+				print err
 		else:
 			if not Itinerary.objects.filter(id=itinerary_id).filter(participants=user).exists():
 				print "Warn: username does not participate yet"
@@ -92,7 +96,11 @@ If any question, please contact the kicker directly...
 Cheers!
 TravelPad team
 """ % (request.user.username, itinerary.title)
-			send_mail(subject="[TravelPad] invitation notification", message= email_body, from_email="rueiminl@andrew.cmu.edu", recipient_list=[user.email])
+			try:
+				send_mail(subject="[TravelPad] invitation notification", message= email_body, from_email="travelpadteam@gmail.com", recipient_list=[user.email])
+			except Exception as err:
+				print "exception happens while send_mail"
+				print err
 		results = {"success":"true",
 		           "participant": {"id" : user.id, "username" : user.username}
 		          }
