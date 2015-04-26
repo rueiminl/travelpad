@@ -46,6 +46,7 @@
 					<h1>{{scheduleCtrl.itinerary.title}}</h1>
 					<h4><span class="glyphicon glyphicon-map-marker"><span> {{scheduleCtrl.itinerary.place.name}}</h4>
 					<h4><span class="glyphicon glyphicon-calendar"><span> {{scheduleCtrl.itinerary.start_date|date:'MMM d, yyyy'}}&#8213;{{scheduleCtrl.itinerary.end_date|date:'MMM d, yyyy'}}</h4>
+					<hr/>
 					<h3><small ng-show="scheduleCtrl.collapseDesc" class="">{{scheduleCtrl.itinerary.description.substring(0,80) + "..."}}</small>
 					<small ng-hide="scheduleCtrl.collapseDesc">{{scheduleCtrl.itinerary.description}}</small></h3>
 					
