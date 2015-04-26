@@ -26,17 +26,29 @@
 		<div class="col-md-10">
 			<div class="alert_placeholder">
 			</div>
-                    <div class="expenseheader">
+                    <div class="expenseheader row">
+                        <div class="col-md-3">
                         <h4>Total expense I have to pay:</h4>
-                        <h3>{{costCtrl.myCost}}</h3>
+                        </div>
+                        <div class="col-md-2 text-right">
+                        <h3>${{costCtrl.myCost | number:2}}</h3>
+                        </div>
                     </div>
-                    <div class="expenseheader">
-                        <h4>Expense that I have haven't paid:</h4>
-                        <h3>{{costCtrl.unpaidCost}}</h3>
+                    <div class="expenseheader row">
+                        <div class="col-md-3">
+                        <h4>Expense that I haven't paid:</h4>
+                        </div>
+                        <div class="col-md-2 text-right">
+                        <h3>${{costCtrl.unpaidCost | number:2}}</h3>
+                        </div>
                     </div>
-                    <div class="expenseheader">
+                    <div class="expenseheader row">
+                        <div class="col-md-3">
                         <h4>Expense that I need to collect:</h4>
-                        <h3>{{costCtrl.receiveCost}}</h3>
+                        </div>
+                        <div class="col-md-2 text-right">
+                        <h3>${{costCtrl.receiveCost | number:2}}</h3>
+                        </div>
                     </div>
                 <br>
 			    <!--  Products Container  -->
@@ -67,7 +79,7 @@
                           </tr>
                         </thead>
 						<tr ng-repeat="cost in costCtrl.costs| orderBy:'-creation_time'" ng-class="costCtrl.backcolor(cost)">
-						<td><h4>{{cost.amount}}</h4></td>
+						<td><h4>${{cost.amount | number:2}}</h4></td>
 						<td><h4>{{cost.note}}</h4></td>
 						<td><h4>{{cost.owner.username}}</h4></td>
                         <td>
