@@ -18,8 +18,10 @@
 					t.messages.push(data[i]);
 				}else{
 					for (var j = 0; j < t.messages.length; j++){
-					    if (t.messages[j].id == data[i].id && t.messages[j].timestamp < data[i].timestamp)
-					        t.messages[j] = data[i]; //replace an item in array
+					    if (t.messages[j].id == data[i].id && t.messages[j].timestamp < data[i].timestamp){
+					    	data[i].newReply = {related_message: data[i].id};
+							t.messages[j] = data[i]; //replace an item in array
+					    }
 					}
 				}
 			}
@@ -82,6 +84,7 @@
 	*/
 	this.addReply = function(message){
 		// message.newReply.related_message = message.id;
+		console.log(message.newReply);
 		$http.post("/reply-json", message.newReply).success(function(data){
 			message.replies.push(data);
 			message.newReply = {related_message: message.id}; //reset
@@ -95,6 +98,7 @@
 	this.deleteReply = function(message, reply){
 		$http.delete("/reply-json/" + reply.id).success(function(data){
 			message.replies.splice(message.replies.indexOf(reply),1); //delete an item in array
+			message.newReply = {related_message: message.id}; //reset
 			$.toaster({ priority : 'success', title : 'Success', message : 'Reply deleted'});
 		}).error(function(data) {
     		$.toaster({ priority : 'danger', title : 'Error', message : data.errors});
