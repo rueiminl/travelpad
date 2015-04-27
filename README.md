@@ -1,3 +1,5 @@
+site: http://ec2-52-10-143-249.us-west-2.compute.amazonaws.com
+
 # team27
 15-437/15-637 repo for chunninc
 
